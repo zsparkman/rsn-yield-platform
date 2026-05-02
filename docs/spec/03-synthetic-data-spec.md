@@ -2,30 +2,53 @@
 
 ## Overview
 
-A deterministic Node.js generator under `scripts/generator/` produces all JSON files in `/data` from a single seed. Running `npm run generate-data` is reproducible — same seed always produces the same output. This is critical for build stability and for review.
+A deterministic Node.js generator under `scripts/generator/` produces
+the four source files in `/data` from a single seed. Running
+`npm run generate-data` is reproducible — same seed always produces
+the same output. The orchestrator also runs the ETL and the contracts
+validator after generation.
+
+The generator's job is the **source files only**. All derived shapes
+(per-game rollups, AUR summary, etc.) are computed from those source
+files at build time by `src/lib/etl.ts`. See `01-data-model.md` for
+the source schemas and `05-etl-contracts.md` for the property-based
+ETL invariants.
 
 ## Determinism
 
 - Use `seedrandom` (npm: `seedrandom`) for all random draws
 - Single top-level seed: `'rsn-yield-platform-v1'`
-- All sub-generators receive a derived seed via `seedrandom(topSeed + ':' + namespace)` so changes to one section don't shift all downstream randomness
+- All sub-generators receive a derived seed via
+  `seedrandom(topSeed + ':' + namespace)` so changes to one section
+  don't shift all downstream randomness
+- Per-game RNG (`rngForKey('floater-fires', game_id)`) for any sub-
+  routine whose distribution must stay stable when sampling order
+  elsewhere shifts
 
 ## Generator order
 
-1. `01-broadcast-calendar.ts` — date dimension
-2. `02-opponents.ts` — fictional team roster
-3. `03-clients.ts` — load from `04-client-roster.json`, augment with synthetic AE assignments and buying intensities
-4. `04-rate-card.ts` — emit rate_card.json from spec table
-5. `05-inventory-capacity.ts` — emit inventory_capacity.json from spec table
-6. `06-schedule.ts` — generate 25 PR + 145 REG games
-7. `07-spots.ts` — generate ~10–14k spots
-8. `08-rollups.ts` — compute game_rollup.json and aur_summary.json
-9. `99-validate.ts` — run validation targets, fail build if any miss
+1. `01-schedule.ts` — generate `data/schedule.csv` (25 PR + 145 REG
+   games in 10-column Master Game Schedule format)
+2. `02-spots.ts` — generate `data/spots.csv` (~18,000 rows in 29-column
+   Wide Orbit format)
+3. `03-copy-source.ts` — copy `Inventory_Table_synthetic.xlsx` and
+   `Dynamic_Rates_synthetic.xlsx` from `docs/reference/` into `/data`
 
-## 1. Schedule generator (06-schedule.ts)
+After generation, `scripts/generate-data.ts` parses the four source
+files, runs the ETL, runs the property-based contracts validator
+(`src/lib/etl-validate.ts`), then runs the distributional validator
+(`src/lib/etl-distributional.ts`). Any contract or distributional
+miss fails the build with a non-zero exit code.
+
+## 1. Schedule generator (01-schedule.ts)
+
+Outputs `data/schedule.csv` in the 10-column Master Game Schedule shape.
+Sentinels (the fictional home team) plays real MLB opponents from
+`scripts/generator/_opponents.ts`. The Regional set is fixed to
+{Giants, Padres, Angels} per the M chain.
 
 ### Inputs
-- 14 opponents (3 Regional, 11 Standard) from opponents.json
+- 29 real MLB opponents (3 Regional, 26 Standard) from `_opponents.ts`
 - Calendar window: Feb 21 (PR start) through end of September (REG end)
 
 ### Algorithm
@@ -87,7 +110,7 @@ Matchup tier assignment:
 
 Validate that the schedule produces the day-of-week, In Game variant, and simulcast distributions within ±2% of targets.
 
-## 2. Demand model (used by 07-spots.ts)
+## 2. Demand model (used by 02-spots.ts)
 
 A scalar `demand_score ∈ [0, 1]` per game-inventory cell drives fill rate, oversell probability, and rate tier resolution.
 
@@ -171,7 +194,7 @@ Reference points produced by the curve:
 
 Final paid_eq30 target = expected_paid_fill_pct × cap, with Gaussian noise (σ=2 eq30) applied.
 
-## 3. Spot generator (07-spots.ts)
+## 3. Spot generator (02-spots.ts)
 
 For each game-inventory cell:
 
@@ -311,9 +334,12 @@ booked_impressions = booked_rating × demo_universe_size × 1000
 
 Already specified in 01-data-model.md. Generator emits the table directly.
 
-## 5. Validation targets (99-validate.ts)
+## 5. Validation targets (etl-distributional.ts)
 
-Hard fail the build if any of these miss:
+Hard fail the build if any of these miss. Sellout-band targets and EUR
+ranges are computed by `src/lib/etl-distributional.ts` against the ETL
+output (specifically `inventoryExc0` for the per-cell sellout bands and
+the spec-formula EUR/AUR for EUR ranges and AUR-vs-EUR delta).
 
 | Metric | Target | Tolerance |
 |--------|--------|-----------|
@@ -325,8 +351,6 @@ Hard fail the build if any of these miss:
 | % In Game cells with paid_eq30 ≤ Primary cap | 30% | ±5% |
 | % In Game cells with paid_eq30 0–20% over Primary | 50% | ±5% |
 | % In Game cells with paid_eq30 20%+ over Primary | 20% | ±5% |
-| Floater firings (REG games with ≥1 floater spot) | ~138 | ±15 |
-| % REG games firing 0 floaters | ~8% | ±3% |
 | Mean EUR REG In Game Standard | $7,500–9,500 | range |
 | Mean EUR REG In Game Regional | $11,000–14,000 | range |
 | AUR vs EUR delta in Postgame | AUR 3–8% below EUR | range |
@@ -334,7 +358,16 @@ Hard fail the build if any of these miss:
 | Top 50 client EQ30 share | 75–88% | range |
 | Spots with priority=paid | ~78% | ±4% |
 
-Validation script prints all metrics to stdout. Build fails on any miss with a specific error message naming the metric.
+Two prior targets (`Floater firings (games)`, `% games firing 0 floaters`)
+were dropped in the SSRS-input migration. They measured an explicit
+`Floaters A&B` inv-type spot count that the M model doesn't have —
+floater capacity derives from In Game oversell instead, which is
+covered by the `% In Game cells sold > cap` targets above.
+
+ETL output is also gated by the property-based contracts spec
+(`05-etl-contracts.md`); both validators run from
+`scripts/generate-data.ts`. Build fails non-zero on any miss with one
+line per failing contract / metric.
 
 ## Output structure
 
@@ -342,17 +375,13 @@ After running `npm run generate-data`:
 
 ```
 data/
-├── games.json
-├── opponents.json
-├── inventory_capacity.json
-├── rate_card.json
-├── clients.json
-├── spots.json
-├── broadcast_calendar.json
-├── game_inventory.json
-├── game_rollup.json
-├── aur_summary.json
-└── _validation_report.json   ← validation metrics, dated, stored
+├── spots.csv                 ← generated, 29-col Wide Orbit format
+├── schedule.csv              ← generated, 10-col Master Game Schedule format
+├── inventory_capacity.xlsx   ← copied from docs/reference/
+├── rate_card.xlsx            ← copied from docs/reference/
+└── _validation_report.json   ← contracts + distributional metrics, dated
 ```
 
-Only `_validation_report.json` and minified production data ship to the deployed site.
+Only `_validation_report.json` ships to the deployed site as a build
+artifact; the four source files are inlined into the prerendered routes
+via the ETL.

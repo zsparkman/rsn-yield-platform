@@ -2,291 +2,257 @@
 
 ## Overview
 
-Six entities, three derived layers. Entities mirror the source tables in the reference Power Query workbook; derived layers mirror the joins. Everything is generated at build time and seeded as static JSON. The browser performs filtering, sorting, and lightweight aggregation only — no API calls, no server, no live computation.
+The app is a faithful re-implementation of the Power Query / Pivot Table
+chain that powers the existing Excel-based reports. The data flow has
+two layers:
+
+1. **Source files** — four files in `/data` that mirror the real
+   SSRS / Wide Orbit / Excel inputs the production workbook consumes.
+   The synthetic generator produces these; the same pipeline could in
+   theory be pointed at real exports with no code change other than
+   swapping the input files.
+2. **ETL output** — typed in-memory shapes computed at build time by
+   `src/lib/etl.ts`, mirroring the named M queries in
+   `docs/reference/SNLA_Dodgers_Snapshot.txt`. Views consume these.
+
+The browser performs filtering, sorting, and lightweight aggregation
+only. No API calls, no server, no live recomputation: everything is
+prerendered at build.
 
 ## Naming conventions
 
-- Identifiers: `snake_case`
-- TypeScript interfaces: `PascalCase`
-- Currency: stored as integer cents (avoid floating-point); convert at render
-- Dates: ISO 8601 strings (`YYYY-MM-DD`); times stored separately as `HH:MM` 24h
-- Enums: typed unions in TypeScript (e.g., `'PR' | 'REG'`)
+- **Source field names** preserve the SSRS / Excel column names exactly
+  (`SpotRate`, `AdvertiserName`, `INV TYPE`, `Avails Key`). The ETL is
+  the only place that translates between the SSRS shape and app
+  conventions.
+- **App identifiers** (within ETL outputs and views): `snake_case` for
+  fields, `PascalCase` for interfaces.
+- **Currency** in source files is dollars-and-cents floats (matches Wide
+  Orbit). The ETL preserves that representation; views format on render.
+- **Dates** in source files: `MM/DD/YYYY` (Wide Orbit / Master Game
+  Schedule convention). The ETL converts to ISO `YYYY-MM-DD` on
+  derived shapes (e.g., `air_date_iso`).
+- **Times** in source files: `HH:MM:SS` 24h for spots; `H:MMam/pm` for
+  schedule. ETL normalizes to 24h `HH:MM` for derived shapes.
 
-## Entities (seeded JSON files in /data)
+## Source files
 
-### games.json
+### `data/spots.csv` — Wide Orbit SSRS export (29 columns)
 
-One row per televised game.
+One row per booked spot, exactly mirroring `PPIRSNBookedSpots*.csv`:
 
 ```typescript
-interface Game {
-  game_id: string;              // 'g_0001' through 'g_0170'
-  air_date: string;             // ISO date
-  day_of_week: 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun';
-  start_time: string;           // 'HH:MM' 24h
-  start_minute_mod_30: number;  // for In Game ± derivation
-  in_game_variant: 'In Game-' | 'In Game' | 'In Game+';
-  season_phase: 'PR' | 'REG';
-  opponent_id: string;
-  opponent_name: string;
-  home_away: 'Home' | 'Away';
-  matchup_tier: 'Regional' | 'Standard';
-  format: 'Standard' | 'Expanded';
-  simulcast: 'Exclusive' | 'Simulcast';
-  network_partner: string | null;  // 'ESPN', 'TBS', etc. when Simulcast
-  broadcast_month: string;          // 'March' through 'September'
-  broadcast_year: number;
-  broadcast_qtr: 'Q1' | 'Q2' | 'Q3';
-  week_start: string;               // ISO date, Monday
-  series_id: string;
-  series_game_num: 1 | 2 | 3 | 4;
+interface RawSpot {
+  ChannelName: string;             // 'BSWN'
+  AdvertiserName: string;          // canonical, with optional " /Repped" suffix
+  RevenueCode2: string;            // 'National' / 'Local' / 'National Political'
+  OrderNumber: number | null;
+  LineNumber: number | null;
+  SpotNumber: number | null;
+  SpotLength: number;              // 15 / 30 / 60 (other sizes possible in real data)
+  SpotRate: number;                // gross dollars
+  SpotState: 'Placed' | 'Booked';
+  PriorityCode: string;            // 'P-04' / 'P-08' / 'P-09' / 'P-19' / 'P-80' / etc.
+  AirDate: string;                 // 'MM/DD/YYYY'
+  AirTime1: string;                // 'HH:MM:SS' 24h
+  InventoryCodeBooked: string;
+  PathBooked: string;              // 'Sentinels --> Sentinels Regular Season --> ...'
+  InventoryCodePlaced: string;     // empty when unplaced
+  PathPlaced: string;              // empty when unplaced
+  TimePeriod: string;
+  AEFullName: string;              // contains 'HomeTeamSports' for repped spots
+  ProductCode: string;
+  ParentProductCode: string;       // 'AUTO' / 'FINANCE' / etc.
+  DemoCode: string;                // 'HH' / 'A25-54' / etc.
+  BookedRating: number;
+  BookedImpressions: number;       // raw count
+  UnitCode: string;                // 'Sponsor' / 'General'
+  CPP: number | null;
+  TotalEquivSold: number;          // 0.5 / 1.0 / 2.0
+  EffectiveUnitRate: number;       // gross per :30-equivalent
+  UnitAirStatusCode: string;       // 'Aired' / 'Late Add' / etc.
+  InventoryType: 'BK' | 'NM';      // booked vs no-charge
 }
 ```
 
-Target count: 170 (25 PR + 145 REG).
+Reference: `docs/reference/PPIRSNBookedSpots2026_synthetic.csv`. Target
+size for the Sentinels season: ~18,000 rows.
 
-### opponents.json
+### `data/schedule.csv` — Master Game Schedule (10 columns)
+
+One row per scheduled event:
 
 ```typescript
-interface Opponent {
-  opponent_id: string;
-  name: string;                    // fictional team name
-  city: string;                    // fictional
-  league_division: 'Coastal' | 'Mountain' | 'Heartland' | 'Atlantic';
-  matchup_tier: 'Regional' | 'Standard';
-  base_demand_multiplier: number;  // 0.85 to 1.10
+interface RawScheduleRow {
+  '#': string;                     // 'PRE 1' / '1' / '2' / ... ('PRE *' = preseason)
+  DAY: string;                     // full day name
+  DATE: string;                    // 'MM/DD/YYYY'
+  TIME: string;                    // 'H:MMam/pm' or 'OFF DAY'
+  OPPONENT: string;                // 'vs. Angels' / 'at Padres'
+  TV: string;                      // 'SNLA' (drop rows with '(Confirmed Exclusive)')
+  'OTHER TV': string;              // simulcast partner or empty
+  NOTES: string;
+  FORMAT: string;                  // 'Home Standard -- 5421' etc. (Expanded → Expanded)
+  'SQUEEZE PLAY BUG': string;
 }
 ```
 
-Three Regional opponents, ~11 Standard. Use neutral fictional names (e.g., "Coastal Mariners," "Highland Stags") — do NOT use any real MLB team or city name.
+Reference structure:
+`docs/reference/2026_Dodgers_Master_Game_Schedule__02_27_26.xlsx`
+(provided externally; not committed to the repo). Target: 25 PR + 145
+REG = 170 game rows.
 
-### inventory_capacity.json
+### `data/inventory_capacity.xlsx` — Inventory Table
+
+One row per `(Team, Type, Inventory, Format)` capacity bucket:
 
 ```typescript
-interface InventoryCapacity {
-  season_phase: 'PR' | 'REG';
-  inv_type: 'Pregame' | 'In Game' | 'In Game+' | 'In Game-' | 'Postgame' | 'Floaters A&B';
-  format: 'Standard' | 'Expanded';
-  avails: number;  // eq30 units
+interface RawInventoryCapRow {
+  Syscode: number;
+  Team: string;                    // 'Sentinels'
+  Type: 'PR' | 'REG';
+  Inventory:
+    | 'Pregame' | 'In Game' | 'In Game+' | 'In Game-'
+    | 'Postgame' | 'Floaters A&B';
+  Format: 'Standard' | 'Expanded' | 'DH' | 'Expanded DH';
+  Avails: number;                  // eq30 capacity
 }
 ```
 
-Values follow the reference Inventory Table structure. Synthetic absolutes:
+Source-of-truth: `docs/reference/Inventory_Table_synthetic.xlsx`,
+copied verbatim into `data/` by the generator's
+`scripts/generator/03-copy-source.ts`.
 
-| Phase | Inv          | Standard | Expanded |
-|-------|--------------|----------|----------|
-| PR    | Pregame      | 21       | 21       |
-| PR    | In Game      | 43.5     | 52.5     |
-| PR    | In Game+     | 47.5     | 56.5     |
-| PR    | In Game-     | 39.5     | 48.5     |
-| PR    | Postgame     | 17       | 17       |
-| PR    | Floaters A&B | 6        | 6        |
-| REG   | Pregame      | 21       | 21       |
-| REG   | In Game      | 51       | 58       |
-| REG   | In Game+     | 55       | 62       |
-| REG   | In Game-     | 47       | 54       |
-| REG   | Postgame     | 17       | 17       |
-| REG   | Floaters A&B | 6        | 6        |
+### `data/rate_card.xlsx` — Dynamic Rates
 
-### rate_card.json
+One row per `(Type, Inv, Matchup, Tier)` rate cell:
 
 ```typescript
-interface RateCardEntry {
-  season_phase: 'PR' | 'REG';
-  inv_type: 'Pregame' | 'In Game' | 'Postgame';
-  matchup_tier: 'Standard' | 'Regional';
-  rate_tier: 'Base' | 'FL' | 'Bump';
-  rate_cents: number;
+interface RawRateCardRow {
+  Syscode: number;
+  Net: string;                     // 'BSWN'
+  Team: string;                    // 'Sentinels'
+  Type: 'PR' | 'REG';
+  Inv: 'Pregame' | 'In Game' | 'Postgame';
+  Matchup: 'Standard' | 'Regional';
+  Tier: 'Base' | 'FL' | 'Bump';    // FL only for In Game
+  Rate: number;                    // gross dollars per :30
 }
 ```
 
-Synthetic rates (deliberately not matching real values, but preserving ratios):
+Source-of-truth: `docs/reference/Dynamic_Rates_synthetic.xlsx`, copied
+verbatim. The generator does not modify rates.
 
-| Phase | Inv      | Tier     | Standard | Regional |
-|-------|----------|----------|----------|----------|
-| PR    | Pregame  | Base     | $400     | $400     |
-| PR    | Pregame  | Bump     | $800     | $800     |
-| PR    | In Game  | Base     | $1,650   | $1,650   |
-| PR    | In Game  | FL       | $1,950   | $1,950   |
-| PR    | In Game  | Bump     | $3,300   | $3,300   |
-| PR    | Postgame | Base     | $175     | $175     |
-| PR    | Postgame | Bump     | $350     | $350     |
-| REG   | Pregame  | Base     | $1,375   | $1,375   |
-| REG   | Pregame  | Bump     | $2,750   | $2,750   |
-| REG   | In Game  | Base     | $11,500  | $17,250  |
-| REG   | In Game  | FL       | $13,800  | $20,700  |
-| REG   | In Game  | Bump     | $23,000  | $34,500  |
-| REG   | Postgame | Base     | $3,650   | $3,650   |
-| REG   | Postgame | Bump     | $7,300   | $7,300   |
+## ETL output shapes
 
-FL tier exists only for In Game inventory.
+The five named functions in `src/lib/etl.ts` correspond to the M
+queries in `SNLA_Dodgers_Snapshot.txt`. Inputs and outputs are typed;
+joins use `Map<string, T>` on tuple keys instead of literal join-key
+columns, but the join-key strings remain on outputs for parity with
+the M schema and for the contracts validator.
 
-### clients.json
+### `EnrichedSpot[]` — `deriveSpots()` ← *Lakers Spot Data 19-22*
 
-See `04-client-roster.json` for the data. Schema:
+`RawSpot` plus derived columns:
+- `inventory_type_booked`, `inventory_type_placed`, `inventory_type` —
+  the cascaded classification (Galaxy/Sparks/default → Ancillary;
+  In Game / Pregame / Postgame from path text).
+- `spot_rate_net` — `SpotRate * 0.85`.
+- `booked_display_status` — `'As Booked' | 'As Placed'`.
+- `post_inv_code`, `post_code`, `post_key` — the "Post Code" cascade.
+- `air_date_iso`, `broadcast_month`, `broadcast_year`, `broadcast_qtr`
+  (`'Q1' | 'Q2' | 'Q3' | 'Q4'`), `period` (`'4Q' | '1-2Q' | null`).
+- `booked_impressions_thousands` — raw `/ 1000`.
+- `fl_flag` — `'FL'` iff `InventoryCodePlaced` contains `'Timeout'`.
+- `hts_flag` — `'HTS'` iff `AEFullName` contains `'HomeTeamSports'`.
 
-```typescript
-interface Client {
-  client_id: string;
-  name: string;
-  category: 'QSR' | 'Auto' | 'Insurance' | 'Telco' | 'Retail' |
-            'Pharma' | 'CPG' | 'Travel' | 'Finance' | 'Gaming' | 'Misc';
-  lob: 'Direct' | 'Repped';
-  buying_intensity: number;       // relative weight ≥ 0; used as a sampling weight, no upper bound enforced
-  preferred_inv_type: 'Pregame' | 'In Game' | 'Postgame' | 'mixed';
-  preferred_demo: string;          // 'HH', 'A25-54', etc.
-  preferred_length_mix: { '15': number; '30': number };  // sums to 1.0
-  ae_name: string;
-}
-```
+### `EnrichedScheduleRow[]` — `deriveSchedule()` ← *Lakers Combined Schedules*
 
-### spots.json
+One row per `(game, INV TYPE)`. Each calendar game emits three rows
+(Pregame / In Game / Postgame). Adds:
+- `+/-` — `'+'` if start minute mod 30 > 14, `'-'` if < 8, else `null`
+  (set only for In Game).
+- `INV TYPE.1` — `INV TYPE` concatenated with `+/-`
+  (e.g., `'In Game+'`, `'In Game-'`).
+- `Simulcast` — `'Simulcast'` iff `OTHER TV` is non-empty.
+- `Expanded` — `'Expanded' | 'DH' | 'Expanded DH' | 'Standard'`.
+- `Matchup` — `'Regional'` if opponent ∈ {Giants, Padres, Angels} else
+  `'Standard'`.
+- `Avails Key` — `[TYPE, TYPE2, INV TYPE.1, Expanded].join('.')`.
+- `EVENT_PROGRAM` — `'Sentinels {OPPONENT}'` with `'PR: '` prefix for PR.
+- Broadcast calendar columns.
 
-The booked-spot ledger. Largest file — target ~10,000–14,000 rows.
+Filters: drops `OFF DAY` rows, `(Confirmed Exclusive)` TV rows,
+`NonSpectrum.In Game` rows, and `DATE <= 2019-12-29`.
 
-```typescript
-interface Spot {
-  spot_id: string;
-  game_id: string;
-  client_id: string;
-  inv_type: 'Pregame' | 'In Game' | 'Postgame' | 'Floaters A&B';
-  spot_length: 15 | 30 | 60;
-  spot_length_eq30: number;        // 0.5 | 1.0 | 2.0
-  rate_tier: 'Base' | 'FL' | 'Bump';
-  spot_rate_gross_cents: number;
-  spot_rate_net_cents: number;     // gross * 0.85
-  total_eq30: number;              // = spot_length_eq30
-  priority_code: 'paid' | 'nc' | 'adu' | 'xadu' | 'bonus';
-  demo_code: 'HH' | 'A18-49' | 'A25-54' | 'M25-54' | 'A35+' | 'A21-49';
-  booked_impressions: number;
-  booked_rating: number;
-  spot_state: 'Placed' | 'Booked';
-  ae_name: string;
-}
-```
+### `SpotsByClientRow[]` — `deriveSpotsByClient()` ← *Lakers by Client (Inc $0)*
 
-### broadcast_calendar.json
+Left outer join of `EnrichedScheduleRow` (left) onto `EnrichedSpot`
+(right) on the tuple `(DATE, INV TYPE)`. Schedule rows without
+matching spots are kept with all spot fields zero-filled. Adds:
+- `$0` — `'Paid'` iff `SpotRate > 0`, else `'$0'`.
+- `AfterToday` — `1` iff `AirDate > today`, else `0`.
 
-```typescript
-interface BroadcastDate {
-  date: string;
-  broadcast_month: string;
-  broadcast_year: number;
-  broadcast_qtr: 'Q1' | 'Q2' | 'Q3' | 'Q4';
-  week_start: string;
-}
-```
+### `InventoryRollupRow[]` — `deriveInventory(opts)` ← *Inventory (Exc $0) / (Inc $0)*
 
-Generate for the full demo year (Feb through October).
+Per-game-per-inv-type rollup. Two variants by `opts.include0`:
+- `Exc $0` filters paid spots only before grouping (`SpotRate > 0`).
+- `Inc $0` groups everything.
 
-## Derived layers (also seeded as JSON)
+Each game emits four rows: Pregame, the resolved In Game variant
+(`In Game` / `In Game+` / `In Game-`), Postgame, and Floaters A&B.
+The Floaters row's `Cap` is fixed at 6; its `Sold` derives from the
+In Game oversell (`max(0, -Oversell_M)`); its revenue / EUR / AUR are
+forced to 0 (no double-counting — revenue lives on the In Game row).
 
-These pre-aggregations exist so views read directly without recomputing across thousands of rows.
+Rate tier (M sign convention `Oversell = Avails - Sold`):
+- In Game with `Oversell > 0` → `Base`
+- In Game with `Oversell > -6` → `FL`
+- In Game with `Oversell <= -6` → `Bump`
+- Floaters A&B → `FL` (priced at the floater rack rate)
+- Pregame / Postgame with `Avail > 0` → `Base`
+- Pregame / Postgame else → `Bump`
 
-### game_inventory.json
+EUR and AUR per the M chain: `EUR = mean(EffectiveUnitRate)` and
+`AUR = mean(SpotRate)` over joined paid spots. (Spec-formula EUR /
+AUR — `sum(net) / sum(eq30)` and `sum(net) / count` — are computed
+inside `etl-distributional.ts` for validation against the EUR-range
+and AUR-vs-EUR-delta calibration targets.)
 
-Cartesian product of Games × valid InventoryCapacity rows for that game's (phase, format), expanded so each game emits 4–5 rows (Pregame, the resolved In Game ± variant, Postgame, Floaters A&B).
+### `AurSummaryRow[]` — `deriveAurSummary()` ← *AUR Summary*
 
-```typescript
-interface GameInventoryCell {
-  game_id: string;
-  inv_type: string;
-  cap: number;                    // primary avails
-  effective_cap: number;          // primary * 1.10 (operational ceiling per business logic)
-  floater_cap: number;            // 6 for Floaters A&B rows, 0 elsewhere
-  game: Game;                     // denormalized for fast lookup
-}
-```
+Per-`(DATE, INV TYPE)` wide-form pivot. Floaters A&B rows are
+filtered out. One column per `(LOB Group × Spot Group × metric)`
+bucket plus totals. Empty intersections resolve to `0`, never
+`null` or `undefined`.
 
-### game_rollup.json
+LOB Group: `'HTS'` iff `AEFullName` contains `'HomeTeamSports'`.
 
-Per-game per-inv-type spot aggregates with rate tier resolution.
+Spot Group:
+- `SpotRate > 0` → `'Paid'`
+- `PriorityCode = 'P-80'` → `'NC'`
+- `PriorityCode = 'P-19'` → `'NC'`
+- `PriorityCode = 'P-09'` → `'ADU'`
+- `PriorityCode = 'P-08'` → `'Cross Property ADU'`
+- `PriorityCode = 'P-04'` → `'Bonus'`
+- else → null (excluded)
 
-```typescript
-interface GameRollup {
-  game_id: string;
-  inv_type: string;
-  cap: number;
-  sold_eq30: number;
-  paid_eq30: number;
-  nc_eq30: number;
-  adu_eq30: number;
-  xadu_eq30: number;
-  bonus_eq30: number;
-  oversell_eq30: number;          // sold - cap, can be negative (under-sold)
-  rate_tier_resolved: 'Base' | 'FL' | 'Bump';
-  current_rate_cents: number;     // the rate the next sold spot would book at
-  gross_rev_cents: number;
-  net_rev_cents: number;
-  eur_cents: number;              // net_rev / paid_eq30
-  aur_cents: number;              // net_rev / paid_unit_count
-  paid_unit_count: number;        // count of paid spots regardless of length
-  sellout_pct: number;            // (paid_eq30 + nc_eq30) / cap
-  sellout_pct_with_adu: number;
-}
-```
+For Paid: all three of `Gross REV`, `Net REV`, `EQ30` carried.
+For non-Paid: only `EQ30`.
 
-Rate tier resolution rule (mirrors the reference query logic). Recall
-`oversell_eq30 = sold - cap`, so positive oversell means we are *over*
-the cap and into the floater band:
-
-- In Game with oversell_eq30 ≤ 0 → Base
-- In Game with 0 < oversell_eq30 ≤ 6 → FL
-- In Game with oversell_eq30 > 6 → Bump
-- Floaters A&B → always FL (priced at the floater rack rate)
-- Pregame/Postgame with sold ≤ cap → Base
-- Pregame/Postgame with sold > cap → Bump
-
-### aur_summary.json
-
-Per-(date, season_phase, inv_type) decomposition by LOB × spot group.
-
-```typescript
-interface AURSummaryRow {
-  date: string;
-  season_phase: 'PR' | 'REG';
-  inv_type: string;
-  // Direct LOB
-  direct_paid_eq30: number;
-  direct_nc_eq30: number;
-  direct_adu_eq30: number;
-  direct_xadu_eq30: number;
-  direct_bonus_eq30: number;
-  direct_paid_gross_cents: number;
-  direct_paid_net_cents: number;
-  // Repped LOB
-  repped_paid_eq30: number;
-  repped_nc_eq30: number;
-  repped_adu_eq30: number;
-  repped_xadu_eq30: number;
-  repped_bonus_eq30: number;
-  repped_paid_gross_cents: number;
-  repped_paid_net_cents: number;
-  // Totals
-  total_paid_eq30: number;
-  total_paid_unit_count: number;
-  total_paid_net_cents: number;
-  cap: number;
-  eur_cents: number;
-  aur_cents: number;
-  sellout_pct: number;            // (paid + nc) / cap
-  sellout_pct_with_adu: number;   // (paid + nc + adu + xadu) / cap
-}
-```
+Per-row rollups: `HTS Total.EQ30`, `Non-HTS Total.EQ30`,
+`Total Total.EQ30`, `Sellout = (Paid + NC) / Avails`,
+`Sellout + ADU = (Paid + NC + ADU + Cross Property ADU) / Avails`.
 
 ## File size targets
 
 | File | Approx rows | Approx size |
 |------|-------------|-------------|
-| games.json | 170 | 50 KB |
-| opponents.json | 14 | 3 KB |
-| inventory_capacity.json | 24 | 2 KB |
-| rate_card.json | 28 | 3 KB |
-| clients.json | 60 | 12 KB |
-| spots.json | 10,000–14,000 | 2–3 MB |
-| game_inventory.json | ~700 | 200 KB |
-| game_rollup.json | ~700 | 250 KB |
-| aur_summary.json | ~400 | 150 KB |
-| broadcast_calendar.json | ~250 | 25 KB |
+| spots.csv | ~18,000 | 5–6 MB |
+| schedule.csv | 170 | 15 KB |
+| inventory_capacity.xlsx | ~36 | 6 KB |
+| rate_card.xlsx | ~28 | 6 KB |
+| _validation_report.json | — | 10 KB |
 
-Spots is the only file that needs care for browser delivery. Acceptable to ship at 2–3 MB unminified, ~700 KB gzipped over Vercel's edge. For static export, this is fine.
+ETL outputs are not persisted to disk — they live in memory during
+the build and are inlined into the prerendered routes.
