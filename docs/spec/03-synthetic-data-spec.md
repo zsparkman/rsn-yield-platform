@@ -183,7 +183,10 @@ For each game-inventory cell:
 
 Per inventory type:
 
-RSN inventory is :30s and :15s only — no :60s.
+RSN inventory is overwhelmingly :30s and :15s. :60s appear as a tail
+behavior that matches real Wide Orbit exports (~1% of Pregame/Postgame).
+:75s and :45s appear in some real exports but are excluded from the
+synthetic generator.
 
 **In Game (incl. ± variants):**
 - :30s: 96%
@@ -191,11 +194,13 @@ RSN inventory is :30s and :15s only — no :60s.
 
 **Pregame:**
 - :30s: 92%
-- :15s: 8%
+- :15s: 7%
+- :60s: 1%
 
 **Postgame:**
 - :30s: 89%
-- :15s: 11%
+- :15s: 10%
+- :60s: 1%
 
 **Floaters A&B:**
 - :30s: 100% (operationally always :30s in floater rotation)
@@ -218,7 +223,7 @@ While remaining_eq30 > 0:
   - Floaters A&B → FL
   - Otherwise Base
 - Look up gross_rate from rate_card
-- Apply spot-length multiplier: :15 = 0.55×, :30 = 1.0×
+- Apply spot-length multiplier: :15 = 0.55×, :30 = 1.0×, :60 = 1.85×
 - Apply rack-to-sold discount (see "Rate distribution" below)
 - Compute net_rate = gross × 0.85
 - Decrement remaining_eq30 by spot_length_eq30
