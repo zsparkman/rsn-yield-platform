@@ -177,20 +177,19 @@ For each game-inventory cell:
 
 Per inventory type:
 
+RSN inventory is :30s and :15s only — no :60s.
+
 **In Game (incl. ± variants):**
 - :30s: 96%
 - :15s: 4%
-- :60s: 0%
 
 **Pregame:**
 - :30s: 92%
-- :15s: 7%
-- :60s: 1%
+- :15s: 8%
 
 **Postgame:**
 - :30s: 89%
-- :15s: 10%
-- :60s: 1%
+- :15s: 11%
 
 **Floaters A&B:**
 - :30s: 100% (operationally always :30s in floater rotation)
@@ -206,7 +205,7 @@ While remaining_eq30 > 0:
   - In Game oversell → FL or Bump per the rules
   - Otherwise Base
 - Look up gross_rate from rate_card
-- Apply spot-length multiplier: :15 = 0.55×, :30 = 1.0×, :60 = 1.85×
+- Apply spot-length multiplier: :15 = 0.55×, :30 = 1.0×
 - Apply within-tier noise: Gaussian σ=4% of base rate, clipped to [0.85×, 1.15×]
 - Compute net_rate = gross × 0.85
 - Decrement remaining_eq30 by spot_length_eq30

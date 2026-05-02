@@ -150,8 +150,8 @@ interface Spot {
   game_id: string;
   client_id: string;
   inv_type: 'Pregame' | 'In Game' | 'Postgame' | 'Floaters A&B';
-  spot_length: 15 | 30 | 60;
-  spot_length_eq30: number;        // 0.5 | 1.0 | 2.0
+  spot_length: 15 | 30;
+  spot_length_eq30: number;        // 0.5 | 1.0
   rate_tier: 'Base' | 'FL' | 'Bump';
   spot_rate_gross_cents: number;
   spot_rate_net_cents: number;     // gross * 0.85

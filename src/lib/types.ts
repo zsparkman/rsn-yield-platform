@@ -51,7 +51,7 @@ export type PriorityCode = "paid" | "nc" | "adu" | "xadu" | "bonus";
 
 export type SpotState = "Placed" | "Booked";
 
-export type SpotLength = 15 | 30 | 60;
+export type SpotLength = 15 | 30;
 
 export interface Game {
   game_id: string;

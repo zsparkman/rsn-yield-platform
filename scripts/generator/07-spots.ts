@@ -212,28 +212,24 @@ function rateTierForOversell(
 
 // ---------- Length-mix per inventory type ----------
 
-const LENGTH_MIX: Record<
-  InventoryType,
-  Record<"15" | "30" | "60", number>
-> = {
-  "In Game": { "15": 0.04, "30": 0.96, "60": 0 },
-  "In Game+": { "15": 0.04, "30": 0.96, "60": 0 },
-  "In Game-": { "15": 0.04, "30": 0.96, "60": 0 },
-  Pregame: { "15": 0.07, "30": 0.92, "60": 0.01 },
-  Postgame: { "15": 0.10, "30": 0.89, "60": 0.01 },
-  "Floaters A&B": { "15": 0, "30": 1.0, "60": 0 },
+// RSN inventory is :30s and :15s only. No :60s anywhere.
+const LENGTH_MIX: Record<InventoryType, Record<"15" | "30", number>> = {
+  "In Game": { "15": 0.04, "30": 0.96 },
+  "In Game+": { "15": 0.04, "30": 0.96 },
+  "In Game-": { "15": 0.04, "30": 0.96 },
+  Pregame: { "15": 0.08, "30": 0.92 },
+  Postgame: { "15": 0.11, "30": 0.89 },
+  "Floaters A&B": { "15": 0, "30": 1.0 },
 };
 
 const LENGTH_TO_EQ30: Record<SpotLength, number> = {
   15: 0.5,
   30: 1.0,
-  60: 2.0,
 };
 
 const LENGTH_RATE_MULT: Record<SpotLength, number> = {
   15: 0.55,
   30: 1.0,
-  60: 1.85,
 };
 
 // ---------- Demo + impressions ----------
@@ -360,7 +356,7 @@ function sampleClient(
 
 function sampleSpotLength(rng: () => number, invType: InventoryType): SpotLength {
   const mix = LENGTH_MIX[invType];
-  const k = pickWeighted(rng, ["15", "30", "60"], [mix["15"], mix["30"], mix["60"]]);
+  const k = pickWeighted(rng, ["15", "30"], [mix["15"], mix["30"]]);
   return Number(k) as SpotLength;
 }
 
