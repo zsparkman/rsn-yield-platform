@@ -1,45 +1,89 @@
 #!/usr/bin/env tsx
 //
-// Top-level orchestrator: runs all eight generator modules in order then
-// validates. Exits non-zero on any validation failure.
+// Top-level orchestrator for the SSRS-input + ETL architecture.
 //
-import { run as runCalendar } from "./generator/01-broadcast-calendar";
-import { run as runOpponents } from "./generator/02-opponents";
-import { run as runClients } from "./generator/03-clients";
-import { run as runRateCard } from "./generator/04-rate-card";
-import { run as runInventoryCapacity } from "./generator/05-inventory-capacity";
-import { run as runSchedule } from "./generator/06-schedule";
-import { run as runSpots } from "./generator/07-spots";
-import { run as runRollups } from "./generator/08-rollups";
-import { run as runValidate } from "./generator/99-validate";
+// 1. Generate the four source files (data/spots.csv, data/schedule.csv,
+//    data/inventory_capacity.xlsx, data/rate_card.xlsx).
+// 2. Parse them.
+// 3. Run the ETL (src/lib/etl.ts).
+// 4. Run the contracts validator (src/lib/etl-validate.ts).
+// 5. Run the distributional validator (src/lib/etl-distributional.ts).
+// 6. Exit non-zero on any failure.
+
+import * as fs from "node:fs";
+import * as path from "node:path";
+
+import { run as runSchedule } from "./generator/01-schedule";
+import { run as runSpots } from "./generator/02-spots";
+import { run as runCopy } from "./generator/03-copy-source";
+import { loadSources, runEtl } from "../src/lib/etl";
+import { runContracts } from "../src/lib/etl-validate";
+import { runDistributional } from "../src/lib/etl-distributional";
+
+const REPO_ROOT = path.resolve(__dirname, "..");
+const DATA_DIR = path.join(REPO_ROOT, "data");
 
 async function main(): Promise<void> {
   const t0 = Date.now();
-  console.log("=== rsn-yield-platform synthetic data generator ===\n");
+  console.log("=== rsn-yield-platform synthetic data + ETL pipeline ===\n");
 
-  console.log("[1/8] broadcast calendar");
-  runCalendar();
-  console.log("[2/8] opponents");
-  runOpponents();
-  console.log("[3/8] clients");
-  runClients();
-  console.log("[4/8] rate card");
-  runRateCard();
-  console.log("[5/8] inventory capacity");
-  runInventoryCapacity();
-  console.log("[6/8] schedule");
+  console.log("[1/6] schedule.csv");
   runSchedule();
-  console.log("[7/8] spots + game inventory");
+  console.log("[2/6] spots.csv");
   runSpots();
-  console.log("[8/8] rollups + AUR summary");
-  runRollups();
+  console.log("[3/6] inventory_capacity.xlsx + rate_card.xlsx (copy)");
+  runCopy();
 
-  console.log("\n=== validation ===\n");
-  const ok = runValidate();
+  console.log("\n[4/6] ETL");
+  const inputs = loadSources(DATA_DIR);
+  console.log(`  parsed ${inputs.spots.length} spots, ${inputs.schedule.length} schedule rows, ${inputs.inventoryCapacity.length} inv caps, ${inputs.rateCard.length} rate-card rows`);
+  const outputs = runEtl(inputs);
+  console.log(`  derived ${outputs.spots.length} spots, ${outputs.schedule.length} schedule, ${outputs.spotsByClient.length} sbc, ${outputs.inventoryExc0.length} inv (Exc), ${outputs.inventoryInc0.length} inv (Inc), ${outputs.aurSummary.length} aur`);
+
+  console.log("\n[5/6] Property-based contract validation");
+  const cr = runContracts(inputs, outputs);
+  let failed = 0;
+  for (const r of cr.results) {
+    const tag = r.passed ? "PASS" : "FAIL";
+    const line = `  [${tag}] ${r.id.padEnd(4)} ${r.summary}`;
+    console.log(line);
+    if (!r.passed) {
+      failed += 1;
+      if (r.reason) console.log(`         reason: ${r.reason}`);
+    }
+  }
+  console.log(`  ${cr.results.length - failed}/${cr.results.length} contracts passed`);
+
+  console.log("\n[6/6] Distributional validation");
+  const dist = runDistributional(outputs.schedule, outputs.spots, outputs.inventoryExc0);
+  let distFailed = 0;
+  const longest = Math.max(...dist.map((m) => m.name.length));
+  for (const m of dist) {
+    const tag = m.passed ? "PASS" : "FAIL";
+    console.log(`  [${tag}] ${m.name.padEnd(longest)}  value=${m.value}  target=${m.target}`);
+    if (!m.passed) distFailed += 1;
+  }
+  console.log(`  ${dist.length - distFailed}/${dist.length} distributional metrics passed`);
+
+  // Persist the validation report
+  fs.writeFileSync(
+    path.join(DATA_DIR, "_validation_report.json"),
+    JSON.stringify({
+      generated_at: new Date().toISOString(),
+      contracts: cr.results.map((r) => ({ id: r.id, summary: r.summary, passed: r.passed, reason: r.reason })),
+      distributional: dist,
+    }, null, 2),
+  );
 
   const dt = ((Date.now() - t0) / 1000).toFixed(1);
   console.log(`\nTotal: ${dt}s`);
-  process.exit(ok ? 0 : 1);
+
+  if (failed > 0 || distFailed > 0) {
+    console.error(`\nFAIL: ${failed} contracts + ${distFailed} distributional checks`);
+    process.exit(1);
+  }
+  console.log("\nAll validations passed.");
+  process.exit(0);
 }
 
 main().catch((err) => {

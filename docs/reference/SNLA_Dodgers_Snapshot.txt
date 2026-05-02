@@ -1,0 +1,429 @@
+section Section1;
+
+shared #"PPI RSN Booked Spots 2019" = let
+    Source = Csv.Document(File.Contents("P:\Pricing, Planning and Inventory\2020 Trackers\RSN Data\SNLA\PPIRSNBookedSpots2019Dodgers.csv"),[Delimiter=",", Columns=29, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    #"Filtered Rows" = Table.SelectRows(#"Promoted Headers", each ([OrderNumber] <> "")),
+    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"ChannelName", type text}, {"AdvertiserName", type text}, {"RevenueCode2", type text}, {"OrderNumber", Int64.Type}, {"LineNumber", Int64.Type}, {"SpotNumber", Int64.Type}, {"SpotLength", Int64.Type}, {"SpotRate", type number}, {"SpotState", type text}, {"PriorityCode", type text}, {"AirDate", type date}, {"AirTime1", type time}, {"InventoryCodeBooked", type text}, {"PathBooked", type text}, {"InventoryCodePlaced", type text}, {"PathPlaced", type text}, {"TimePeriod", type text}, {"AEFullName", type text}, {"ProductCode", type text}, {"ParentProductCode", type text}, {"DemoCode", type text}, {"BookedRating", type number}, {"BookedImpressions", Int64.Type}}),
+    #"Removed Errors" = Table.RemoveRowsWithErrors(#"Changed Type", {"OrderNumber"}),
+    #"Replaced Value" = Table.ReplaceValue(#"Removed Errors",""," ",Replacer.ReplaceValue,{"PathPlaced"}),
+    #"Added Conditional Column" = Table.AddColumn(#"Replaced Value", "Inventory Type (Booked)", each if Text.Contains([PathBooked], "Galaxy") then "Ancillary" else if Text.Contains([PathBooked], "Sparks") then "Ancillary" else if Text.Contains([PathBooked], "In Game") then "In Game" else if Text.Contains([PathBooked], "InGame") then "In Game" else if Text.Contains([PathBooked], "Pregame") then "Pregame" else if Text.Contains([PathBooked], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom1" = Table.AddColumn(#"Added Conditional Column", "TBD", each if [PathPlaced] = " " and [SpotState] = "Placed" then "TBD" else null),
+    Custom1 = Table.AddColumn(#"Added Custom1", "Inventory Type (Placed)", each if Text.Contains([PathPlaced], "Galaxy") then "Ancillary" else if Text.Contains([PathPlaced], "Sparks") then "Ancillary" else if Text.Contains([PathPlaced],"Re-air") then "Ancillary" else if [PathPlaced] = " " then [SpotState] else if Text.Contains([PathPlaced], "In Game") then "In Game" else if Text.Contains([PathPlaced], "InGame") then "In Game" else if Text.Contains([PathPlaced], "Pregame") then "Pregame" else if Text.Contains([PathPlaced], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom2" = Table.AddColumn(Custom1, "Inventory Type", each if [SpotState] = "Placed" and [#"Inventory Type (Placed)"] ="Placed" then [#"Inventory Type (Booked)"] else if [SpotState] = "Placed" then [#"Inventory Type (Placed)"] else [#"Inventory Type (Booked)"]),
+    #"Duplicated Column" = Table.DuplicateColumn(#"Added Custom2", "InventoryCodeBooked", "InventoryCodeBooked - Copy"),
+    #"Renamed Columns" = Table.RenameColumns(#"Duplicated Column",{{"InventoryCodeBooked - Copy", "InventoryCode"}})
+in
+    #"Renamed Columns";
+
+shared #"PPI RSN Booked Spots 2020" = let
+    Source = Csv.Document(File.Contents("P:\Pricing, Planning and Inventory\2020 Trackers\RSN Data\SNLA\PPIRSNBookedSpots2020Dodgers.csv"),[Delimiter=",", Columns=29, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    #"Filtered Rows" = Table.SelectRows(#"Promoted Headers", each ([OrderNumber] <> "")),
+    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"ChannelName", type text}, {"AdvertiserName", type text}, {"RevenueCode2", type text}, {"OrderNumber", Int64.Type}, {"LineNumber", Int64.Type}, {"SpotNumber", Int64.Type}, {"SpotLength", Int64.Type}, {"SpotRate", type number}, {"SpotState", type text}, {"PriorityCode", type text}, {"AirDate", type date}, {"AirTime1", type time}, {"InventoryCodeBooked", type text}, {"PathBooked", type text}, {"InventoryCodePlaced", type text}, {"PathPlaced", type text}, {"TimePeriod", type text}, {"AEFullName", type text}, {"ProductCode", type text}, {"ParentProductCode", type text}, {"DemoCode", type text}, {"BookedRating", type number}, {"BookedImpressions", Int64.Type}}),
+    #"Removed Errors" = Table.RemoveRowsWithErrors(#"Changed Type", {"OrderNumber"}),
+    #"Replaced Value" = Table.ReplaceValue(#"Removed Errors",""," ",Replacer.ReplaceValue,{"PathPlaced"}),
+    #"Added Conditional Column" = Table.AddColumn(#"Replaced Value", "Inventory Type (Booked)", each if Text.Contains([PathBooked], "Galaxy") then "Ancillary" else if Text.Contains([PathBooked], "Sparks") then "Ancillary" else if Text.Contains([PathBooked], "In Game") then "In Game" else if Text.Contains([PathBooked], "InGame") then "In Game" else if Text.Contains([PathBooked], "Pregame") then "Pregame" else if Text.Contains([PathBooked], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom1" = Table.AddColumn(#"Added Conditional Column", "TBD", each if [PathPlaced] = " " and [SpotState] = "Placed" then "TBD" else null),
+    Custom1 = Table.AddColumn(#"Added Custom1", "Inventory Type (Placed)", each if Text.Contains([PathPlaced], "Galaxy") then "Ancillary" else if Text.Contains([PathPlaced], "Sparks") then "Ancillary" else if Text.Contains([PathPlaced],"Re-air") then "Ancillary" else if [PathPlaced] = " " then [SpotState] else if Text.Contains([PathPlaced], "In Game") then "In Game" else if Text.Contains([PathPlaced], "InGame") then "In Game" else if Text.Contains([PathPlaced], "Pregame") then "Pregame" else if Text.Contains([PathPlaced], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom2" = Table.AddColumn(Custom1, "Inventory Type", each if [SpotState] = "Placed" and [#"Inventory Type (Placed)"] ="Placed" then [#"Inventory Type (Booked)"] else if [SpotState] = "Placed" then [#"Inventory Type (Placed)"] else [#"Inventory Type (Booked)"]),
+    #"Duplicated Column" = Table.DuplicateColumn(#"Added Custom2", "InventoryCodeBooked", "InventoryCodeBooked - Copy"),
+    #"Renamed Columns" = Table.RenameColumns(#"Duplicated Column",{{"InventoryCodeBooked - Copy", "InventoryCode"}})
+in
+    #"Renamed Columns";
+
+shared #"PPI RSN Booked Spots 2021" = let
+    Source = Csv.Document(File.Contents("P:\Pricing, Planning and Inventory\2020 Trackers\RSN Data\SNLA\PPIRSNBookedSpots2021Dodgers.csv"),[Delimiter=",", Columns=29, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    #"Filtered Rows" = Table.SelectRows(#"Promoted Headers", each ([OrderNumber] <> "")),
+    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"ChannelName", type text}, {"AdvertiserName", type text}, {"RevenueCode2", type text}, {"OrderNumber", Int64.Type}, {"LineNumber", Int64.Type}, {"SpotNumber", Int64.Type}, {"SpotLength", Int64.Type}, {"SpotRate", type number}, {"SpotState", type text}, {"PriorityCode", type text}, {"AirDate", type date}, {"AirTime1", type time}, {"InventoryCodeBooked", type text}, {"PathBooked", type text}, {"InventoryCodePlaced", type text}, {"PathPlaced", type text}, {"TimePeriod", type text}, {"AEFullName", type text}, {"ProductCode", type text}, {"ParentProductCode", type text}, {"DemoCode", type text}, {"BookedRating", type number}, {"BookedImpressions", Int64.Type}}),
+    #"Removed Errors" = Table.RemoveRowsWithErrors(#"Changed Type", {"OrderNumber"}),
+    #"Replaced Value" = Table.ReplaceValue(#"Removed Errors",""," ",Replacer.ReplaceValue,{"PathPlaced"}),
+    #"Added Conditional Column" = Table.AddColumn(#"Replaced Value", "Inventory Type (Booked)", each if Text.Contains([PathBooked], "Galaxy") then "Ancillary" else if Text.Contains([PathBooked], "Sparks") then "Ancillary" else if Text.Contains([PathBooked], "In Game") then "In Game" else if Text.Contains([PathBooked], "InGame") then "In Game" else if Text.Contains([PathBooked], "Pregame") then "Pregame" else if Text.Contains([PathBooked], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom1" = Table.AddColumn(#"Added Conditional Column", "TBD", each if [PathPlaced] = " " and [SpotState] = "Placed" then "TBD" else null),
+    Custom1 = Table.AddColumn(#"Added Custom1", "Inventory Type (Placed)", each if Text.Contains([PathPlaced], "Galaxy") then "Ancillary" else if Text.Contains([PathPlaced], "Sparks") then "Ancillary" else if Text.Contains([PathPlaced],"Re-air") then "Ancillary" else if [PathPlaced] = " " then [SpotState] else if Text.Contains([PathPlaced], "In Game") then "In Game" else if Text.Contains([PathPlaced], "InGame") then "In Game" else if Text.Contains([PathPlaced], "Pregame") then "Pregame" else if Text.Contains([PathPlaced], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom2" = Table.AddColumn(Custom1, "Inventory Type", each if [SpotState] = "Placed" and [#"Inventory Type (Placed)"] ="Placed" then [#"Inventory Type (Booked)"] else if [SpotState] = "Placed" then [#"Inventory Type (Placed)"] else [#"Inventory Type (Booked)"]),
+    #"Duplicated Column" = Table.DuplicateColumn(#"Added Custom2", "InventoryCodeBooked", "InventoryCodeBooked - Copy"),
+    #"Renamed Columns" = Table.RenameColumns(#"Duplicated Column",{{"InventoryCodeBooked - Copy", "InventoryCode"}})
+in
+    #"Renamed Columns";
+
+shared #"PPI RSN Booked Spots 2022" = let
+    Source = Csv.Document(File.Contents("P:\Pricing, Planning and Inventory\2020 Trackers\RSN Data\SNLA\PPIRSNBookedSpots2022Dodgers.csv"),[Delimiter=",", Columns=29, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    #"Filtered Rows" = Table.SelectRows(#"Promoted Headers", each ([OrderNumber] <> "")),
+    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"ChannelName", type text}, {"AdvertiserName", type text}, {"RevenueCode2", type text}, {"OrderNumber", Int64.Type}, {"LineNumber", Int64.Type}, {"SpotNumber", Int64.Type}, {"SpotLength", Int64.Type}, {"SpotRate", type number}, {"SpotState", type text}, {"PriorityCode", type text}, {"AirDate", type date}, {"AirTime1", type time}, {"InventoryCodeBooked", type text}, {"PathBooked", type text}, {"InventoryCodePlaced", type text}, {"PathPlaced", type text}, {"TimePeriod", type text}, {"AEFullName", type text}, {"ProductCode", type text}, {"ParentProductCode", type text}, {"DemoCode", type text}, {"BookedRating", type number}, {"BookedImpressions", Int64.Type}}),
+    #"Removed Errors" = Table.RemoveRowsWithErrors(#"Changed Type", {"OrderNumber"}),
+    #"Replaced Value" = Table.ReplaceValue(#"Removed Errors",""," ",Replacer.ReplaceValue,{"PathPlaced"}),
+    #"Added Conditional Column" = Table.AddColumn(#"Replaced Value", "Inventory Type (Booked)", each if Text.Contains([PathBooked], "Galaxy") then "Ancillary" else if Text.Contains([PathBooked], "Sparks") then "Ancillary" else if Text.Contains([PathBooked], "In Game") then "In Game" else if Text.Contains([PathBooked], "InGame") then "In Game" else if Text.Contains([PathBooked], "Pregame") then "Pregame" else if Text.Contains([PathBooked], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom1" = Table.AddColumn(#"Added Conditional Column", "TBD", each if [PathPlaced] = " " and [SpotState] = "Placed" then "TBD" else null),
+    Custom1 = Table.AddColumn(#"Added Custom1", "Inventory Type (Placed)", each if Text.Contains([PathPlaced], "Galaxy") then "Ancillary" else if Text.Contains([PathPlaced], "Sparks") then "Ancillary" else if Text.Contains([PathPlaced],"Re-air") then "Ancillary" else if [PathPlaced] = " " then [SpotState] else if Text.Contains([PathPlaced], "In Game") then "In Game" else if Text.Contains([PathPlaced], "InGame") then "In Game" else if Text.Contains([PathPlaced], "Pregame") then "Pregame" else if Text.Contains([PathPlaced], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom2" = Table.AddColumn(Custom1, "Inventory Type", each if [SpotState] = "Placed" and [#"Inventory Type (Placed)"] ="Placed" then [#"Inventory Type (Booked)"] else if [SpotState] = "Placed" then [#"Inventory Type (Placed)"] else [#"Inventory Type (Booked)"]),
+    #"Duplicated Column" = Table.DuplicateColumn(#"Added Custom2", "InventoryCodeBooked", "InventoryCodeBooked - Copy"),
+    #"Renamed Columns" = Table.RenameColumns(#"Duplicated Column",{{"InventoryCodeBooked - Copy", "InventoryCode"}})
+in
+    #"Renamed Columns";
+
+shared #"PPI RSN Booked Spots 2023" = let
+    Source = Csv.Document(File.Contents("P:\Pricing, Planning and Inventory\2020 Trackers\RSN Data\SNLA\PPIRSNBookedSpots2023Dodgers.csv"),[Delimiter=",", Columns=29, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    #"Filtered Rows" = Table.SelectRows(#"Promoted Headers", each ([OrderNumber] <> "")),
+    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"ChannelName", type text}, {"AdvertiserName", type text}, {"RevenueCode2", type text}, {"OrderNumber", Int64.Type}, {"LineNumber", Int64.Type}, {"SpotNumber", Int64.Type}, {"SpotLength", Int64.Type}, {"SpotRate", type number}, {"SpotState", type text}, {"PriorityCode", type text}, {"AirDate", type date}, {"AirTime1", type time}, {"InventoryCodeBooked", type text}, {"PathBooked", type text}, {"InventoryCodePlaced", type text}, {"PathPlaced", type text}, {"TimePeriod", type text}, {"AEFullName", type text}, {"ProductCode", type text}, {"ParentProductCode", type text}, {"DemoCode", type text}, {"BookedRating", type number}, {"BookedImpressions", Int64.Type}}),
+    #"Removed Errors" = Table.RemoveRowsWithErrors(#"Changed Type", {"OrderNumber"}),
+    #"Replaced Value" = Table.ReplaceValue(#"Removed Errors",""," ",Replacer.ReplaceValue,{"PathPlaced"}),
+    #"Added Conditional Column" = Table.AddColumn(#"Replaced Value", "Inventory Type (Booked)", each if Text.Contains([PathBooked], "Galaxy") then "Ancillary" else if Text.Contains([PathBooked], "Sparks") then "Ancillary" else if Text.Contains([PathBooked], "In Game") then "In Game" else if Text.Contains([PathBooked], "InGame") then "In Game" else if Text.Contains([PathBooked], "Pregame") then "Pregame" else if Text.Contains([PathBooked], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom1" = Table.AddColumn(#"Added Conditional Column", "TBD", each if [PathPlaced] = " " and [SpotState] = "Placed" then "TBD" else null),
+    Custom1 = Table.AddColumn(#"Added Custom1", "Inventory Type (Placed)", each if Text.Contains([PathPlaced], "Galaxy") then "Ancillary" else if Text.Contains([PathPlaced], "Sparks") then "Ancillary" else if Text.Contains([PathPlaced],"Re-air") then "Ancillary" else if [PathPlaced] = " " then [SpotState] else if Text.Contains([PathPlaced], "In Game") then "In Game" else if Text.Contains([PathPlaced], "InGame") then "In Game" else if Text.Contains([PathPlaced], "Pregame") then "Pregame" else if Text.Contains([PathPlaced], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom2" = Table.AddColumn(Custom1, "Inventory Type", each if [SpotState] = "Placed" and [#"Inventory Type (Placed)"] ="Placed" then [#"Inventory Type (Booked)"] else if [SpotState] = "Placed" then [#"Inventory Type (Placed)"] else [#"Inventory Type (Booked)"]),
+    #"Duplicated Column" = Table.DuplicateColumn(#"Added Custom2", "InventoryCodeBooked", "InventoryCodeBooked - Copy"),
+    #"Renamed Columns" = Table.RenameColumns(#"Duplicated Column",{{"InventoryCodeBooked - Copy", "InventoryCode"}})
+in
+    #"Renamed Columns";
+
+shared #"PPI RSN Booked Spots 2024" = let
+    Source = Csv.Document(File.Contents("P:\Pricing, Planning and Inventory\2020 Trackers\RSN Data\SNLA\PPIRSNBookedSpots2024Dodgers2.csv"),[Delimiter=",", Columns=29, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    #"Filtered Rows" = Table.SelectRows(#"Promoted Headers", each ([OrderNumber] <> "")),
+    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"ChannelName", type text}, {"AdvertiserName", type text}, {"RevenueCode2", type text}, {"OrderNumber", Int64.Type}, {"LineNumber", Int64.Type}, {"SpotNumber", Int64.Type}, {"SpotLength", Int64.Type}, {"SpotRate", type number}, {"SpotState", type text}, {"PriorityCode", type text}, {"AirDate", type date}, {"AirTime1", type time}, {"InventoryCodeBooked", type text}, {"PathBooked", type text}, {"InventoryCodePlaced", type text}, {"PathPlaced", type text}, {"TimePeriod", type text}, {"AEFullName", type text}, {"ProductCode", type text}, {"ParentProductCode", type text}, {"DemoCode", type text}, {"BookedRating", type number}, {"BookedImpressions", Int64.Type}}),
+    #"Removed Errors" = Table.RemoveRowsWithErrors(#"Changed Type", {"OrderNumber"}),
+    #"Replaced Value" = Table.ReplaceValue(#"Removed Errors",""," ",Replacer.ReplaceValue,{"PathPlaced"}),
+    #"Added Conditional Column" = Table.AddColumn(#"Replaced Value", "Inventory Type (Booked)", each if Text.Contains([PathBooked], "Galaxy") then "Ancillary" else if Text.Contains([PathBooked], "Sparks") then "Ancillary" else if Text.Contains([PathBooked], "In Game") then "In Game" else if Text.Contains([PathBooked], "InGame") then "In Game" else if Text.Contains([PathBooked], "Pregame") then "Pregame" else if Text.Contains([PathBooked], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom1" = Table.AddColumn(#"Added Conditional Column", "TBD", each if [PathPlaced] = " " and [SpotState] = "Placed" then "TBD" else null),
+    Custom1 = Table.AddColumn(#"Added Custom1", "Inventory Type (Placed)", each if Text.Contains([PathPlaced], "Galaxy") then "Ancillary" else if Text.Contains([PathPlaced], "Sparks") then "Ancillary" else if Text.Contains([PathPlaced],"Re-air") then "Ancillary" else if [PathPlaced] = " " then [SpotState] else if Text.Contains([PathPlaced], "In Game") then "In Game" else if Text.Contains([PathPlaced], "InGame") then "In Game" else if Text.Contains([PathPlaced], "Pregame") then "Pregame" else if Text.Contains([PathPlaced], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom2" = Table.AddColumn(Custom1, "Inventory Type", each if [SpotState] = "Placed" and [#"Inventory Type (Placed)"] ="Placed" then [#"Inventory Type (Booked)"] else if [SpotState] = "Placed" then [#"Inventory Type (Placed)"] else [#"Inventory Type (Booked)"]),
+    #"Duplicated Column" = Table.DuplicateColumn(#"Added Custom2", "InventoryCodeBooked", "InventoryCodeBooked - Copy"),
+    #"Renamed Columns" = Table.RenameColumns(#"Duplicated Column",{{"InventoryCodeBooked - Copy", "InventoryCode"}})
+in
+    #"Renamed Columns";
+
+shared #"PPI RSN Booked Spots 2025" = let
+    Source = Csv.Document(File.Contents("P:\Pricing, Planning and Inventory\2020 Trackers\RSN Data\SNLA\PPIRSNBookedSpots2025Dodgers.csv"),[Delimiter=",", Columns=29, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    #"Filtered Rows" = Table.SelectRows(#"Promoted Headers", each ([OrderNumber] <> "")),
+    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"ChannelName", type text}, {"AdvertiserName", type text}, {"RevenueCode2", type text}, {"OrderNumber", Int64.Type}, {"LineNumber", Int64.Type}, {"SpotNumber", Int64.Type}, {"SpotLength", Int64.Type}, {"SpotRate", type number}, {"SpotState", type text}, {"PriorityCode", type text}, {"AirDate", type date}, {"AirTime1", type time}, {"InventoryCodeBooked", type text}, {"PathBooked", type text}, {"InventoryCodePlaced", type text}, {"PathPlaced", type text}, {"TimePeriod", type text}, {"AEFullName", type text}, {"ProductCode", type text}, {"ParentProductCode", type text}, {"DemoCode", type text}, {"BookedRating", type number}, {"BookedImpressions", Int64.Type}}),
+    #"Removed Errors" = Table.RemoveRowsWithErrors(#"Changed Type", {"OrderNumber"}),
+    #"Replaced Value" = Table.ReplaceValue(#"Removed Errors",""," ",Replacer.ReplaceValue,{"PathPlaced"}),
+    #"Added Conditional Column" = Table.AddColumn(#"Replaced Value", "Inventory Type (Booked)", each if Text.Contains([PathBooked], "Galaxy") then "Ancillary" else if Text.Contains([PathBooked], "Sparks") then "Ancillary" else if Text.Contains([PathBooked], "In Game") then "In Game" else if Text.Contains([PathBooked], "InGame") then "In Game" else if Text.Contains([PathBooked], "Pregame") then "Pregame" else if Text.Contains([PathBooked], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom1" = Table.AddColumn(#"Added Conditional Column", "TBD", each if [PathPlaced] = " " and [SpotState] = "Placed" then "TBD" else null),
+    Custom1 = Table.AddColumn(#"Added Custom1", "Inventory Type (Placed)", each if Text.Contains([PathPlaced], "Galaxy") then "Ancillary" else if Text.Contains([PathPlaced], "Sparks") then "Ancillary" else if Text.Contains([PathPlaced],"Re-air") then "Ancillary" else if [PathPlaced] = " " then [SpotState] else if Text.Contains([PathPlaced], "In Game") then "In Game" else if Text.Contains([PathPlaced], "InGame") then "In Game" else if Text.Contains([PathPlaced], "Pregame") then "Pregame" else if Text.Contains([PathPlaced], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom2" = Table.AddColumn(Custom1, "Inventory Type", each if [SpotState] = "Placed" and [#"Inventory Type (Placed)"] ="Placed" then [#"Inventory Type (Booked)"] else if [SpotState] = "Placed" then [#"Inventory Type (Placed)"] else [#"Inventory Type (Booked)"]),
+    #"Duplicated Column" = Table.DuplicateColumn(#"Added Custom2", "InventoryCodeBooked", "InventoryCodeBooked - Copy"),
+    #"Renamed Columns" = Table.RenameColumns(#"Duplicated Column",{{"InventoryCodeBooked - Copy", "InventoryCode"}})
+in
+    #"Renamed Columns";
+
+shared #"PPI RSN Booked Spots 2026" = let
+    Source = Csv.Document(File.Contents("P:\Pricing, Planning and Inventory\2020 Trackers\RSN Data\SNLA\PPIRSNBookedSpots2026Dodgers.csv"),[Delimiter=",", Columns=29, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    #"Filtered Rows" = Table.SelectRows(#"Promoted Headers", each ([OrderNumber] <> "")),
+    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"ChannelName", type text}, {"AdvertiserName", type text}, {"RevenueCode2", type text}, {"OrderNumber", Int64.Type}, {"LineNumber", Int64.Type}, {"SpotNumber", Int64.Type}, {"SpotLength", Int64.Type}, {"SpotRate", type number}, {"SpotState", type text}, {"PriorityCode", type text}, {"AirDate", type date}, {"AirTime1", type time}, {"InventoryCodeBooked", type text}, {"PathBooked", type text}, {"InventoryCodePlaced", type text}, {"PathPlaced", type text}, {"TimePeriod", type text}, {"AEFullName", type text}, {"ProductCode", type text}, {"ParentProductCode", type text}, {"DemoCode", type text}, {"BookedRating", type number}, {"BookedImpressions", Int64.Type}}),
+    #"Removed Errors" = Table.RemoveRowsWithErrors(#"Changed Type", {"OrderNumber"}),
+    #"Replaced Value" = Table.ReplaceValue(#"Removed Errors",""," ",Replacer.ReplaceValue,{"PathPlaced"}),
+    #"Added Conditional Column" = Table.AddColumn(#"Replaced Value", "Inventory Type (Booked)", each if Text.Contains([PathBooked], "Galaxy") then "Ancillary" else if Text.Contains([PathBooked], "Sparks") then "Ancillary" else if Text.Contains([PathBooked], "In Game") then "In Game" else if Text.Contains([PathBooked], "InGame") then "In Game" else if Text.Contains([PathBooked], "Pregame") then "Pregame" else if Text.Contains([PathBooked], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom1" = Table.AddColumn(#"Added Conditional Column", "TBD", each if [PathPlaced] = " " and [SpotState] = "Placed" then "TBD" else null),
+    Custom1 = Table.AddColumn(#"Added Custom1", "Inventory Type (Placed)", each if Text.Contains([PathPlaced], "Galaxy") then "Ancillary" else if Text.Contains([PathPlaced], "Sparks") then "Ancillary" else if Text.Contains([PathPlaced],"Re-air") then "Ancillary" else if [PathPlaced] = " " then [SpotState] else if Text.Contains([PathPlaced], "In Game") then "In Game" else if Text.Contains([PathPlaced], "InGame") then "In Game" else if Text.Contains([PathPlaced], "Pregame") then "Pregame" else if Text.Contains([PathPlaced], "Postgame") then "Postgame" else "Ancillary"),
+    #"Added Custom2" = Table.AddColumn(Custom1, "Inventory Type", each if [SpotState] = "Placed" and [#"Inventory Type (Placed)"] ="Placed" then [#"Inventory Type (Booked)"] else if [SpotState] = "Placed" then [#"Inventory Type (Placed)"] else [#"Inventory Type (Booked)"]),
+    #"Duplicated Column" = Table.DuplicateColumn(#"Added Custom2", "InventoryCodeBooked", "InventoryCodeBooked - Copy"),
+    #"Renamed Columns" = Table.RenameColumns(#"Duplicated Column",{{"InventoryCodeBooked - Copy", "InventoryCode"}})
+in
+    #"Renamed Columns";
+
+shared #"Lakers Spot Data 19-22" = let
+    Source = Table.Combine({#"PPI RSN Booked Spots 2020", #"PPI RSN Booked Spots 2021", #"PPI RSN Booked Spots 2022", #"PPI RSN Booked Spots 2023", #"PPI RSN Booked Spots 2024", #"PPI RSN Booked Spots 2025", #"PPI RSN Booked Spots 2026"}),
+    #"Replaced Value" = Table.ReplaceValue(Source,""," ",Replacer.ReplaceValue,{"InventoryCodePlaced"}),
+    #"Inserted Merged Column" = Table.AddColumn(#"Replaced Value", "SPOT KEY", each Text.Combine({Text.From([AirDate], "en-US"), [Inventory Type]}, "."), type text),
+    #"Added Custom" = Table.AddColumn(#"Inserted Merged Column", "SpotRate (Net)", each [SpotRate]*0.85),
+    #"Changed Type" = Table.TransformColumnTypes(#"Added Custom",{{"CPP", Currency.Type}}),
+    #"Added Custom1" = Table.AddColumn(#"Changed Type", "BookedDisplayStatus", each if [SpotState] <> "Placed" then "As Booked" else if [#"Inventory Type (Placed)"] = [#"Inventory Type (Booked)"] then "As Booked" else "As Placed"),
+    #"Added Conditional Column" = Table.AddColumn(#"Added Custom1", "Post Inv. Code", each if [Inventory Type] <> "Ancillary" then [Inventory Type] else if [InventoryCodePlaced] <> " " then [InventoryCodePlaced] else [InventoryCodeBooked]),
+    #"Added Conditional Column1" = Table.AddColumn(#"Added Conditional Column", "Custom", each if Text.Contains([PathPlaced], "PR") then ".PR" else if Text.Contains([PathPlaced], "Regular Season") then ".REG" else if Text.Contains([PathPlaced], "PS") then ".PS" else if Text.Contains([PathBooked], "PR") then ".PR" else if Text.Contains([PathBooked], "Regular Season") then ".REG" else if Text.Contains([PathBooked], "PS") then ".PS" else null),
+    #"Merged Columns" = Table.CombineColumns(#"Added Conditional Column1",{"Post Inv. Code", "Custom"},Combiner.CombineTextByDelimiter("", QuoteStyle.None),"Post Code.1"),
+    #"Added Conditional Column2" = Table.AddColumn(#"Merged Columns", "Post Code", each if Text.Contains([Post Code.1], "Sparks") then "ROS" else if Text.Contains([Post Code.1], "Pregame") then [Post Code.1] else if Text.Contains([Post Code.1], "In Game") then [Post Code.1] else if Text.Contains([Post Code.1], "Postgame") then [Post Code.1] else if [Post Code.1] = "Backstage Lakers Premiere" then [Post Code.1] else if Text.Contains([Post Code.1], "Lakers Compacto") then [Post Code.1] else if Text.Contains([Post Code.1], "Laker Encore") then [Post Code.1] else "ROS"),
+    #"Replaced Value1" = Table.ReplaceValue(#"Added Conditional Column2"," Premiere","",Replacer.ReplaceText,{"Post Code"}),
+    #"Removed Columns" = Table.RemoveColumns(#"Replaced Value1",{"Post Code.1"}),
+    #"Inserted Merged Column1" = Table.AddColumn(#"Removed Columns", "Post Key", each Text.Combine({[Post Code], [DemoCode]}, "."), type text),
+    #"Merged Queries1" = Table.NestedJoin(#"Inserted Merged Column1",{"AirDate"},#"Broadcast Calendar",{"Air Date"},"Broadcast Calendar",JoinKind.LeftOuter),
+    #"Expanded Broadcast Calendar" = Table.ExpandTableColumn(#"Merged Queries1", "Broadcast Calendar", {"Qtr"}, {"Broadcast Calendar.Qtr"}),
+    #"Added Conditional Column3" = Table.AddColumn(#"Expanded Broadcast Calendar", "Period", each if [Broadcast Calendar.Qtr] = "Q4" then "4Q" else if [Broadcast Calendar.Qtr] = "Q1" then "1-2Q" else if [Broadcast Calendar.Qtr] = "Q2" then "1-2Q" else null),
+    #"Removed Columns2" = Table.RemoveColumns(#"Added Conditional Column3",{"Broadcast Calendar.Qtr"}),
+    #"Divided Column" = Table.TransformColumns(#"Removed Columns2", {{"BookedImpressions", each _ / 1000, type number}}),
+    #"Added Conditional Column5" = Table.AddColumn(#"Divided Column", "FL", each if Text.Contains([InventoryCodePlaced], "Timeout") then "FL" else "P"),
+    #"Added Conditional Column6" = Table.AddColumn(#"Added Conditional Column5", "HTS", each if Text.Contains([AEFullName], "HomeTeamSports") then "HTS" else "Non-HTS")
+in
+    #"Added Conditional Column6";
+
+shared #"Lakers Historical Schedules" = let
+    Source = Csv.Document(File.Contents("P:\Pricing, Planning and Inventory\2020 Trackers\1199 Dodgers Tracker\Schedule\Clean\Dodgers Combined Historical (Clean).csv"),[Delimiter=","]),
+    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"EVENT/PROGRAM", type text}, {"TV", type text}, {"DATE", type date}, {"DAY", type text}, {"START", type datetime}, {"#", type text}, {"OPPONENT", type text}, {"OTHER TV", type text}, {"END", type datetime}, {"SEASON", type text}, {"TYPE", type text}, {"NET.DATE.TIME", type text}, {"TYPE2", type text}}),
+    #"Filtered Rows" = Table.SelectRows(#"Changed Type", each [DATE] >= #date(2018, 12, 31))
+in
+    #"Filtered Rows";
+
+shared #"Lakers 21-22 Schedule" = let
+    Source = Excel.Workbook(File.Contents("P:\Pricing, Planning and Inventory\2020 Trackers\1199 Dodgers Tracker\Schedule\2026 Dodgers Master Game Schedule - 02.27.26.xlsx"), null, true),
+    #"Master Game Schedule_Sheet" = Source{[Item="Master Game Schedule",Kind="Sheet"]}[Data],
+    #"Changed Type6" = Table.TransformColumnTypes(#"Master Game Schedule_Sheet",{{"Column1", type any}, {"Column2", type text}, {"Column3", type any}, {"Column4", type text}, {"Column5", type text}, {"Column6", type text}, {"Column7", type text}, {"Column8", type text}, {"Column9", type text}, {"Column10", type text}}),
+    #"Changed Type" = Table.TransformColumnTypes(#"Changed Type6",{{"Column1", type any}, {"Column2", type text}, {"Column3", type text}, {"Column4", type any}, {"Column5", type text}, {"Column6", type text}, {"Column7", type text}, {"Column8", type text}, {"Column9", type text}}),
+    #"Removed Top Rows" = Table.Skip(#"Changed Type",1),
+    #"Promoted Headers" = Table.PromoteHeaders(#"Removed Top Rows", [PromoteAllScalars=true]),
+    #"Replaced Value" = Table.ReplaceValue(#"Promoted Headers",null,"TBD",Replacer.ReplaceValue,{"FORMAT"}),
+    #"Changed Type1" = Table.TransformColumnTypes(#"Replaced Value",{{"#", type any}, {"DAY", type text}, {"TIME", type any}, {"OPPONENT", type text}, {"TV", type text}, {"OTHER TV", type text}}),
+    #"Filtered Rows" = Table.SelectRows(#"Changed Type1", each ([#"#"] <> null and [#"#"] <> "*ALL SNLA GAMES WILL BE PRODUCED IN SPANISH (SPECIAL EVENTS CHANNEL)" and [#"#"] <> "*NOTE: All times listed are PST" and [#"#"] <> "*Schedule is subject to change" and [#"#"] <> "8.20.21" and [#"#"] <> "9.10.21")),
+    #"Changed Type2" = Table.TransformColumnTypes(#"Filtered Rows",{{"TIME", type time}}),
+    #"Replaced Errors" = Table.ReplaceErrorValues(#"Changed Type2", {{"TIME", #time(18, 0, 0)}}),
+    #"Changed Type3" = Table.TransformColumnTypes(#"Replaced Errors",{{"DATE", type date}}),
+    #"Changed Type4" = Table.TransformColumnTypes(#"Changed Type3",{{"#", type text}}),
+    #"Added Conditional Column1" = Table.AddColumn(#"Changed Type4", "TYPE2", each if Text.Contains([#"#"], "PRE") then "PR" else "REG"),
+    #"Renamed Columns1" = Table.RenameColumns(#"Added Conditional Column1",{{"TIME", "START"}}),
+    #"Added Custom" = Table.AddColumn(#"Renamed Columns1", "Column10", each null),
+    #"Added Custom1" = Table.AddColumn(#"Added Custom", "SEASON", each "26"),
+    #"Added Custom2" = Table.AddColumn(#"Added Custom1", "TYPE", each "Dodgers"),
+    #"Added Custom3" = Table.AddColumn(#"Added Custom2", "END", each null),
+    #"Inserted Merged Column" = Table.AddColumn(#"Added Custom3", "EVENT/PROGRAM", each Text.Combine({[TYPE], [OPPONENT]}, " "), type text),
+    #"Added Custom4" = Table.AddColumn(#"Inserted Merged Column", "NET", each "SNLA"),
+    #"Inserted Merged Column1" = Table.AddColumn(#"Added Custom4", "NET.DATE.TIME", each Text.Combine({[NET], Text.From([DATE], "en-US"), Text.From([START], "en-US")}, "."), type text),
+    #"Changed Type5" = Table.TransformColumnTypes(#"Inserted Merged Column1",{{"DATE", type date}}),
+    #"Filtered Rows1" = Table.SelectRows(#"Changed Type5", each ([DAY] <> null)),
+    #"Changed Type7" = Table.TransformColumnTypes(#"Filtered Rows1",{{"START", type datetime}}),
+    #"Removed Columns" = Table.RemoveColumns(#"Changed Type7",{"Column10"}),
+    #"Changed Type8" = Table.TransformColumnTypes(#"Removed Columns",{{"END", type time}, {"TYPE2", type text}, {"SEASON", type text}, {"TYPE", type text}, {"NET", type text}}),
+    #"Filtered Rows2" = Table.SelectRows(#"Changed Type8", each ([DATE] <> #date(2023, 6, 25))),
+    #"Filtered Rows3" = Table.SelectRows(#"Filtered Rows2", each not Text.Contains([TV], "(Confirmed Exclusive)"))
+in
+    #"Filtered Rows3";
+
+shared #"Lakers Combined Schedules" = let
+    Source = Table.Combine({#"Lakers Historical Schedules", #"Lakers 21-22 Schedule"}),
+    #"Changed Type1" = Table.TransformColumnTypes(Source,{{"START", type time}, {"END", type time}}),
+    #"Replaced Value" = Table.ReplaceValue(#"Changed Type1","",null,Replacer.ReplaceValue,{"OTHER TV"}),
+    #"Added Custom" = Table.AddColumn(#"Replaced Value", "Inv Type", each "Pregame,In Game,Postgame"),
+    #"Split Column by Delimiter" = Table.SplitColumn(#"Added Custom", "Inv Type", Splitter.SplitTextByDelimiter(",", QuoteStyle.Csv), {"Inv Type.1", "Inv Type.2", "Inv Type.3", "Inv Type.4"}),
+    #"Changed Type2" = Table.TransformColumnTypes(#"Split Column by Delimiter",{{"Inv Type.1", type text}, {"Inv Type.2", type text}, {"Inv Type.3", type text}}),
+    #"Removed Columns1" = Table.RemoveColumns(#"Changed Type2",{"NET", "SQUEEZE PLAY BUG", "Column12"}),
+    #"Unpivoted Columns" = Table.UnpivotOtherColumns(#"Removed Columns1", {"EVENT/PROGRAM", "TV", "DATE", "DAY", "START", "#", "OPPONENT", "OTHER TV", "END", "SEASON", "TYPE", "NET.DATE.TIME", "TYPE2", "NOTES", "FORMAT"}, "Attribute", "Value"),
+    #"Removed Columns" = Table.RemoveColumns(#"Unpivoted Columns",{"Attribute"}),
+    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"Value", "INV TYPE"}}),
+    #"Inserted Minute" = Table.AddColumn(#"Renamed Columns", "Minute", each Time.Minute([START]), Int64.Type),
+    #"Added Custom1" = Table.AddColumn(#"Inserted Minute", "Half Hour", each if [Minute] >= 30 then [Minute]-30 else [Minute]),
+    #"Added Custom2" = Table.AddColumn(#"Added Custom1", "+/-", each if [INV TYPE] <> "In Game" then null else if [Half Hour]<8 then "-" else if [Half Hour]>14 then "+" else null),
+    #"Removed Columns2" = Table.RemoveColumns(#"Added Custom2",{"Minute", "Half Hour"}),
+    #"Sorted Rows" = Table.Sort(#"Removed Columns2",{{"DATE", Order.Ascending}}),
+    #"Added Conditional Column" = Table.AddColumn(#"Sorted Rows", "Simulcast", each if [OTHER TV] = null then "Exclusive" else "Simulcast"),
+    #"Filtered Rows2" = Table.SelectRows(#"Added Conditional Column", each [NET.DATE.TIME] <> "SNLA.9/20/2022.7:10 PM" and [NET.DATE.TIME] <> "SNLA.5/17/2022.7:10 PM"),
+    #"Replaced Value2" = Table.ReplaceValue(#"Filtered Rows2","GAME 1 & GAME 2","GAME 1",Replacer.ReplaceText,{"EVENT/PROGRAM"}),
+    #"Replaced Value4" = Table.ReplaceValue(#"Replaced Value2","GAME 2","GAME 1",Replacer.ReplaceText,{"EVENT/PROGRAM"}),
+    #"Replaced Value3" = Table.ReplaceValue(#"Replaced Value4","GAME 1","(DH)",Replacer.ReplaceText,{"EVENT/PROGRAM"}),
+    #"Added Conditional Column3" = Table.AddColumn(#"Replaced Value3", "Expanded", each if Text.Contains([FORMAT], "Expanded") then "Expanded" else if Text.Contains([#"EVENT/PROGRAM"], "DH") then "DH" else if Text.Contains([#"EVENT/PROGRAM"], "DH") and Text.Contains([FORMAT], "Expanded") then "Expanded DH" else "Standard"),
+    #"Added Conditional Column4" = Table.AddColumn(#"Added Conditional Column3", "Matchup", each if Text.Contains([OPPONENT], "Giants") then "Regional" else if Text.Contains([OPPONENT], "Padres") then "Regional" else if Text.Contains([OPPONENT], "Angels") then "Regional" else "Standard"),
+    #"Inserted Merged Column" = Table.AddColumn(#"Added Conditional Column4", "INV TYPE.1", each Text.Combine({[INV TYPE], [#"+/-"]}, ""), type text),
+    #"Inserted Merged Column1" = Table.AddColumn(#"Inserted Merged Column", "Avails Key", each Text.Combine({[TYPE], [TYPE2], [INV TYPE.1], [Expanded]}, "."), type text),
+    #"Merged Queries" = Table.NestedJoin(#"Inserted Merged Column1",{"DATE"},#"Broadcast Calendar",{"Air Date"},"Broadcast Calendar",JoinKind.LeftOuter),
+    #"Expanded Broadcast Calendar" = Table.ExpandTableColumn(#"Merged Queries", "Broadcast Calendar", {"Broadcast Month", "Broadcast Year", "Qtr"}, {"Broadcast Calendar.Broadcast Month", "Broadcast Calendar.Broadcast Year", "Broadcast Calendar.Qtr"}),
+    #"Added Conditional Column1" = Table.AddColumn(#"Expanded Broadcast Calendar", "NonSpectrum", each if [TV] <> "SNLA" then "NonSpectrum" else "Spectrum"),
+    #"Inserted Merged Column2" = Table.AddColumn(#"Added Conditional Column1", "NS-Ancillary", each Text.Combine({[NonSpectrum], [INV TYPE]}, "."), type text),
+    #"Filtered Rows" = Table.SelectRows(#"Inserted Merged Column2", each [#"NS-Ancillary"] <> "NonSpectrum.In Game"),
+    #"Added Conditional Column2" = Table.AddColumn(#"Filtered Rows", "Title Prefix", each if Text.Contains([TYPE2], "PR") then "PR: " else null),
+    #"Merged Columns" = Table.CombineColumns(Table.TransformColumnTypes(#"Added Conditional Column2", {{"Title Prefix", type text}}, "en-US"),{"Title Prefix", "EVENT/PROGRAM"},Combiner.CombineTextByDelimiter("", QuoteStyle.None),"EVENT/PROGRAM.1"),
+    #"Renamed Columns2" = Table.RenameColumns(#"Merged Columns",{{"EVENT/PROGRAM.1", "EVENT/PROGRAM"}}),
+    #"Filtered Rows1" = Table.SelectRows(#"Renamed Columns2", each [DATE] > #date(2019, 12, 29)),
+    #"Inserted Merged Column3" = Table.AddColumn(#"Filtered Rows1", "SPOT KEY", each Text.Combine({Text.From([DATE], "en-US"), [INV TYPE]}, "."), type text),
+    #"Filtered Rows3" = Table.SelectRows(#"Inserted Merged Column3", each not Text.Contains([TV], "(Confirmed Exclusive)"))
+in
+    #"Filtered Rows3";
+
+shared #"Broadcast Calendar" = let
+    Source = Excel.Workbook(File.Contents("P:\Pricing, Planning and Inventory\2020 Trackers\Broadcast Dates Expanded.xlsx"), null, true),
+    Query1_Table = Source{[Item="Query1",Kind="Table"]}[Data],
+    #"Changed Type" = Table.TransformColumnTypes(Query1_Table,{{"Broadcast Month", type text}, {"Broadcast Year", Int64.Type}, {"Air Date", type date}}),
+    #"Added Conditional Column" = Table.AddColumn(#"Changed Type", "Qtr", each if [Broadcast Month] = "January" then "Q1" else if [Broadcast Month] = "February" then "Q1" else if [Broadcast Month] = "March" then "Q1" else if [Broadcast Month] = "April" then "Q2" else if [Broadcast Month] = "May" then "Q2" else if [Broadcast Month] = "June" then "Q2" else if [Broadcast Month] = "July" then "Q3" else if [Broadcast Month] = "August" then "Q3" else if [Broadcast Month] = "September" then "Q3" else if [Broadcast Month] = "October" then "Q4" else if [Broadcast Month] = "November" then "Q4" else if [Broadcast Month] = "December" then "Q4" else null)
+in
+    #"Added Conditional Column";
+
+shared #"Lakers by Client (Inc $0)" = let
+    Source = Table.NestedJoin(#"Lakers Combined Schedules",{"SPOT KEY"},#"Lakers Spot Data 19-22",{"SPOT KEY"},"Lakers Spot Data 19-22",JoinKind.LeftOuter),
+    #"Expanded Lakers Spot Data 19-22" = Table.ExpandTableColumn(Source, "Lakers Spot Data 19-22", {"ChannelName", "AdvertiserName", "RevenueCode2", "OrderNumber", "LineNumber", "SpotLength", "SpotRate", "SpotState", "PriorityCode", "AirDate", "AEFullName", "ProductCode", "ParentProductCode", "DemoCode", "BookedRating", "BookedImpressions", "UnitCode", "CPP", "TotalEquivSold", "EffectiveUnitRate", "UnitAirStatusCode", "InventoryType", "Inventory Type", "InventoryCode", "SPOT KEY", "SpotRate (Net)", "BookedDisplayStatus", "FL", "HTS"}, {"Lakers Spot Data 19-22.ChannelName", "Lakers Spot Data 19-22.AdvertiserName", "Lakers Spot Data 19-22.RevenueCode2", "Lakers Spot Data 19-22.OrderNumber", "Lakers Spot Data 19-22.LineNumber", "Lakers Spot Data 19-22.SpotLength", "Lakers Spot Data 19-22.SpotRate", "Lakers Spot Data 19-22.SpotState", "Lakers Spot Data 19-22.PriorityCode", "Lakers Spot Data 19-22.AirDate", "Lakers Spot Data 19-22.AEFullName", "Lakers Spot Data 19-22.ProductCode", "Lakers Spot Data 19-22.ParentProductCode", "Lakers Spot Data 19-22.DemoCode", "Lakers Spot Data 19-22.BookedRating", "Lakers Spot Data 19-22.BookedImpressions", "Lakers Spot Data 19-22.UnitCode", "Lakers Spot Data 19-22.CPP", "Lakers Spot Data 19-22.TotalEquivSold", "Lakers Spot Data 19-22.EffectiveUnitRate", "Lakers Spot Data 19-22.UnitAirStatusCode", "Lakers Spot Data 19-22.InventoryType", "Lakers Spot Data 19-22.Inventory Type", "Lakers Spot Data 19-22.InventoryCode", "Lakers Spot Data 19-22.SPOT KEY", "Lakers Spot Data 19-22.SpotRate (Net)", "Lakers Spot Data 19-22.BookedDisplayStatus", "Lakers Spot Data 19-22.FL", "Lakers Spot Data 19-22.HTS"}),
+    #"Convert value nulls to 0" = Table.ReplaceValue(#"Expanded Lakers Spot Data 19-22",null,0,Replacer.ReplaceValue,{"Lakers Spot Data 19-22.SpotRate", "Lakers Spot Data 19-22.BookedRating", "Lakers Spot Data 19-22.BookedImpressions", "Lakers Spot Data 19-22.CPP", "Lakers Spot Data 19-22.TotalEquivSold", "Lakers Spot Data 19-22.EffectiveUnitRate", "Lakers Spot Data 19-22.SpotRate (Net)"}),
+    #"Added Conditional Column" = Table.AddColumn(#"Convert value nulls to 0", "$0", each if [#"Lakers Spot Data 19-22.SpotRate"] = 0 then "$0" else "Paid"),
+    #"Replaced Value" = Table.ReplaceValue(#"Added Conditional Column",0,null,Replacer.ReplaceValue,{"Lakers Spot Data 19-22.CPP"}),
+    #"Changed Type" = Table.TransformColumnTypes(#"Replaced Value",{{"Lakers Spot Data 19-22.SpotRate (Net)", Currency.Type}, {"Lakers Spot Data 19-22.CPP", Currency.Type}, {"Lakers Spot Data 19-22.TotalEquivSold", type number}, {"Lakers Spot Data 19-22.EffectiveUnitRate", Currency.Type}}),
+    #"Changed Type1" = Table.TransformColumnTypes(#"Changed Type",{{"DATE", type date}}),
+    #"Added Custom" = Table.AddColumn(#"Changed Type1", "After Today", each if [#"Lakers Spot Data 19-22.AirDate"] > Date.From(DateTime.LocalNow()) then 1 else 0)
+in
+    #"Added Custom";
+
+shared #"Inventory  (Exc $0)" = let
+    Source = #"Lakers by Client (Inc $0)",
+    #"Filtered Rows" = Table.SelectRows(Source, each [#"Lakers Spot Data 19-22.SpotRate"] > 0),
+    #"Appended Query" = Table.Combine({#"Filtered Rows", #"Lakers Combined Schedules"}),
+    #"Replaced Value" = Table.ReplaceValue(#"Appended Query",null,0,Replacer.ReplaceValue,{"Lakers Spot Data 19-22.SpotRate", "Lakers Spot Data 19-22.BookedRating", "Lakers Spot Data 19-22.BookedImpressions", "Lakers Spot Data 19-22.CPP", "Lakers Spot Data 19-22.TotalEquivSold", "Lakers Spot Data 19-22.EffectiveUnitRate", "Lakers Spot Data 19-22.SpotRate (Net)"}),
+    #"Grouped Rows" = Table.Group(#"Replaced Value", {"DATE", "EVENT/PROGRAM", "TYPE2", "INV TYPE", "Avails Key", "Broadcast Calendar.Broadcast Month", "Broadcast Calendar.Broadcast Year", "SEASON", "Matchup"}, {{"Sold", each List.Sum([#"Lakers Spot Data 19-22.TotalEquivSold"]), type number}, {"Gross Rev", each List.Sum([#"Lakers Spot Data 19-22.SpotRate"]), type number}, {"Net Rev", each List.Sum([#"Lakers Spot Data 19-22.SpotRate (Net)"]), type number}, {"EUR", each List.Average([#"Lakers Spot Data 19-22.EffectiveUnitRate"]), type number}, {"AUR", each List.Average([#"Lakers Spot Data 19-22.SpotRate"]), type number}}),
+    #"Merged Queries" = Table.NestedJoin(#"Grouped Rows",{"Avails Key"},#"Inventory Table",{"Avails Key"},"Inventory Table",JoinKind.LeftOuter),
+    #"Expanded Inventory Table" = Table.ExpandTableColumn(#"Merged Queries", "Inventory Table", {"Avails"}, {"Inventory Table.Avails"}),
+    #"Added Custom" = Table.AddColumn(#"Expanded Inventory Table", "Primary Avail", each if [Inventory Table.Avails]-[Sold]>=0 then [Inventory Table.Avails]-[Sold] else 0),
+    #"Added Custom1" = Table.AddColumn(#"Added Custom", "Oversell", each [Inventory Table.Avails]-[Sold]),
+    #"Added Custom6" = Table.AddColumn(#"Added Custom1", "Floater Avail", each if [Oversell]<0 and [Oversell]+6>=0 then [Oversell]+6 else if [Oversell]<0 and [Oversell]+6<0 then 0 else 6),
+    #"Replaced Value1" = Table.ReplaceValue(#"Added Custom6","In Game","In Game.Floaters A&B",Replacer.ReplaceText,{"INV TYPE"}),
+    #"Split Column by Delimiter" = Table.SplitColumn(#"Replaced Value1", "INV TYPE", Splitter.SplitTextByDelimiter(".", QuoteStyle.Csv), {"INV TYPE.1", "INV TYPE.2"}),
+    #"Unpivoted Columns" = Table.UnpivotOtherColumns(#"Split Column by Delimiter", {"DATE", "EVENT/PROGRAM", "TYPE2", "Avails Key", "Broadcast Calendar.Broadcast Month", "Broadcast Calendar.Broadcast Year", "SEASON", "Matchup", "Sold", "Gross Rev", "Net Rev", "EUR", "AUR", "Inventory Table.Avails", "Primary Avail", "Oversell", "Floater Avail"}, "Attribute", "Value"),
+    #"Removed Columns1" = Table.RemoveColumns(#"Unpivoted Columns",{"Attribute"}),
+    #"Renamed Columns1" = Table.RenameColumns(#"Removed Columns1",{{"Value", "INV TYPE"}}),
+    #"Added Conditional Column2" = Table.AddColumn(#"Renamed Columns1", "Avail", each if [INV TYPE] = "Floaters A&B" then [Floater Avail] else [Primary Avail]),
+    #"Changed Type" = Table.TransformColumnTypes(#"Added Conditional Column2",{{"Avail", type number}, {"Oversell", type number}}),
+    #"Sorted Rows1" = Table.Sort(#"Changed Type",{{"DATE", Order.Descending}}),
+    #"Added Custom2" = Table.AddColumn(#"Sorted Rows1", "Sellout", each [Sold]/[Inventory Table.Avails]),
+    #"Changed Type1" = Table.TransformColumnTypes(#"Added Custom2",{{"Sellout", Percentage.Type}}),
+    #"Added Custom7" = Table.AddColumn(#"Changed Type1", "Rate Tier", each if [INV TYPE] = "In Game" and [Oversell]>0 then "Base" else if [INV TYPE] = "In Game" and [Oversell]>-6 then "FL" else if [INV TYPE] = "In Game" and [Oversell]<=-6 then "Bump" else if [Avail]>0 then "Base" else "Bump"),
+    #"Inserted Merged Column" = Table.AddColumn(#"Added Custom7", "Rate Key", each Text.Combine({[TYPE2], [INV TYPE], [Matchup], [Rate Tier]}, "."), type text),
+    #"Merged Queries1" = Table.NestedJoin(#"Inserted Merged Column",{"Rate Key"},#"Dynamic Rates",{"Rate Key"},"Dynamic Rates",JoinKind.LeftOuter),
+    #"Expanded Dynamic Rates" = Table.ExpandTableColumn(#"Merged Queries1", "Dynamic Rates", {"Rate"}, {"Dynamic Rates.Rate"}),
+    #"Inserted Start of Week" = Table.AddColumn(#"Expanded Dynamic Rates", "Start of Week", each Date.StartOfWeek([DATE], Day.Monday)),
+    #"Changed Type2" = Table.TransformColumnTypes(#"Inserted Start of Week",{{"Start of Week", type date}}),
+    #"Sorted Rows" = Table.Sort(#"Changed Type2",{{"DATE", Order.Ascending}}),
+    #"Renamed Columns" = Table.RenameColumns(#"Sorted Rows",{{"Sold", "Primary Sold"}}),
+    #"Added Custom8" = Table.AddColumn(#"Renamed Columns", "FL Cap", each 6),
+    #"Added Custom9" = Table.AddColumn(#"Added Custom8", "FL Sold", each if [Oversell]<0 then [Oversell]*-1 else 0),
+    #"Added Custom10" = Table.AddColumn(#"Added Custom9", "Cap", each if [INV TYPE] = "Floaters A&B" then [FL Cap] else [Inventory Table.Avails]),
+    #"Added Custom11" = Table.AddColumn(#"Added Custom10", "Sold", each if [INV TYPE] = "Floaters A&B" then [FL Sold] else [Primary Sold]),
+    #"Removed Columns" = Table.RemoveColumns(#"Added Custom11",{"Primary Sold", "Inventory Table.Avails", "Primary Avail", "Floater Avail", "Sellout", "FL Cap", "FL Sold"}),
+    #"Added Custom12" = Table.AddColumn(#"Removed Columns", "Sellout", each [Sold]/[Cap]),
+    #"Changed Type6" = Table.TransformColumnTypes(#"Added Custom12",{{"Cap", type number}, {"Sold", type number}, {"Sellout", Percentage.Type}}),
+    #"Renamed Columns2" = Table.RenameColumns(#"Changed Type6",{{"Gross Rev", "Gross Rev.1"}, {"Net Rev", "Net Rev.1"}, {"EUR", "EUR.1"}, {"AUR", "AUR.1"}}),
+    #"Added Conditional Column" = Table.AddColumn(#"Renamed Columns2", "Gross Rev", each if [INV TYPE] = "Floaters A&B" then 0 else [Gross Rev.1]),
+    #"Added Conditional Column3" = Table.AddColumn(#"Added Conditional Column", "Net Rev", each if [INV TYPE] = "Floaters A&B" then 0 else [Net Rev.1]),
+    #"Added Conditional Column4" = Table.AddColumn(#"Added Conditional Column3", "EUR", each if [INV TYPE] = "Floaters A&B" then 0 else [EUR.1]),
+    #"Added Conditional Column5" = Table.AddColumn(#"Added Conditional Column4", "AUR", each if [INV TYPE] = "Floaters A&B" then 0 else [AUR.1]),
+    #"Removed Columns2" = Table.RemoveColumns(#"Added Conditional Column5",{"Gross Rev.1", "Net Rev.1", "EUR.1", "AUR.1"}),
+    #"Changed Type7" = Table.TransformColumnTypes(#"Removed Columns2",{{"Gross Rev", Currency.Type}, {"Net Rev", Currency.Type}, {"EUR", Currency.Type}, {"AUR", Currency.Type}}),
+    #"Added Custom3" = Table.AddColumn(#"Changed Type7", "After Today", each if [DATE] > Date.From(DateTime.LocalNow()) then 1 else 0),
+    #"Added Custom4" = Table.AddColumn(#"Added Custom3", "After Today.1", each if [#"Lakers Spot Data 19-22.AirDate"] > Date.From(DateTime.LocalNow()) then 1 else 0)
+in
+    #"Added Custom4";
+
+shared #"Inventory  (Inc $0)" = let
+    Source = #"Lakers by Client (Inc $0)",
+    #"Appended Query" = Table.Combine({Source, #"Lakers Combined Schedules"}),
+    #"Replaced Value" = Table.ReplaceValue(#"Appended Query",null,0,Replacer.ReplaceValue,{"Lakers Spot Data 19-22.SpotRate", "Lakers Spot Data 19-22.BookedRating", "Lakers Spot Data 19-22.BookedImpressions", "Lakers Spot Data 19-22.CPP", "Lakers Spot Data 19-22.TotalEquivSold", "Lakers Spot Data 19-22.EffectiveUnitRate", "Lakers Spot Data 19-22.SpotRate (Net)"}),
+    #"Grouped Rows" = Table.Group(#"Replaced Value", {"DATE", "EVENT/PROGRAM", "TYPE2", "INV TYPE", "Avails Key", "Broadcast Calendar.Broadcast Month", "Broadcast Calendar.Broadcast Year", "SEASON", "Matchup"}, {{"Sold", each List.Sum([#"Lakers Spot Data 19-22.TotalEquivSold"]), type number}, {"Gross Rev", each List.Sum([#"Lakers Spot Data 19-22.SpotRate"]), type number}, {"Net Rev", each List.Sum([#"Lakers Spot Data 19-22.SpotRate (Net)"]), type number}, {"EUR", each List.Average([#"Lakers Spot Data 19-22.EffectiveUnitRate"]), type number}, {"AUR", each List.Average([#"Lakers Spot Data 19-22.SpotRate"]), type number}}),
+    #"Merged Queries" = Table.NestedJoin(#"Grouped Rows",{"Avails Key"},#"Inventory Table",{"Avails Key"},"Inventory Table",JoinKind.LeftOuter),
+    #"Expanded Inventory Table" = Table.ExpandTableColumn(#"Merged Queries", "Inventory Table", {"Avails"}, {"Inventory Table.Avails"}),
+    #"Added Custom" = Table.AddColumn(#"Expanded Inventory Table", "Primary Avail", each if [Inventory Table.Avails]-[Sold]>=0 then [Inventory Table.Avails]-[Sold] else 0),
+    #"Added Custom1" = Table.AddColumn(#"Added Custom", "Oversell", each [Inventory Table.Avails]-[Sold]),
+    #"Added Custom6" = Table.AddColumn(#"Added Custom1", "Floater Avail", each if [Oversell]<0 and [Oversell]+6>=0 then [Oversell]+6 else if [Oversell]<0 and [Oversell]+6<0 then 0 else 6),
+    #"Replaced Value1" = Table.ReplaceValue(#"Added Custom6","In Game","In Game.Floaters A&B",Replacer.ReplaceText,{"INV TYPE"}),
+    #"Split Column by Delimiter" = Table.SplitColumn(#"Replaced Value1", "INV TYPE", Splitter.SplitTextByDelimiter(".", QuoteStyle.Csv), {"INV TYPE.1", "INV TYPE.2"}),
+    #"Unpivoted Columns" = Table.UnpivotOtherColumns(#"Split Column by Delimiter", {"DATE", "EVENT/PROGRAM", "TYPE2", "Avails Key", "Broadcast Calendar.Broadcast Month", "Broadcast Calendar.Broadcast Year", "SEASON", "Matchup", "Sold", "Gross Rev", "Net Rev", "EUR", "AUR", "Inventory Table.Avails", "Primary Avail", "Oversell", "Floater Avail"}, "Attribute", "Value"),
+    #"Removed Columns1" = Table.RemoveColumns(#"Unpivoted Columns",{"Attribute"}),
+    #"Renamed Columns1" = Table.RenameColumns(#"Removed Columns1",{{"Value", "INV TYPE"}}),
+    #"Added Conditional Column2" = Table.AddColumn(#"Renamed Columns1", "Avail", each if [INV TYPE] = "Floaters A&B" then [Floater Avail] else [Primary Avail]),
+    #"Changed Type" = Table.TransformColumnTypes(#"Added Conditional Column2",{{"Avail", type number}, {"Oversell", type number}}),
+    #"Sorted Rows1" = Table.Sort(#"Changed Type",{{"DATE", Order.Descending}}),
+    #"Added Custom2" = Table.AddColumn(#"Sorted Rows1", "Sellout", each [Sold]/[Inventory Table.Avails]),
+    #"Changed Type1" = Table.TransformColumnTypes(#"Added Custom2",{{"Sellout", Percentage.Type}}),
+    #"Added Custom7" = Table.AddColumn(#"Changed Type1", "Rate Tier", each if [INV TYPE] = "In Game" and [Oversell]>0 then "Base" else if [INV TYPE] = "In Game" and [Oversell]>-6 then "FL" else if [INV TYPE] = "In Game" and [Oversell]<=-6 then "Bump" else if [Avail]>0 then "Base" else "Bump"),
+    #"Inserted Merged Column" = Table.AddColumn(#"Added Custom7", "Rate Key", each Text.Combine({[TYPE2], [INV TYPE], [Matchup], [Rate Tier]}, "."), type text),
+    #"Merged Queries1" = Table.NestedJoin(#"Inserted Merged Column",{"Rate Key"},#"Dynamic Rates",{"Rate Key"},"Dynamic Rates",JoinKind.LeftOuter),
+    #"Expanded Dynamic Rates" = Table.ExpandTableColumn(#"Merged Queries1", "Dynamic Rates", {"Rate"}, {"Dynamic Rates.Rate"}),
+    #"Inserted Start of Week" = Table.AddColumn(#"Expanded Dynamic Rates", "Start of Week", each Date.StartOfWeek([DATE], Day.Monday)),
+    #"Changed Type2" = Table.TransformColumnTypes(#"Inserted Start of Week",{{"Start of Week", type date}}),
+    #"Sorted Rows" = Table.Sort(#"Changed Type2",{{"DATE", Order.Ascending}}),
+    #"Renamed Columns" = Table.RenameColumns(#"Sorted Rows",{{"Sold", "Primary Sold"}}),
+    #"Added Custom8" = Table.AddColumn(#"Renamed Columns", "FL Cap", each 6),
+    #"Added Custom9" = Table.AddColumn(#"Added Custom8", "FL Sold", each if [Oversell]<0 then [Oversell]*-1 else 0),
+    #"Added Custom10" = Table.AddColumn(#"Added Custom9", "Cap", each if [INV TYPE] = "Floaters A&B" then [FL Cap] else [Inventory Table.Avails]),
+    #"Added Custom11" = Table.AddColumn(#"Added Custom10", "Sold", each if [INV TYPE] = "Floaters A&B" then [FL Sold] else [Primary Sold]),
+    #"Removed Columns" = Table.RemoveColumns(#"Added Custom11",{"Primary Sold", "Inventory Table.Avails", "Primary Avail", "Floater Avail", "Sellout", "FL Cap", "FL Sold"}),
+    #"Added Custom12" = Table.AddColumn(#"Removed Columns", "Sellout", each [Sold]/[Cap]),
+    #"Changed Type6" = Table.TransformColumnTypes(#"Added Custom12",{{"Cap", type number}, {"Sold", type number}, {"Sellout", Percentage.Type}}),
+    #"Renamed Columns2" = Table.RenameColumns(#"Changed Type6",{{"Gross Rev", "Gross Rev.1"}, {"Net Rev", "Net Rev.1"}, {"EUR", "EUR.1"}, {"AUR", "AUR.1"}}),
+    #"Added Conditional Column" = Table.AddColumn(#"Renamed Columns2", "Gross Rev", each if [INV TYPE] = "Floaters A&B" then 0 else [Gross Rev.1]),
+    #"Added Conditional Column3" = Table.AddColumn(#"Added Conditional Column", "Net Rev", each if [INV TYPE] = "Floaters A&B" then 0 else [Net Rev.1]),
+    #"Added Conditional Column4" = Table.AddColumn(#"Added Conditional Column3", "EUR", each if [INV TYPE] = "Floaters A&B" then 0 else [EUR.1]),
+    #"Added Conditional Column5" = Table.AddColumn(#"Added Conditional Column4", "AUR", each if [INV TYPE] = "Floaters A&B" then 0 else [AUR.1]),
+    #"Removed Columns2" = Table.RemoveColumns(#"Added Conditional Column5",{"Gross Rev.1", "Net Rev.1", "EUR.1", "AUR.1"}),
+    #"Changed Type7" = Table.TransformColumnTypes(#"Removed Columns2",{{"Gross Rev", Currency.Type}, {"Net Rev", Currency.Type}, {"EUR", Currency.Type}, {"AUR", Currency.Type}}),
+    #"Inserted Merged Column1" = Table.AddColumn(#"Changed Type7", "Primary Avails Key", each Text.Combine({Text.From([DATE], "en-US"), [INV TYPE]}, "."), type text)
+in
+    #"Inserted Merged Column1";
+
+shared #"Inventory Table" = let
+    Source = Excel.Workbook(File.Contents("P:\Pricing, Planning and Inventory\2020 Trackers\Inventory Table.xlsx"), null, true),
+    Table1_Table = Source{[Item="Table1",Kind="Table"]}[Data],
+    #"Changed Type" = Table.TransformColumnTypes(Table1_Table,{{"Syscode", Int64.Type}, {"Team", type text}, {"Type", type text}, {"Inventory", type text}, {"Format", type text}, {"Avails", type number}}),
+    #"Filtered Rows" = Table.SelectRows(#"Changed Type", each ([Team] = "Dodgers")),
+    #"Inserted Merged Column" = Table.AddColumn(#"Filtered Rows", "Avails Key", each Text.Combine({[Team], [Type], [Inventory], [Format]}, "."), type text)
+in
+    #"Inserted Merged Column";
+
+shared #"Dynamic Rates" = let
+    Source = Excel.Workbook(File.Contents("P:\Pricing, Planning and Inventory\2020 Trackers\Dynamic Rates.xlsx"), null, true),
+    Sheet1_Sheet = Source{[Item="Sheet1",Kind="Sheet"]}[Data],
+    #"Promoted Headers" = Table.PromoteHeaders(Sheet1_Sheet, [PromoteAllScalars=true]),
+    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Syscode", Int64.Type}, {"Net", type text}, {"Team", type text}, {"Type", type text}, {"Inv", type text}, {"Tier", type text}, {"Rate", Int64.Type}}),
+    #"Filtered Rows" = Table.SelectRows(#"Changed Type", each ([Team] = "Dodgers")),
+    #"Inserted Merged Column" = Table.AddColumn(#"Filtered Rows", "Rate Key", each Text.Combine({[Type], [Inv], [Matchup], [Tier]}, "."), type text)
+in
+    #"Inserted Merged Column";
+
+shared #"Unmatched Spots" = let
+    Source = Table.NestedJoin(#"Lakers Combined Schedules",{"SPOT KEY"},#"Lakers Spot Data 19-22",{"SPOT KEY"},"Lakers Spot Data 19-22",JoinKind.RightAnti),
+    #"Expanded Lakers Spot Data 19-22" = Table.ExpandTableColumn(Source, "Lakers Spot Data 19-22", {"ChannelName", "AdvertiserName", "RevenueCode2", "OrderNumber", "LineNumber", "SpotLength", "SpotRate", "SpotState", "PriorityCode", "AirDate", "InventoryCode", "InventoryCodePath", "ProductCode", "ParentProductCode", "DemoCode", "BookedRating", "BookedImpressions", "UnitCode", "CPP", "TotalEquivSold", "EffectiveUnitRate", "UnitAirStatusCode", "InventoryType", "Inventory Type", "SPOT KEY", "SpotRate (Net)", "AEFullName"}, {"Lakers Spot Data 19-22.ChannelName", "Lakers Spot Data 19-22.AdvertiserName", "Lakers Spot Data 19-22.RevenueCode2", "Lakers Spot Data 19-22.OrderNumber", "Lakers Spot Data 19-22.LineNumber", "Lakers Spot Data 19-22.SpotLength", "Lakers Spot Data 19-22.SpotRate", "Lakers Spot Data 19-22.SpotState", "Lakers Spot Data 19-22.PriorityCode", "Lakers Spot Data 19-22.AirDate", "Lakers Spot Data 19-22.InventoryCode", "Lakers Spot Data 19-22.InventoryCodePath", "Lakers Spot Data 19-22.ProductCode", "Lakers Spot Data 19-22.ParentProductCode", "Lakers Spot Data 19-22.DemoCode", "Lakers Spot Data 19-22.BookedRating", "Lakers Spot Data 19-22.BookedImpressions", "Lakers Spot Data 19-22.UnitCode", "Lakers Spot Data 19-22.CPP", "Lakers Spot Data 19-22.TotalEquivSold", "Lakers Spot Data 19-22.EffectiveUnitRate", "Lakers Spot Data 19-22.UnitAirStatusCode", "Lakers Spot Data 19-22.InventoryType", "Lakers Spot Data 19-22.Inventory Type", "Lakers Spot Data 19-22.SPOT KEY", "Lakers Spot Data 19-22.SpotRate (Net)", "AEFullName"}),
+    #"Convert value nulls to 0" = Table.ReplaceValue(#"Expanded Lakers Spot Data 19-22",null,0,Replacer.ReplaceValue,{"Lakers Spot Data 19-22.SpotRate", "Lakers Spot Data 19-22.BookedRating", "Lakers Spot Data 19-22.BookedImpressions", "Lakers Spot Data 19-22.CPP", "Lakers Spot Data 19-22.TotalEquivSold", "Lakers Spot Data 19-22.EffectiveUnitRate", "Lakers Spot Data 19-22.SpotRate (Net)"}),
+    #"Added Conditional Column" = Table.AddColumn(#"Convert value nulls to 0", "$0", each if [#"Lakers Spot Data 19-22.SpotRate"] = 0 then "$0" else "Paid"),
+    #"Changed Type" = Table.TransformColumnTypes(#"Added Conditional Column",{{"Lakers Spot Data 19-22.SpotRate (Net)", type number}, {"Lakers Spot Data 19-22.EffectiveUnitRate", type number}, {"Lakers Spot Data 19-22.TotalEquivSold", type number}}),
+    #"Filtered Rows" = Table.SelectRows(#"Changed Type", each [#"Lakers Spot Data 19-22.Inventory Type"] <> "Ancillary"),
+    #"Added Custom" = Table.AddColumn(#"Filtered Rows", "After Today", each if [#"Lakers Spot Data 19-22.AirDate"] > Date.From(DateTime.LocalNow()) then 1 else 0)
+in
+    #"Added Custom";
+
+shared Ratings = let
+    Source = Excel.Workbook(File.Contents("\\wsr-adl-pubfs\Sales\Sales One Stop Shop\Research\Ratings\MLB\2023 Dodgers-MLB Ratings Final Track.xlsx"), null, true),
+    #"Dodgers-Angels RSNs_Sheet" = Source{[Item="Dodgers-Angels RSNs",Kind="Sheet"]}[Data],
+    #"Promoted Headers" = Table.PromoteHeaders(#"Dodgers-Angels RSNs_Sheet", [PromoteAllScalars=true]),
+    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Column1", type text}, {"Column3", type text}, {"Column4", type text}, {"Column5", type any}, {"Column6", type any}, {"Column7", type any}, {"Column8", type any}, {"Column9", type any}, {"Column10", type any}, {"Column11", type any}, {"Column12", type any}, {"Column13", type any}, {"Column14", type any}, {"Column15", type any}, {"Column16", type any}, {"Column17", type any}, {"Column18", type any}, {"Column19", type any}, {"Column20", type text}, {"Column21", type text}, {"Column22", type text}, {"Column23", type text}, {"Column24", type any}, {"Column25", type any}, {"Column26", type any}, {"Column27", type any}, {"Column28", type any}, {"Column29", type any}, {"Column30", type any}, {"Column31", type any}, {"Column32", type any}, {"Column33", type any}, {"Column34", type any}, {"Column35", type any}, {"Column36", type any}, {"Column37", type any}, {"Column38", type any}, {"Column39", type text}, {"Column40", type any}, {"Column41", type any}, {"Column42", type any}, {"Column43", type any}}),
+    #"Filtered Rows" = Table.SelectRows(#"Changed Type", each ([Column1] <> null)),
+    #"Promoted Headers1" = Table.PromoteHeaders(#"Filtered Rows", [PromoteAllScalars=true]),
+    #"Changed Type1" = Table.TransformColumnTypes(#"Promoted Headers1",{{" Home vs Away", type text}, {"Network", type text}, {"Program", type text}, {"Game", type text}, {"Date", type date}, {"Start", type datetime}, {"End", type datetime}, {"HH", type number}, {"A25-54", type number}, {"M25-54", type number}, {"A18-49", type number}, {"A25-49", type number}, {"P2+", type number}, {"HH_1", Int64.Type}, {"A25-54_2", Int64.Type}, {"M25-54_3", Int64.Type}, {"A18-49_4", Int64.Type}, {"A25-49_5", Int64.Type}, {"P2+_6", Int64.Type}, {"Column20", type text}, {"Network_7", type text}, {"Program_8", type text}, {"Game_9", type text}, {"Date_10", type date}, {"Start_11", type datetime}, {"End_12", type datetime}, {"HH_13", type number}, {"A25-54_14", type number}, {"M25-54_15", type number}, {"A18-49_16", type number}, {"A25-49_17", type number}, {"P2+_18", type number}, {"HH_19", Int64.Type}, {"A25-54_20", Int64.Type}, {"M25-54_21", Int64.Type}, {"A18-49_22", Int64.Type}, {"A25-49_23", Int64.Type}, {"P2+_24", Int64.Type}, {"Column39", type text}, {"Column40", type any}, {"Column41", type any}, {"Column42", type any}, {"Column43", type any}}),
+    #"Merged Queries" = Table.NestedJoin(#"Changed Type1", {"Date"}, #"Broadcast Calendar", {"Air Date"}, "Broadcast Calendar", JoinKind.LeftOuter),
+    #"Expanded Broadcast Calendar" = Table.ExpandTableColumn(#"Merged Queries", "Broadcast Calendar", {"Broadcast Month", "Broadcast Year", "Qtr"}, {"Broadcast Month", "Broadcast Year", "Qtr"}),
+    #"Changed Type2" = Table.TransformColumnTypes(#"Expanded Broadcast Calendar",{{"Start", type time}, {"End", type time}})
+in
+    #"Changed Type2";
+
+shared #"AUR Summary" = let
+    Source = #"Lakers by Client (Inc $0)",
+    #"Merged Columns2" = Table.CombineColumns(Source,{"INV TYPE", "+/-"},Combiner.CombineTextByDelimiter("", QuoteStyle.None),"INV TYPE.2"),
+    #"Renamed Columns" = Table.RenameColumns(#"Merged Columns2",{{"INV TYPE.2", "INV TYPE"}}),
+    #"Inserted Merged Column" = Table.AddColumn(#"Renamed Columns", "Primary Avails Key", each Text.Combine({[TYPE], [TYPE2], [INV TYPE], [Expanded]}, "."), type text),
+    #"Grouped Rows" = Table.Group(#"Inserted Merged Column", {"SEASON", "TYPE2", "Broadcast Calendar.Broadcast Year", "Broadcast Calendar.Qtr", "Broadcast Calendar.Broadcast Month", "DATE", "INV TYPE", "$0", "Lakers Spot Data 19-22.PriorityCode", "Lakers Spot Data 19-22.HTS", "Primary Avails Key"}, {{"Gross REV", each List.Sum([#"Lakers Spot Data 19-22.SpotRate"]), type nullable number}, {"Net REV", each List.Sum([#"Lakers Spot Data 19-22.SpotRate (Net)"]), type nullable number}, {"EQ30", each List.Sum([#"Lakers Spot Data 19-22.TotalEquivSold"]), type nullable number}}),
+    #"Added Conditional Column" = Table.AddColumn(#"Grouped Rows", "LOB Group", each if [#"Lakers Spot Data 19-22.HTS"] = "HTS" then "HTS" else "Non-HTS"),
+    #"Added Conditional Column1" = Table.AddColumn(#"Added Conditional Column", "Spot Group", each if [#"$0"] = "Paid" then "Paid" else if [#"Lakers Spot Data 19-22.PriorityCode"] = "P-80" then "NC" else if [#"Lakers Spot Data 19-22.PriorityCode"] = "P-19" then "NC" else if [#"Lakers Spot Data 19-22.PriorityCode"] = "P-09" then "ADU" else if [#"Lakers Spot Data 19-22.PriorityCode"] = "P-08" then "Cross Property ADU" else if [#"Lakers Spot Data 19-22.PriorityCode"] = "P-04" then "Bonus" else null),
+    #"Grouped Rows1" = Table.Group(#"Added Conditional Column1", {"SEASON", "Broadcast Calendar.Broadcast Year", "Broadcast Calendar.Qtr", "Broadcast Calendar.Broadcast Month", "TYPE2", "DATE", "INV TYPE", "LOB Group", "Spot Group", "Primary Avails Key"}, {{"Gross REV", each List.Sum([Gross REV]), type nullable number}, {"Net REV", each List.Sum([Net REV]), type nullable number}, {"EQ30", each List.Sum([EQ30]), type nullable number}}),
+    #"Filtered Rows" = Table.SelectRows(#"Grouped Rows1", each ([Spot Group] <> null)),
+    #"Merged Columns" = Table.CombineColumns(#"Filtered Rows",{"LOB Group", "Spot Group"},Combiner.CombineTextByDelimiter(" ", QuoteStyle.None),"LOB-Spot Group"),
+    #"Unpivoted Columns" = Table.UnpivotOtherColumns(#"Merged Columns", {"SEASON", "Broadcast Calendar.Broadcast Year", "Broadcast Calendar.Qtr", "Broadcast Calendar.Broadcast Month", "TYPE2", "DATE", "INV TYPE", "LOB-Spot Group", "Primary Avails Key"}, "Attribute", "Value"),
+    #"Merged Columns1" = Table.CombineColumns(#"Unpivoted Columns",{"LOB-Spot Group", "Attribute"},Combiner.CombineTextByDelimiter(".", QuoteStyle.None),"LOB-Spot Group Data"),
+    #"Filtered Rows1" = Table.SelectRows(#"Merged Columns1", each ([#"LOB-Spot Group Data"] = "HTS ADU.EQ30" or [#"LOB-Spot Group Data"] = "HTS Bonus.EQ30" or [#"LOB-Spot Group Data"] = "HTS Cross Property ADU.EQ30" or [#"LOB-Spot Group Data"] = "HTS NC.EQ30" or [#"LOB-Spot Group Data"] = "HTS Paid.EQ30" or [#"LOB-Spot Group Data"] = "HTS Paid.Gross REV" or [#"LOB-Spot Group Data"] = "HTS Paid.Net REV" or [#"LOB-Spot Group Data"] = "Non-HTS ADU.EQ30" or [#"LOB-Spot Group Data"] = "Non-HTS Bonus.EQ30" or [#"LOB-Spot Group Data"] = "Non-HTS Cross Property ADU.EQ30" or [#"LOB-Spot Group Data"] = "Non-HTS NC.EQ30" or [#"LOB-Spot Group Data"] = "Non-HTS Paid.EQ30" or [#"LOB-Spot Group Data"] = "Non-HTS Paid.Gross REV" or [#"LOB-Spot Group Data"] = "Non-HTS Paid.Net REV")),
+    #"Pivoted Column" = Table.Pivot(#"Filtered Rows1", List.Distinct(#"Filtered Rows1"[#"LOB-Spot Group Data"]), "LOB-Spot Group Data", "Value", List.Sum),
+    #"Replaced Value1" = Table.ReplaceValue(#"Pivoted Column",null,0,Replacer.ReplaceValue,{"Non-HTS Bonus.EQ30", "Non-HTS Paid.Gross REV", "Non-HTS Paid.Net REV", "Non-HTS Paid.EQ30", "HTS Paid.Gross REV", "HTS Paid.Net REV", "HTS Paid.EQ30", "HTS Bonus.EQ30", "Non-HTS NC.EQ30", "HTS NC.EQ30", "Non-HTS ADU.EQ30", "HTS ADU.EQ30", "Non-HTS Cross Property ADU.EQ30", "HTS Cross Property ADU.EQ30"}),
+    #"Inserted Addition" = Table.AddColumn(#"Replaced Value1", "Total Bonus.EQ30", each [#"Non-HTS Bonus.EQ30"] + [#"HTS Bonus.EQ30"], type number),
+    #"Inserted Addition1" = Table.AddColumn(#"Inserted Addition", "Total Cross Property ADU.EQ30", each [#"Non-HTS Cross Property ADU.EQ30"] + [#"HTS Cross Property ADU.EQ30"], type number),
+    #"Inserted Addition2" = Table.AddColumn(#"Inserted Addition1", "Total ADU.EQ30", each [#"Non-HTS ADU.EQ30"] + [#"HTS ADU.EQ30"], type number),
+    #"Inserted Addition3" = Table.AddColumn(#"Inserted Addition2", "Total NC.EQ30", each [#"Non-HTS NC.EQ30"] + [#"HTS NC.EQ30"], type number),
+    #"Inserted Addition4" = Table.AddColumn(#"Inserted Addition3", "Total Paid.EQ30", each [#"Non-HTS Paid.EQ30"] + [#"HTS Paid.EQ30"], type number),
+    #"Inserted Addition5" = Table.AddColumn(#"Inserted Addition4", "Total Paid.Gross REV", each [#"Non-HTS Paid.Gross REV"] + [#"HTS Paid.Gross REV"], type number),
+    #"Inserted Addition6" = Table.AddColumn(#"Inserted Addition5", "Total Paid.Net REV", each [#"Non-HTS Paid.Net REV"] + [#"HTS Paid.Net REV"], type number),
+    #"Replaced Value" = Table.ReplaceValue(#"Inserted Addition6",null,0,Replacer.ReplaceValue,{"Non-HTS Bonus.EQ30", "Non-HTS Paid.Gross REV", "Non-HTS Paid.Net REV", "Non-HTS Paid.EQ30", "HTS Paid.Gross REV", "HTS Paid.Net REV", "HTS Paid.EQ30", "HTS Bonus.EQ30", "Non-HTS NC.EQ30", "HTS NC.EQ30", "Non-HTS ADU.EQ30", "HTS ADU.EQ30", "Non-HTS Cross Property ADU.EQ30", "HTS Cross Property ADU.EQ30", "Total Bonus.EQ30", "Total Cross Property ADU.EQ30", "Total ADU.EQ30", "Total NC.EQ30", "Total Paid.EQ30", "Total Paid.Gross REV", "Total Paid.Net REV"}),
+    #"Merged Queries" = Table.NestedJoin(#"Replaced Value", {"Primary Avails Key"}, #"Inventory Table", {"Avails Key"}, "Inventory Table", JoinKind.FullOuter),
+    #"Expanded Inventory Table" = Table.ExpandTableColumn(#"Merged Queries", "Inventory Table", {"Inventory", "Avails"}, {"Inventory Table.Inventory", "Inventory Table.Avails"}),
+    #"Filtered Rows2" = Table.SelectRows(#"Expanded Inventory Table", each ([Inventory Table.Inventory] <> "Floaters A&B")),
+    #"Removed Columns" = Table.RemoveColumns(#"Filtered Rows2",{"Inventory Table.Inventory"}),
+    #"Renamed Columns1" = Table.RenameColumns(#"Removed Columns",{{"Inventory Table.Avails", "Avails"}}),
+    #"Added Custom3" = Table.AddColumn(#"Renamed Columns1", "Non-HTS Total.EQ30", each [#"Non-HTS Bonus.EQ30"]+[#"Non-HTS Cross Property ADU.EQ30"]+[#"Non-HTS ADU.EQ30"]+[#"Non-HTS NC.EQ30"]+[#"Non-HTS Paid.EQ30"]),
+    #"Added Custom4" = Table.AddColumn(#"Added Custom3", "HTS Total.EQ30", each [#"HTS Bonus.EQ30"]+[#"HTS Cross Property ADU.EQ30"]+[#"HTS ADU.EQ30"]+[#"HTS NC.EQ30"]+[#"HTS Paid.EQ30"]),
+    #"Added Custom" = Table.AddColumn(#"Added Custom4", "Total Total.EQ30", each [Total Bonus.EQ30]+[Total Cross Property ADU.EQ30]+[Total ADU.EQ30]+[Total NC.EQ30]+[Total Paid.EQ30]),
+    #"Added Custom1" = Table.AddColumn(#"Added Custom", "Sellout", each ([Total Paid.EQ30]+[Total NC.EQ30])/[Avails]),
+    #"Added Custom2" = Table.AddColumn(#"Added Custom1", "Sellout + ADU", each ([Total Paid.EQ30]+[Total NC.EQ30]+[Total ADU.EQ30]+[Total Cross Property ADU.EQ30])/[Avails]),
+    #"Changed Type" = Table.TransformColumnTypes(#"Added Custom2",{{"Non-HTS Total.EQ30", type number}, {"HTS Total.EQ30", type number}, {"Total Total.EQ30", type number}, {"Sellout", Percentage.Type}, {"Sellout + ADU", Percentage.Type}})
+in
+    #"Changed Type";

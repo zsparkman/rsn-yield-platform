@@ -42,6 +42,8 @@ next-env.d.ts
 
 # generated data — committed selectively
 /data/*.json
+/data/*.csv
+/data/*.xlsx
 !/data/.gitkeep
 
 # editor

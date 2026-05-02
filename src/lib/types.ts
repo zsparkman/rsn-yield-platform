@@ -1,205 +1,302 @@
-// Shared domain types — see docs/spec/01-data-model.md.
+// Type system for the SSRS-input + ETL architecture.
+//
+// Two layers of types live here:
+//   * "Raw" / source types — mirror the four source files exactly
+//     (Wide Orbit spots CSV, master game schedule CSV, inventory
+//     capacity xlsx, dynamic rate card xlsx).
+//   * "Enriched" / ETL output types — produced by src/lib/etl.ts.
+//
+// The split exists so the ETL layer is the only place that converts
+// SSRS field names (PascalCase / spaces / "/Repped" suffixes) into
+// app-friendly shapes.
 
-export type SeasonPhase = "PR" | "REG";
-export type DayOfWeek = "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun";
-export type InGameVariant = "In Game-" | "In Game" | "In Game+";
-export type HomeAway = "Home" | "Away";
-export type MatchupTier = "Regional" | "Standard";
-export type Format = "Standard" | "Expanded";
-export type Simulcast = "Exclusive" | "Simulcast";
-export type BroadcastQuarter = "Q1" | "Q2" | "Q3" | "Q4";
+// ------------------------------ Source types ------------------------------
 
-export type InventoryType =
-  | "Pregame"
-  | "In Game"
-  | "In Game+"
-  | "In Game-"
-  | "Postgame"
-  | "Floaters A&B";
+export type SeasonPhase = 'PR' | 'REG';
+export type DayOfWeek = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun';
+export type InGameVariant = 'In Game-' | 'In Game' | 'In Game+';
+export type HomeAway = 'Home' | 'Away';
+export type MatchupTier = 'Regional' | 'Standard';
+export type Format =
+  | 'Standard'
+  | 'Expanded'
+  | 'DH'
+  | 'Expanded DH';
+export type Simulcast = 'Exclusive' | 'Simulcast';
+export type BroadcastQuarter = 'Q1' | 'Q2' | 'Q3' | 'Q4';
 
-export type RateInventoryType = "Pregame" | "In Game" | "Postgame";
-export type RateTier = "Base" | "FL" | "Bump";
+export type InventoryGroup =
+  | 'Pregame'
+  | 'In Game'
+  | 'Postgame'
+  | 'Floaters A&B'
+  | 'Ancillary';
 
-export type LeagueDivision = "Coastal" | "Mountain" | "Heartland" | "Atlantic";
+export type InGameWithVariant =
+  | 'In Game'
+  | 'In Game+'
+  | 'In Game-';
 
-export type ClientCategory =
-  | "QSR"
-  | "Auto"
-  | "Insurance"
-  | "Telco"
-  | "Retail"
-  | "Pharma"
-  | "CPG"
-  | "Travel"
-  | "Finance"
-  | "Gaming"
-  | "Misc";
+export type InventoryGroupWithVariant =
+  | InGameWithVariant
+  | 'Pregame'
+  | 'Postgame'
+  | 'Floaters A&B';
 
-export type LineOfBusiness = "Direct" | "Repped";
+export type RateInventoryType = 'Pregame' | 'In Game' | 'Postgame';
+export type RateTier = 'Base' | 'FL' | 'Bump';
 
-export type PreferredInvType = "Pregame" | "In Game" | "Postgame" | "mixed";
+export type SpotLength = 15 | 30 | 60;
+export type SpotState = 'Placed' | 'Booked';
 
-export type DemoCode =
-  | "HH"
-  | "A18-49"
-  | "A25-54"
-  | "M25-54"
-  | "A35+"
-  | "A21-49";
+export type LineOfBusiness = 'Direct' | 'Repped';
 
-export type PriorityCode = "paid" | "nc" | "adu" | "xadu" | "bonus";
-
-export type SpotState = "Placed" | "Booked";
-
-export type SpotLength = 15 | 30;
-
-export interface Game {
-  game_id: string;
-  air_date: string;
-  day_of_week: DayOfWeek;
-  start_time: string;
-  start_minute_mod_30: number;
-  in_game_variant: InGameVariant;
-  season_phase: SeasonPhase;
-  opponent_id: string;
-  opponent_name: string;
-  home_away: HomeAway;
-  matchup_tier: MatchupTier;
-  format: Format;
-  simulcast: Simulcast;
-  network_partner: string | null;
-  broadcast_month: string;
-  broadcast_year: number;
-  broadcast_qtr: "Q1" | "Q2" | "Q3";
-  week_start: string;
-  series_id: string;
-  series_game_num: 1 | 2 | 3 | 4;
+// 29-column Wide Orbit SSRS export. Column order matters for round-tripping
+// to/from the CSV; see scripts/generator/_csv.ts and src/lib/etl.ts.
+export interface RawSpot {
+  ChannelName: string;
+  AdvertiserName: string;
+  RevenueCode2: string;
+  OrderNumber: number | null;
+  LineNumber: number | null;
+  SpotNumber: number | null;
+  SpotLength: number;            // 15 / 30 / 60 (occasionally other in real data)
+  SpotRate: number;              // gross rate, dollars
+  SpotState: SpotState;
+  PriorityCode: string;          // P-04 / P-08 / P-09 / P-19 / P-20 / P-40 / P-80 / P-90
+  AirDate: string;               // MM/DD/YYYY (source format)
+  AirTime1: string;              // HH:MM:SS (source format)
+  InventoryCodeBooked: string;
+  PathBooked: string;
+  InventoryCodePlaced: string;   // " " when unplaced (per M code)
+  PathPlaced: string;            // " " when unplaced
+  TimePeriod: string;
+  AEFullName: string;
+  ProductCode: string;
+  ParentProductCode: string;
+  DemoCode: string;
+  BookedRating: number;
+  BookedImpressions: number;     // raw (per spot)
+  UnitCode: string;
+  CPP: number | null;
+  TotalEquivSold: number;        // 0.5 / 1.0 / 2.0
+  EffectiveUnitRate: number;
+  UnitAirStatusCode: string;
+  InventoryType: 'BK' | 'NM';    // booked vs no-charge
 }
 
-export interface Opponent {
-  opponent_id: string;
-  name: string;
-  city: string;
-  league_division: LeagueDivision;
-  matchup_tier: MatchupTier;
-  base_demand_multiplier: number;
+// Master Game Schedule columns (matches the 2026 xlsx, output as CSV).
+export interface RawScheduleRow {
+  '#': string;                   // "PRE 1" / "1" / etc.
+  DAY: string;                   // "Saturday"
+  DATE: string;                  // MM/DD/YYYY
+  TIME: string;                  // "12:10pm"
+  OPPONENT: string;              // "vs. Angels" / "at Padres"
+  TV: string;                    // usually "SNLA"
+  'OTHER TV': string;            // simulcast partner or empty
+  NOTES: string;
+  FORMAT: string;                // "ST Away 1A -- 6422" etc.
+  'SQUEEZE PLAY BUG': string;
 }
 
-export interface InventoryCapacity {
-  season_phase: SeasonPhase;
-  inv_type: InventoryType;
-  format: Format;
-  avails: number;
+export interface RawInventoryCapRow {
+  Syscode: number;
+  Team: string;                  // "Sentinels"
+  Type: SeasonPhase;             // "PR" / "REG"
+  Inventory: InventoryGroupWithVariant;
+  Format: Format;
+  Avails: number;
 }
 
-export interface RateCardEntry {
-  season_phase: SeasonPhase;
-  inv_type: RateInventoryType;
-  matchup_tier: MatchupTier;
-  rate_tier: RateTier;
-  rate_cents: number;
+export interface RawRateCardRow {
+  Syscode: number;
+  Net: string;                   // "BSWN"
+  Team: string;                  // "Sentinels"
+  Type: SeasonPhase;
+  Inv: RateInventoryType;
+  Matchup: MatchupTier;
+  Tier: RateTier;
+  Rate: number;                  // gross rate, dollars
 }
 
-export interface Client {
-  client_id: string;
-  name: string;
-  category: ClientCategory;
-  lob: LineOfBusiness;
-  buying_intensity: number;
-  preferred_inv_type: PreferredInvType;
-  preferred_demo: string;
-  preferred_length_mix: { "15": number; "30": number; "60": number };
-  ae_name: string;
-}
+// ------------------------------ ETL output types ------------------------------
 
-export interface Spot {
-  spot_id: string;
-  game_id: string;
-  client_id: string;
-  inv_type: InventoryType;
-  spot_length: SpotLength;
-  spot_length_eq30: number;
-  rate_tier: RateTier;
-  spot_rate_gross_cents: number;
-  spot_rate_net_cents: number;
-  total_eq30: number;
-  priority_code: PriorityCode;
-  demo_code: DemoCode;
-  booked_impressions: number;
-  booked_rating: number;
-  spot_state: SpotState;
-  ae_name: string;
-}
-
-export interface BroadcastDate {
-  date: string;
+// deriveSpots() output — the "Lakers Spot Data 19-22" equivalent.
+export interface EnrichedSpot extends RawSpot {
+  inventory_type_booked: InventoryGroup;
+  inventory_type_placed: string;      // 'In Game' | 'Pregame' | 'Postgame' | 'Ancillary' | SpotState fall-through
+  inventory_type: InventoryGroup;
+  spot_rate_net: number;              // SpotRate * 0.85
+  booked_display_status: 'As Booked' | 'As Placed';
+  post_inv_code: string;
+  post_code: string;
+  post_key: string;                   // post_code + '.' + DemoCode
+  spot_key: string;                   // AirDate + '.' + inventory_type
+  air_date_iso: string;               // YYYY-MM-DD parsed from AirDate
   broadcast_month: string;
   broadcast_year: number;
   broadcast_qtr: BroadcastQuarter;
-  week_start: string;
+  period: '4Q' | '1-2Q' | null;
+  booked_impressions_thousands: number; // BookedImpressions / 1000
+  fl_flag: 'FL' | 'P';
+  hts_flag: 'HTS' | 'Non-HTS';
 }
 
-export interface GameInventoryCell {
-  game_id: string;
-  inv_type: InventoryType;
-  cap: number;
-  effective_cap: number;
-  floater_cap: number;
-  game: Game;
+// deriveSchedule() output — the "Lakers Combined Schedules" equivalent.
+// One row per (game, INV TYPE) so each game emits 3 rows
+// (Pregame / In Game / Postgame).
+export interface EnrichedScheduleRow {
+  '#': string;
+  DAY: string;
+  DATE: string;                       // YYYY-MM-DD
+  START: string;                      // HH:MM 24h
+  OPPONENT: string;
+  TV: string;
+  'OTHER TV': string | null;
+  NOTES: string | null;
+  FORMAT: string;
+  EVENT_PROGRAM: string;              // "Sentinels vs. Angels", with "PR: " prefix for PR
+  TYPE: string;                       // "Sentinels"
+  TYPE2: SeasonPhase;
+  SEASON: string;                     // "26"
+  NET: string;                        // "SNLA"
+  'NET.DATE.TIME': string;
+  Simulcast: Simulcast;
+  Expanded: Format;
+  Matchup: MatchupTier;
+  'INV TYPE': RateInventoryType;
+  '+/-': '+' | '-' | null;
+  'INV TYPE.1': InGameWithVariant | RateInventoryType;
+  'Avails Key': string;
+  broadcast_month: string;
+  broadcast_year: number;
+  broadcast_qtr: BroadcastQuarter;
+  NonSpectrum: 'Spectrum' | 'NonSpectrum';
+  'NS-Ancillary': string;
+  'SPOT KEY': string;
 }
 
-export interface GameRollup {
-  game_id: string;
-  inv_type: InventoryType;
-  cap: number;
-  sold_eq30: number;
-  paid_eq30: number;
-  nc_eq30: number;
-  adu_eq30: number;
-  xadu_eq30: number;
-  bonus_eq30: number;
-  oversell_eq30: number;
-  rate_tier_resolved: RateTier;
-  current_rate_cents: number;
-  gross_rev_cents: number;
-  net_rev_cents: number;
-  eur_cents: number;
-  aur_cents: number;
-  paid_unit_count: number;
-  sellout_pct: number;
-  sellout_pct_with_adu: number;
+// deriveSpotsByClient() output — left outer join of schedule onto spots.
+// Spot fields are namespaced with "spot." prefix to keep the row flat
+// while still mirroring the M chain's naming.
+export interface SpotsByClientRow {
+  // Schedule fields
+  DATE: string;
+  EVENT_PROGRAM: string;
+  TYPE: string;
+  TYPE2: SeasonPhase;
+  SEASON: string;
+  'INV TYPE': RateInventoryType;
+  '+/-': '+' | '-' | null;
+  'INV TYPE.1': InGameWithVariant | RateInventoryType;
+  Matchup: MatchupTier;
+  Expanded: Format;
+  'Avails Key': string;
+  'SPOT KEY': string;
+  broadcast_month: string;
+  broadcast_year: number;
+  broadcast_qtr: BroadcastQuarter;
+
+  // Spot fields (left outer; defaulted to 0/empty when no match)
+  'spot.AdvertiserName': string;
+  'spot.OrderNumber': number;
+  'spot.LineNumber': number;
+  'spot.SpotLength': number;
+  'spot.SpotRate': number;
+  'spot.SpotRate (Net)': number;
+  'spot.SpotState': string;
+  'spot.PriorityCode': string;
+  'spot.AirDate': string;
+  'spot.AEFullName': string;
+  'spot.DemoCode': string;
+  'spot.BookedRating': number;
+  'spot.BookedImpressions': number;
+  'spot.CPP': number | null;
+  'spot.TotalEquivSold': number;
+  'spot.EffectiveUnitRate': number;
+  'spot.UnitAirStatusCode': string;
+  'spot.InventoryType': string;
+  'spot.inventory_type': string;
+  'spot.fl_flag': string;
+  'spot.hts_flag': string;
+
+  // Derived
+  '$0': 'Paid' | '$0';
+  AfterToday: 0 | 1;
 }
 
-export interface AURSummaryRow {
-  date: string;
-  season_phase: SeasonPhase;
-  inv_type: InventoryType;
+// deriveInventory() output — per-game-per-inv-type rollup.
+// Modeled on M Inventory (Exc $0) / Inventory (Inc $0). Inc-$0 includes
+// $0-rate spots in the grouping; Exc-$0 filters them out.
+export interface InventoryRollupRow {
+  DATE: string;                       // YYYY-MM-DD
+  EVENT_PROGRAM: string;
+  TYPE2: SeasonPhase;
+  'INV TYPE': InventoryGroupWithVariant | 'Floaters A&B';
+  'Avails Key': string;
+  broadcast_month: string;
+  broadcast_year: number;
+  SEASON: string;
+  Matchup: MatchupTier;
+  Cap: number;                        // Avails (or 6 for Floaters A&B)
+  Sold: number;                       // sum of TotalEquivSold (or FL Sold for Floaters A&B)
+  Sellout: number;                    // Sold / Cap
+  Oversell: number;                   // M sign: Avails - Sold
+  'Rate Tier': RateTier;
+  'Rate Key': string;
+  Rate: number;                       // looked up from rate_card
+  'Start of Week': string;            // YYYY-MM-DD (Monday)
+  'Gross Rev': number;                // 0 for Floaters A&B
+  'Net Rev': number;                  // 0 for Floaters A&B
+  EUR: number;                        // mean(EffectiveUnitRate) over paid spots
+  AUR: number;                        // mean(SpotRate) over paid spots
+  AfterToday: 0 | 1;
+}
 
-  // Direct LOB
-  direct_paid_eq30: number;
-  direct_nc_eq30: number;
-  direct_adu_eq30: number;
-  direct_xadu_eq30: number;
-  direct_bonus_eq30: number;
-  direct_paid_gross_cents: number;
-  direct_paid_net_cents: number;
+// deriveAurSummary() output — per-(date, inv-type) wide-form pivot.
+// One column per (LOB Group × Spot Group × metric). Empty intersections
+// resolve to 0, never null/undefined.
+export interface AurSummaryRow {
+  SEASON: string;
+  broadcast_year: number;
+  broadcast_qtr: BroadcastQuarter;
+  broadcast_month: string;
+  TYPE2: SeasonPhase;
+  DATE: string;                       // YYYY-MM-DD
+  'INV TYPE': InGameWithVariant | RateInventoryType;
+  'Primary Avails Key': string;
 
-  // Repped LOB
-  repped_paid_eq30: number;
-  repped_nc_eq30: number;
-  repped_adu_eq30: number;
-  repped_xadu_eq30: number;
-  repped_bonus_eq30: number;
-  repped_paid_gross_cents: number;
-  repped_paid_net_cents: number;
+  // HTS LOB
+  'HTS Paid.EQ30': number;
+  'HTS Paid.Gross REV': number;
+  'HTS Paid.Net REV': number;
+  'HTS NC.EQ30': number;
+  'HTS ADU.EQ30': number;
+  'HTS Cross Property ADU.EQ30': number;
+  'HTS Bonus.EQ30': number;
+
+  // Non-HTS LOB
+  'Non-HTS Paid.EQ30': number;
+  'Non-HTS Paid.Gross REV': number;
+  'Non-HTS Paid.Net REV': number;
+  'Non-HTS NC.EQ30': number;
+  'Non-HTS ADU.EQ30': number;
+  'Non-HTS Cross Property ADU.EQ30': number;
+  'Non-HTS Bonus.EQ30': number;
 
   // Totals
-  total_paid_eq30: number;
-  total_paid_unit_count: number;
-  total_paid_net_cents: number;
-  cap: number;
-  eur_cents: number;
-  aur_cents: number;
-  sellout_pct: number;
-  sellout_pct_with_adu: number;
+  'Total Paid.EQ30': number;
+  'Total Paid.Gross REV': number;
+  'Total Paid.Net REV': number;
+  'Total NC.EQ30': number;
+  'Total ADU.EQ30': number;
+  'Total Cross Property ADU.EQ30': number;
+  'Total Bonus.EQ30': number;
+  'HTS Total.EQ30': number;
+  'Non-HTS Total.EQ30': number;
+  'Total Total.EQ30': number;
+
+  Avails: number;
+  Sellout: number;
+  'Sellout + ADU': number;
 }
