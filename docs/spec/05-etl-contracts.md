@@ -746,6 +746,13 @@ accordingly.
 Volume-weighted, sales-facing EUR. Surfaces in the Inventory view's
 "EUR (Gross)" column and in the Rates view. Stored in integer cents.
 
+**Scope: paid spots only.** A "paid spot" is a row whose `$0` column
+resolves to `"Paid"` — equivalently, `spot.SpotRate > 0`. NC, ADU,
+xADU, and Bonus spots are excluded from **both** the numerator and
+the denominator. EUR is a yield metric (realized rate per unit of
+inventory sold), not a capacity-utilization metric; including
+non-revenue eq30 in the denominator would dilute it.
+
 ```ts
 output
   .filter(r => r['INV TYPE'] !== 'Floaters A&B')
@@ -772,6 +779,9 @@ the spec definition and what the views display. Rationale anchored at M
 
 Volume-weighted, AUR-facing EUR. Surfaces in the AUR Report view's
 "EUR (Net)" column. Stored in integer cents.
+
+**Scope: paid spots only**, same as I11. NC, ADU, xADU, and Bonus
+spots are excluded from both numerator and denominator.
 
 ```ts
 output
@@ -836,6 +846,10 @@ may join on the tuple instead of the literal string.
 Volume-weighted in numerator, count-based in denominator. Length-
 agnostic — :15s drag the value down, :60s push it up. Surfaces in the
 AUR Report view alongside `eur_net_cents`. Stored in integer cents.
+
+**Scope: paid spots only**, same as I11/I12. NC, ADU, xADU, and Bonus
+spots are excluded from both numerator and denominator (the count is
+of paid spots, not of all spots).
 
 ```ts
 output

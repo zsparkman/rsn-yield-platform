@@ -217,11 +217,11 @@ Three volume-weighted unit-rate metrics, all stored as integer cents
 on every `InventoryRollupRow`:
 
 - **`eur_gross_cents`** — sum of `gross_rev_cents` divided by sum of
-  `total_eq30` over paid spots in the row's aggregation window. The
-  sales-facing EUR. Surfaces in the **Inventory view** as the
-  "EUR (Gross)" column and in the **Rates view**.
+  `total_eq30`, **over paid spots only**. The sales-facing EUR.
+  Surfaces in the **Inventory view** as the "EUR (Gross)" column and
+  in the **Rates view**.
 - **`eur_net_cents`** — sum of `net_rev_cents` divided by sum of
-  `total_eq30` over paid spots. The yield/finance-facing EUR.
+  `total_eq30`, **over paid spots only**. The yield/finance-facing EUR.
   Surfaces in the **AUR Report view** as the "EUR (Net)" column.
 - **`aur_cents`** — sum of `net_rev_cents` divided by `count(paid_spots)`,
   length-agnostic. Surfaces in the **AUR Report view** alongside
@@ -235,6 +235,17 @@ that appears in the M source is a Power Query convenience that
 produces statistically incorrect values for non-uniform aggregation
 windows; the ETL replaces it with volume-weighted formulas across the
 board.
+
+**Scope.** All three metrics are computed **over paid spots only** —
+spots whose `$0` column resolves to `"Paid"` (equivalently,
+`SpotRate > 0`). NC, ADU, xADU, and Bonus spots are excluded from
+both numerator and denominator. These are yield metrics (realized
+rate per unit of inventory sold), not capacity-utilization metrics;
+including non-revenue eq30 in the denominator would dilute the value
+with non-revenue inventory and produce falsely low yields.
+NC/ADU/xADU/Bonus EQ30 is tracked in their own columns on
+`AurSummaryRow` and contributes to `Sellout` / `Sellout + ADU`,
+which are the capacity-utilization metrics.
 
 For Floaters A&B rows all three resolve to 0 (no double-counting —
 revenue lives on the In Game row).
@@ -269,9 +280,12 @@ metrics off this row, both in integer cents:
 
 - **`eur_net_cents`** = `Total Paid.Net REV / Total Paid.EQ30`. The
   AUR-Report-facing EUR. Same definition as `InventoryRollupRow.eur_net_cents`,
-  recomputed at this aggregation level.
+  recomputed at this aggregation level. Both numerator and
+  denominator are paid-only — `Total Paid.*` already excludes
+  NC/ADU/xADU/Bonus, so this is correct by construction.
 - **`aur_cents`** = `Total Paid.Net REV / count(paid spots)`. Length-
-  agnostic per-spot rate.
+  agnostic per-spot rate. Denominator is the count of Paid-group
+  spots only; non-paid spots do not enter.
 
 ## File size targets
 

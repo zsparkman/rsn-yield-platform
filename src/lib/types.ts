@@ -249,6 +249,10 @@ export interface InventoryRollupRow {
   'Gross Rev': number;                // dollars; 0 for Floaters A&B
   'Net Rev': number;                  // dollars; 0 for Floaters A&B
   // Three volume-weighted unit-rate metrics, all in integer cents.
+  // ALL THREE COMPUTED OVER PAID SPOTS ONLY (spot.SpotRate > 0).
+  // NC, ADU, xADU, and Bonus spots are excluded from both numerator
+  // and denominator — these are yield metrics (realized rate per unit
+  // of inventory sold), not capacity-utilization metrics.
   // - eur_gross_cents: sum(gross_rev) / sum(total_eq30) — sales-facing.
   //   Used by the Inventory and Rates views ("EUR (Gross)" column).
   // - eur_net_cents:   sum(net_rev)   / sum(total_eq30) — yield/finance-facing.
