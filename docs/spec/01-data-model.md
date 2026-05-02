@@ -132,10 +132,10 @@ interface Client {
   category: 'QSR' | 'Auto' | 'Insurance' | 'Telco' | 'Retail' |
             'Pharma' | 'CPG' | 'Travel' | 'Finance' | 'Gaming' | 'Misc';
   lob: 'Direct' | 'Repped';
-  buying_intensity: number;       // 0.1 to 1.0; how often this client appears in games
+  buying_intensity: number;       // relative sampling weight; long tail ~0.45, top tier ~10.0
   preferred_inv_type: 'Pregame' | 'In Game' | 'Postgame' | 'mixed';
   preferred_demo: string;          // 'HH', 'A25-54', etc.
-  preferred_length_mix: { '15': number; '30': number; '60': number };  // sums to 1.0
+  preferred_length_mix: { '15': number; '30': number };  // sums to 1.0
   ae_name: string;
 }
 ```
@@ -226,11 +226,14 @@ interface GameRollup {
 }
 ```
 
-Rate tier resolution rule (mirrors the reference query logic):
+Rate tier resolution rule (mirrors the reference query logic). Recall
+`oversell_eq30 = sold - cap`, so positive oversell means we are *over*
+the cap and into the floater band:
 
-- In Game with oversell_eq30 ≥ 0 → Base
-- In Game with -6 ≤ oversell_eq30 < 0 → FL
-- In Game with oversell_eq30 < -6 → Bump
+- In Game with oversell_eq30 ≤ 0 → Base
+- In Game with 0 < oversell_eq30 ≤ 6 → FL
+- In Game with oversell_eq30 > 6 → Bump
+- Floaters A&B → always FL (priced at the floater rack rate)
 - Pregame/Postgame with sold ≤ cap → Base
 - Pregame/Postgame with sold > cap → Bump
 
