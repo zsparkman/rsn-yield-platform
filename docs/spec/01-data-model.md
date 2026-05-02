@@ -132,7 +132,7 @@ interface Client {
   category: 'QSR' | 'Auto' | 'Insurance' | 'Telco' | 'Retail' |
             'Pharma' | 'CPG' | 'Travel' | 'Finance' | 'Gaming' | 'Misc';
   lob: 'Direct' | 'Repped';
-  buying_intensity: number;       // relative sampling weight; long tail ~0.45, top tier ~10.0
+  buying_intensity: number;       // relative weight ≥ 0; used as a sampling weight, no upper bound enforced
   preferred_inv_type: 'Pregame' | 'In Game' | 'Postgame' | 'mixed';
   preferred_demo: string;          // 'HH', 'A25-54', etc.
   preferred_length_mix: { '15': number; '30': number };  // sums to 1.0

@@ -219,12 +219,24 @@ While remaining_eq30 > 0:
   - Otherwise Base
 - Look up gross_rate from rate_card
 - Apply spot-length multiplier: :15 = 0.55×, :30 = 1.0×
-- Apply sold-rate discount (multiplier ~0.85) with Gaussian noise
-  σ=0.05, clipped to [0.72, 1.0]. The discount accounts for sold rates
-  running below rack; without it computed EUR exceeds the §5 targets
-  even when every spot resolves to Base tier.
+- Apply rack-to-sold discount (see "Rate distribution" below)
 - Compute net_rate = gross × 0.85
 - Decrement remaining_eq30 by spot_length_eq30
+
+#### Rate distribution
+
+Sold rates run below rack rates in real ad sales. Each spot's gross rate
+is scaled by a discount multiplier sampled from a Gaussian centred on
+the rack-to-sold ratio with a small spread:
+
+```
+discount = clip(Gaussian(μ=0.85, σ=0.05), 0.72, 1.0)
+gross_rate_cents = rate_card_lookup × length_multiplier × discount
+```
+
+Applied to the rate-card lookup before the spot's gross rate is set.
+Without this, computed EUR exceeds the §5 targets even when every spot
+resolves to Base tier.
 
 ### Step 4: Add NC / ADU / xADU / Bonus spots
 
