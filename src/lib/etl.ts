@@ -603,12 +603,13 @@ interface GroupedAgg {
   season: string;
   matchup: MatchupTier;
   expanded: Format;
-  sold: number;
-  grossRev: number;
-  netRev: number;
-  eurValues: number[];        // for List.Average
-  aurValues: number[];        // for List.Average
-  hasMatchedSpots: boolean;
+  sold: number;              // sum of TotalEquivSold across all spots (paid + non-paid)
+  grossRev: number;          // sum of SpotRate (gross dollars; non-paid contribute 0)
+  netRev: number;            // sum of SpotRate (Net) (net dollars)
+  paidEq30: number;          // sum of TotalEquivSold for SpotRate > 0
+  paidGross: number;         // sum of SpotRate for SpotRate > 0
+  paidNet: number;           // sum of SpotRate (Net) for SpotRate > 0
+  paidCount: number;         // count of paid spots
 }
 
 function aggregateForInventory(
@@ -637,26 +638,23 @@ function aggregateForInventory(
       sold: 0,
       grossRev: 0,
       netRev: 0,
-      eurValues: [],
-      aurValues: [],
-      hasMatchedSpots: false,
+      paidEq30: 0,
+      paidGross: 0,
+      paidNet: 0,
+      paidCount: 0,
     };
     g.sold += r["spot.TotalEquivSold"];
     g.grossRev += r["spot.SpotRate"];
     g.netRev += r["spot.SpotRate (Net)"];
     if (r["spot.SpotRate"] > 0) {
-      g.eurValues.push(r["spot.EffectiveUnitRate"]);
-      g.aurValues.push(r["spot.SpotRate"]);
-      g.hasMatchedSpots = true;
+      g.paidEq30 += r["spot.TotalEquivSold"];
+      g.paidGross += r["spot.SpotRate"];
+      g.paidNet += r["spot.SpotRate (Net)"];
+      g.paidCount += 1;
     }
     grouped.set(key, g);
   }
   return grouped;
-}
-
-function mean(xs: number[]): number {
-  if (!xs.length) return 0;
-  return xs.reduce((a, b) => a + b, 0) / xs.length;
 }
 
 export function deriveInventory(
@@ -713,8 +711,17 @@ export function deriveInventory(
       const isFloater = v.inv === "Floaters A&B";
       const grossRev = isFloater ? 0 : g.grossRev;
       const netRev = isFloater ? 0 : g.netRev;
-      const eur = isFloater ? 0 : mean(g.eurValues);
-      const aur = isFloater ? 0 : mean(g.aurValues);
+      // Volume-weighted unit-rate metrics. All in integer cents.
+      // For Floaters A&B all three resolve to 0 (revenue lives on the In Game row).
+      const eur_gross_cents = isFloater || g.paidEq30 <= 0
+        ? 0
+        : Math.round((g.paidGross / g.paidEq30) * 100);
+      const eur_net_cents = isFloater || g.paidEq30 <= 0
+        ? 0
+        : Math.round((g.paidNet / g.paidEq30) * 100);
+      const aur_cents = isFloater || g.paidCount <= 0
+        ? 0
+        : Math.round((g.paidNet / g.paidCount) * 100);
 
       const dateIso = g.date;
       const startWeek = startOfWeek(dateIso);
@@ -740,8 +747,9 @@ export function deriveInventory(
         "Start of Week": startWeek,
         "Gross Rev": Math.round(grossRev * 100) / 100,
         "Net Rev": Math.round(netRev * 100) / 100,
-        EUR: Math.round(eur * 100) / 100,
-        AUR: Math.round(aur * 100) / 100,
+        eur_gross_cents,
+        eur_net_cents,
+        aur_cents,
         AfterToday: dateMillis > today ? 1 : 0,
       });
     }
@@ -783,15 +791,15 @@ interface AurBucket {
   expanded: Format;
   primary_avails_key: string;
   // metric buckets
-  hts: Record<SpotGroup, { eq30: number; gross: number; net: number }>;
-  nonHts: Record<SpotGroup, { eq30: number; gross: number; net: number }>;
+  hts: Record<SpotGroup, { eq30: number; gross: number; net: number; count: number }>;
+  nonHts: Record<SpotGroup, { eq30: number; gross: number; net: number; count: number }>;
 }
 
 function emptyMetric() {
-  return { eq30: 0, gross: 0, net: 0 };
+  return { eq30: 0, gross: 0, net: 0, count: 0 };
 }
 
-function emptySpotGroupMap(): Record<SpotGroup, { eq30: number; gross: number; net: number }> {
+function emptySpotGroupMap(): Record<SpotGroup, { eq30: number; gross: number; net: number; count: number }> {
   return {
     Paid: emptyMetric(),
     NC: emptyMetric(),
@@ -836,6 +844,7 @@ export function deriveAurSummary(
     bucket.eq30 += r["spot.TotalEquivSold"];
     bucket.gross += r["spot.SpotRate"];
     bucket.net += r["spot.SpotRate (Net)"];
+    bucket.count += 1;
   }
 
   const out: AurSummaryRow[] = [];
@@ -853,8 +862,12 @@ export function deriveAurSummary(
     const totalBonus = b.hts.Bonus.eq30 + b.nonHts.Bonus.eq30;
     const totalPaidGross = b.hts.Paid.gross + b.nonHts.Paid.gross;
     const totalPaidNet = b.hts.Paid.net + b.nonHts.Paid.net;
+    const totalPaidCount = b.hts.Paid.count + b.nonHts.Paid.count;
     const sellout = avails > 0 ? (totalPaid + totalNC) / avails : 0;
     const selloutAdu = avails > 0 ? (totalPaid + totalNC + totalADU + totalXADU) / avails : 0;
+    // Volume-weighted yield metrics for the AUR Report view (integer cents).
+    const eur_net_cents = totalPaid > 0 ? Math.round((totalPaidNet / totalPaid) * 100) : 0;
+    const aur_cents = totalPaidCount > 0 ? Math.round((totalPaidNet / totalPaidCount) * 100) : 0;
     out.push({
       SEASON: b.season,
       broadcast_year: b.broadcast_year,
@@ -891,6 +904,8 @@ export function deriveAurSummary(
       Avails: avails,
       Sellout: Math.round(sellout * 10000) / 10000,
       "Sellout + ADU": Math.round(selloutAdu * 10000) / 10000,
+      eur_net_cents,
+      aur_cents,
     });
   }
   // Stable order by date / inv type.

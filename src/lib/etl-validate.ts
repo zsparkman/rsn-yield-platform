@@ -19,6 +19,31 @@ import type {
 } from "./types";
 import type { EtlInputs, EtlOutputs } from "./etl";
 
+// Helper: aggregate the joined `SpotsByClientRow` rows that match a given
+// inventory rollup row's grouping key. Used by I11–I13 to assert that the
+// stored unit-rate cents match the volume-weighted formula they claim to
+// implement.
+function paidSpotsForCell(
+  spotsByClient: SpotsByClientRow[],
+  cell: InventoryRollupRow,
+): { sumGross: number; sumNet: number; sumEq30: number; count: number } {
+  let sumGross = 0;
+  let sumNet = 0;
+  let sumEq30 = 0;
+  let count = 0;
+  for (const r of spotsByClient) {
+    if (r.DATE !== cell.DATE) continue;
+    if (r.EVENT_PROGRAM !== cell.EVENT_PROGRAM) continue;
+    if (r["INV TYPE.1"] !== cell["INV TYPE"]) continue;
+    if (r["spot.SpotRate"] <= 0) continue;
+    sumGross += r["spot.SpotRate"];
+    sumNet += r["spot.SpotRate (Net)"];
+    sumEq30 += r["spot.TotalEquivSold"];
+    count += 1;
+  }
+  return { sumGross, sumNet, sumEq30, count };
+}
+
 export interface ContractResult {
   id: string;
   summary: string;
@@ -30,7 +55,7 @@ export interface ContractResult {
 type SpotsContract = (input: RawSpot[], output: EnrichedSpot[]) => ContractResult;
 type ScheduleContract = (output: EnrichedScheduleRow[]) => ContractResult;
 type SbcContract = (output: SpotsByClientRow[], schedule: EnrichedScheduleRow[]) => ContractResult;
-type InventoryContract = (output: InventoryRollupRow[]) => ContractResult;
+type InventoryContract = (output: InventoryRollupRow[], spotsByClient: SpotsByClientRow[]) => ContractResult;
 type AurContract = (output: AurSummaryRow[]) => ContractResult;
 
 // ---------- helpers ----------
@@ -464,7 +489,8 @@ const inventoryContracts: Array<{ id: string; summary: string; check: InventoryC
     check: (output) => {
       const bad = output.find((r) =>
         r["INV TYPE"] === "Floaters A&B" &&
-        (r["Gross Rev"] !== 0 || r["Net Rev"] !== 0 || r.EUR !== 0 || r.AUR !== 0)
+        (r["Gross Rev"] !== 0 || r["Net Rev"] !== 0 ||
+         r.eur_gross_cents !== 0 || r.eur_net_cents !== 0 || r.aur_cents !== 0)
       );
       return bad ? fail("I9", "Floaters A&B rows have zeroed Gross/Net/EUR/AUR", JSON.stringify(bad), bad) : pass("I9", "Floaters A&B rows have zeroed Gross/Net/EUR/AUR");
     },
@@ -480,6 +506,41 @@ const inventoryContracts: Array<{ id: string; summary: string; check: InventoryC
       );
       return bad ? fail("I10", "Net Rev ≈ Gross Rev × 0.85 for non-Floater paid rows",
         `gross=${bad["Gross Rev"]} net=${bad["Net Rev"]}`, bad) : pass("I10", "Net Rev ≈ Gross Rev × 0.85 for non-Floater paid rows");
+    },
+  },
+  {
+    id: "I11",
+    summary: "eur_gross_cents = sum(gross_rev) / sum(total_eq30) over paid spots (volume-weighted)",
+    check: (output, spotsByClient) => {
+      for (const r of output) {
+        if (r["INV TYPE"] === "Floaters A&B") continue;
+        const a = paidSpotsForCell(spotsByClient, r);
+        const expected = a.sumEq30 > 0 ? Math.round((a.sumGross / a.sumEq30) * 100) : 0;
+        // Allow 1¢ tolerance for rounding drift on the dollar→cent conversion.
+        if (Math.abs(r.eur_gross_cents - expected) > 1) {
+          return fail("I11", "eur_gross_cents formula",
+            `cell ${r.DATE}/${r["INV TYPE"]}: stored=${r.eur_gross_cents} expected=${expected}`,
+            r);
+        }
+      }
+      return pass("I11", "eur_gross_cents formula");
+    },
+  },
+  {
+    id: "I12",
+    summary: "eur_net_cents = sum(net_rev) / sum(total_eq30) over paid spots (volume-weighted)",
+    check: (output, spotsByClient) => {
+      for (const r of output) {
+        if (r["INV TYPE"] === "Floaters A&B") continue;
+        const a = paidSpotsForCell(spotsByClient, r);
+        const expected = a.sumEq30 > 0 ? Math.round((a.sumNet / a.sumEq30) * 100) : 0;
+        if (Math.abs(r.eur_net_cents - expected) > 1) {
+          return fail("I12", "eur_net_cents formula",
+            `cell ${r.DATE}/${r["INV TYPE"]}: stored=${r.eur_net_cents} expected=${expected}`,
+            r);
+        }
+      }
+      return pass("I12", "eur_net_cents formula");
     },
   },
   {
@@ -506,6 +567,23 @@ const inventoryContracts: Array<{ id: string; summary: string; check: InventoryC
         r["Rate Key"] !== [r.TYPE2, r["INV TYPE"], r.Matchup, r["Rate Tier"]].join(".")
       );
       return bad ? fail("I15", "Rate Key = TYPE2.INV TYPE.Matchup.Rate Tier", `got ${bad["Rate Key"]}`, bad) : pass("I15", "Rate Key = TYPE2.INV TYPE.Matchup.Rate Tier");
+    },
+  },
+  {
+    id: "I16",
+    summary: "aur_cents = sum(net_rev) / count(paid_spots) (length-agnostic)",
+    check: (output, spotsByClient) => {
+      for (const r of output) {
+        if (r["INV TYPE"] === "Floaters A&B") continue;
+        const a = paidSpotsForCell(spotsByClient, r);
+        const expected = a.count > 0 ? Math.round((a.sumNet / a.count) * 100) : 0;
+        if (Math.abs(r.aur_cents - expected) > 1) {
+          return fail("I16", "aur_cents formula",
+            `cell ${r.DATE}/${r["INV TYPE"]}: stored=${r.aur_cents} expected=${expected}`,
+            r);
+        }
+      }
+      return pass("I16", "aur_cents formula");
     },
   },
 ];
@@ -678,7 +756,7 @@ export function runContracts(inputs: EtlInputs, outputs: EtlOutputs): ContractsR
   for (const c of scheduleContracts) results.push(c.check(outputs.schedule));
   for (const c of sbcContracts) results.push(c.check(outputs.spotsByClient, outputs.schedule));
   for (const c of inventoryContracts) {
-    results.push(c.check(outputs.inventoryExc0));
+    results.push(c.check(outputs.inventoryExc0, outputs.spotsByClient));
   }
   for (const c of aurContracts) results.push(c.check(outputs.aurSummary));
   return { results, allPassed: results.every((r) => r.passed) };

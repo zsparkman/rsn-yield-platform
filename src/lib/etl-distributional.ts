@@ -48,6 +48,12 @@ function sumOver<T>(xs: T[], f: (x: T) => number): number {
   return xs.reduce((s, x) => s + f(x), 0);
 }
 
+function volumeWeightedEUR(rows: InventoryRollupRow[]): number {
+  const net = sumOver(rows, (r) => r["Net Rev"]);
+  const eq30 = sumOver(rows, (r) => r.Sold);
+  return eq30 > 0 ? net / eq30 : 0;
+}
+
 export function runDistributional(
   schedule: EnrichedScheduleRow[],
   spots: EnrichedSpot[],
@@ -118,39 +124,20 @@ export function runDistributional(
   results.push(close("% In Game cells sold 0-20% over", within20 / total, 0.50, 0.05, pct));
   results.push(close("% In Game cells sold > 20% over", over20 / total, 0.20, 0.05, pct));
 
-  // Mean EUR REG In Game Standard / Regional. Spec definition:
-  // EUR = sum(net_rev) / sum(paid_eq30) — volume-weighted, NOT the per-row
-  // mean stored on InventoryRollupRow.EUR (which is mean of per-spot
-  // EffectiveUnitRate per the M chain — kept for ETL fidelity).
-  // Group spots by airDate × inv_type and use the schedule rows to
-  // attribute matchup tier (synthetic spots don't carry opponent in their path).
-  const matchupByDateAndInv = new Map<string, "Regional" | "Standard">();
-  const phaseByDate = new Map<string, "PR" | "REG">();
-  for (const sched of schedule) {
-    const k = `${sched.DATE}|${sched["INV TYPE"]}`;
-    matchupByDateAndInv.set(k, sched.Matchup);
-    phaseByDate.set(sched.DATE, sched.TYPE2);
-  }
-  const paidSpots = spots.filter((s) => s.SpotRate > 0);
-  const regInGameStandardSpots = paidSpots.filter((s) => {
-    if (phaseByDate.get(s.air_date_iso) !== "REG") return false;
-    if (s.inventory_type !== "In Game") return false;
-    return matchupByDateAndInv.get(`${s.air_date_iso}|${s.inventory_type}`) === "Standard";
-  });
-  const regInGameRegionalSpots = paidSpots.filter((s) => {
-    if (phaseByDate.get(s.air_date_iso) !== "REG") return false;
-    if (s.inventory_type !== "In Game") return false;
-    return matchupByDateAndInv.get(`${s.air_date_iso}|${s.inventory_type}`) === "Regional";
-  });
-  const eurStd = sumOver(regInGameStandardSpots, (s) => s.spot_rate_net) /
-    Math.max(1, sumOver(regInGameStandardSpots, (s) => s.TotalEquivSold));
-  const eurReg = sumOver(regInGameRegionalSpots, (s) => s.spot_rate_net) /
-    Math.max(1, sumOver(regInGameRegionalSpots, (s) => s.TotalEquivSold));
+  // Mean EUR REG In Game Standard / Regional — the AUR-Report-facing EUR
+  // (spec definition: sum(net_rev) / sum(paid_eq30)). Computed across all
+  // paid spots in the slice, volume-weighted.
+  const regInGameRows = inGameInv.filter((r) => r.TYPE2 === "REG");
+  const stdRows = regInGameRows.filter((r) => r.Matchup === "Standard");
+  const regRows = regInGameRows.filter((r) => r.Matchup === "Regional");
+  const eurStd = volumeWeightedEUR(stdRows);
+  const eurReg = volumeWeightedEUR(regRows);
   results.push(inRange("EUR REG In Game Standard", eurStd, 7500, 9500));
   results.push(inRange("EUR REG In Game Regional", eurReg, 11000, 14000));
 
-  // AUR vs EUR delta in Postgame, using the spec definitions:
-  // EUR = sum(net) / sum(eq30), AUR = sum(net) / count
+  // AUR vs EUR delta in Postgame. Uses the spec definitions:
+  // EUR = sum(net) / sum(eq30); AUR = sum(net) / count(paid_spots).
+  const paidSpots = spots.filter((s) => s.SpotRate > 0);
   const postSpots = paidSpots.filter((s) => s.inventory_type === "Postgame");
   const postEUR = sumOver(postSpots, (s) => s.spot_rate_net) /
     Math.max(1, sumOver(postSpots, (s) => s.TotalEquivSold));

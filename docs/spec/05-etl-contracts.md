@@ -723,7 +723,7 @@ output
   .filter(r => r['INV TYPE'] === 'Floaters A&B')
   .every(r =>
     r['Gross Rev'] === 0 && r['Net Rev'] === 0 &&
-    r.EUR === 0 && r.AUR === 0)
+    r.eur_gross_cents === 0 && r.eur_net_cents === 0 && r.aur_cents === 0)
 ```
 
 Anchored at M `#"Added Conditional Column"` through `#"Added
@@ -741,7 +741,10 @@ output
 Aggregation may introduce up to ~$1 of float drift; tolerance set
 accordingly.
 
-#### I11. EUR = mean of joined paid spots' EffectiveUnitRate
+#### I11. eur_gross_cents = sum(gross_rev) / sum(total_eq30) over paid spots
+
+Volume-weighted, sales-facing EUR. Surfaces in the Inventory view's
+"EUR (Gross)" column and in the Rates view. Stored in integer cents.
 
 ```ts
 output
@@ -749,19 +752,26 @@ output
   .every(r => {
     const paid = spotsByClient.filter(s =>
       s.DATE === r.DATE && s['EVENT/PROGRAM'] === r['EVENT/PROGRAM'] &&
-      s['INV TYPE'] === r['INV TYPE'] &&
-      s['Lakers Spot Data 19-22.SpotRate'] > 0);
-    if (paid.length === 0) return r.EUR === 0;
-    const expected = mean(paid, s => s['Lakers Spot Data 19-22.EffectiveUnitRate']);
-    return approxEq(r.EUR, expected, 1.0);
+      s['INV TYPE.1'] === r['INV TYPE'] &&
+      s['spot.SpotRate'] > 0);
+    const sumGross = sum(paid, s => s['spot.SpotRate']);
+    const sumEq30 = sum(paid, s => s['spot.TotalEquivSold']);
+    const expected = sumEq30 > 0 ? Math.round(sumGross / sumEq30 * 100) : 0;
+    return Math.abs(r.eur_gross_cents - expected) <= 1;
   })
 ```
 
-Anchored at M `#"Grouped Rows"` aggregator `List.Average`
-(EffectiveUnitRate) (line 260). Note the M defines EUR as a simple
-average of the per-spot EffectiveUnitRate, NOT as Net Rev / Paid eq30.
+This **replaces** the prior I11 contract (M-style `mean(EffectiveUnitRate)`).
+The mean-of-means form double-weights low-volume cells and is statistically
+incorrect for non-uniform aggregation windows; the volume-weighted form is
+the spec definition and what the views display. Rationale anchored at M
+`#"Grouped Rows"` (line 260) but corrected to use sum/sum rather than
+`List.Average` of per-spot EUR.
 
-#### I12. AUR = mean of joined paid spots' SpotRate
+#### I12. eur_net_cents = sum(net_rev) / sum(total_eq30) over paid spots
+
+Volume-weighted, AUR-facing EUR. Surfaces in the AUR Report view's
+"EUR (Net)" column. Stored in integer cents.
 
 ```ts
 output
@@ -769,17 +779,22 @@ output
   .every(r => {
     const paid = spotsByClient.filter(s =>
       s.DATE === r.DATE && s['EVENT/PROGRAM'] === r['EVENT/PROGRAM'] &&
-      s['INV TYPE'] === r['INV TYPE'] &&
-      s['Lakers Spot Data 19-22.SpotRate'] > 0);
-    if (paid.length === 0) return r.AUR === 0;
-    const expected = mean(paid, s => s['Lakers Spot Data 19-22.SpotRate']);
-    return approxEq(r.AUR, expected, 1.0);
+      s['INV TYPE.1'] === r['INV TYPE'] &&
+      s['spot.SpotRate'] > 0);
+    const sumNet = sum(paid, s => s['spot.SpotRate (Net)']);
+    const sumEq30 = sum(paid, s => s['spot.TotalEquivSold']);
+    const expected = sumEq30 > 0 ? Math.round(sumNet / sumEq30 * 100) : 0;
+    return Math.abs(r.eur_net_cents - expected) <= 1;
   })
 ```
 
-Anchored at M `#"Grouped Rows"` aggregator `List.Average`
-(SpotRate) (line 260). M defines AUR as a simple average of the
-per-spot SpotRate, NOT as Net Rev / Paid units.
+This **replaces** the prior I12 contract (M-style `mean(SpotRate)`,
+which was actually documenting a gross-based unit-rate metric of
+the same broken mean-of-means shape). The two EUR variants —
+gross and net — are maintained explicitly because sales leadership
+(Inventory / Rates views) and yield/finance leadership (AUR Report)
+need different views of the same data; the M code maintains both
+deliberately.
 
 #### I13. Inc-$0 row count >= Exc-$0 row count
 
@@ -815,6 +830,32 @@ output.every(r =>
 
 Anchored at M `#"Inserted Merged Column"` (line 277). Implementation
 may join on the tuple instead of the literal string.
+
+#### I16. aur_cents = sum(net_rev) / count(paid_spots) over paid spots
+
+Volume-weighted in numerator, count-based in denominator. Length-
+agnostic — :15s drag the value down, :60s push it up. Surfaces in the
+AUR Report view alongside `eur_net_cents`. Stored in integer cents.
+
+```ts
+output
+  .filter(r => r['INV TYPE'] !== 'Floaters A&B')
+  .every(r => {
+    const paid = spotsByClient.filter(s =>
+      s.DATE === r.DATE && s['EVENT/PROGRAM'] === r['EVENT/PROGRAM'] &&
+      s['INV TYPE.1'] === r['INV TYPE'] &&
+      s['spot.SpotRate'] > 0);
+    const sumNet = sum(paid, s => s['spot.SpotRate (Net)']);
+    const expected = paid.length > 0 ? Math.round(sumNet / paid.length * 100) : 0;
+    return Math.abs(r.aur_cents - expected) <= 1;
+  })
+```
+
+The M chain's `List.Average(SpotRate)` was a statistically broken
+proxy for this: per-cell mean-of-spot-rates is sensitive to row count
+in the joined table (which depends on whether $0 rows are excluded
+during aggregation), but `sum(net) / count(paid)` is invariant. The
+volume-weighted form is what the AUR Report actually wants.
 
 ---
 

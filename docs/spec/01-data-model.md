@@ -213,11 +213,31 @@ Rate tier (M sign convention `Oversell = Avails - Sold`):
 - Pregame / Postgame with `Avail > 0` → `Base`
 - Pregame / Postgame else → `Bump`
 
-EUR and AUR per the M chain: `EUR = mean(EffectiveUnitRate)` and
-`AUR = mean(SpotRate)` over joined paid spots. (Spec-formula EUR /
-AUR — `sum(net) / sum(eq30)` and `sum(net) / count` — are computed
-inside `etl-distributional.ts` for validation against the EUR-range
-and AUR-vs-EUR-delta calibration targets.)
+Three volume-weighted unit-rate metrics, all stored as integer cents
+on every `InventoryRollupRow`:
+
+- **`eur_gross_cents`** — sum of `gross_rev_cents` divided by sum of
+  `total_eq30` over paid spots in the row's aggregation window. The
+  sales-facing EUR. Surfaces in the **Inventory view** as the
+  "EUR (Gross)" column and in the **Rates view**.
+- **`eur_net_cents`** — sum of `net_rev_cents` divided by sum of
+  `total_eq30` over paid spots. The yield/finance-facing EUR.
+  Surfaces in the **AUR Report view** as the "EUR (Net)" column.
+- **`aur_cents`** — sum of `net_rev_cents` divided by `count(paid_spots)`,
+  length-agnostic. Surfaces in the **AUR Report view** alongside
+  `eur_net_cents`.
+
+Both EUR variants are volume-weighted (sum/sum); they differ only in
+the numerator. The M chain maintains both deliberately because sales
+leadership and yield/finance leadership need different views of the
+same data. The mean-of-means form (`List.Average(EffectiveUnitRate)`)
+that appears in the M source is a Power Query convenience that
+produces statistically incorrect values for non-uniform aggregation
+windows; the ETL replaces it with volume-weighted formulas across the
+board.
+
+For Floaters A&B rows all three resolve to 0 (no double-counting —
+revenue lives on the In Game row).
 
 ### `AurSummaryRow[]` — `deriveAurSummary()` ← *AUR Summary*
 
@@ -243,6 +263,15 @@ For non-Paid: only `EQ30`.
 Per-row rollups: `HTS Total.EQ30`, `Non-HTS Total.EQ30`,
 `Total Total.EQ30`, `Sellout = (Paid + NC) / Avails`,
 `Sellout + ADU = (Paid + NC + ADU + Cross Property ADU) / Avails`.
+
+The AUR Report view also consumes two volume-weighted unit-rate
+metrics off this row, both in integer cents:
+
+- **`eur_net_cents`** = `Total Paid.Net REV / Total Paid.EQ30`. The
+  AUR-Report-facing EUR. Same definition as `InventoryRollupRow.eur_net_cents`,
+  recomputed at this aggregation level.
+- **`aur_cents`** = `Total Paid.Net REV / count(paid spots)`. Length-
+  agnostic per-spot rate.
 
 ## File size targets
 

@@ -96,7 +96,10 @@ The flagship view. Mirrors the real Inventory tab.
 - Second column: Event/Program (e.g., "Dodgers vs. Coastal Mariners" — sanitized)
 - Third column: Inventory type (Pregame / In Game / Postgame / Floaters A&B)
 - Numeric columns: Avail, Cap, Sold, Sellout%, REV (Net), EUR (Gross)
-- Per-game total row beneath each game's 4 rows: total Net REV, weighted average EUR
+  - "EUR (Gross)" is `eur_gross_cents` — sales-facing, volume-weighted
+    sum(gross_rev) / sum(total_eq30). The Rates view consumes the same
+    field. The AUR Report uses `eur_net_cents` instead.
+- Per-game total row beneath each game's 4 rows: total Net REV, weighted average EUR (Gross)
 
 **Heat formatting:**
 - Sellout%: heat scale across all rows
@@ -205,18 +208,24 @@ The senior view. Mirrors the real AUR Report tab.
   - Type (PR/REG), Month, Date
   - Avail
   - Paid (eq30), NC, ADU, xADU, Bonus, Total
-  - Net REV, AUR, EUR
+  - Net REV, AUR, EUR (Net)
   - Sellout%, Sellout+ADU%
+
+The "EUR (Net)" column is `eur_net_cents` — volume-weighted
+`sum(net_rev) / sum(total_eq30)`. The "AUR" column is `aur_cents` —
+volume-weighted in numerator, count-based in denominator
+(`sum(net_rev) / count(paid_spots)`). The Inventory view shows
+`eur_gross_cents` instead; this view is the only place AUR surfaces.
 
 **Legend at top (small text, dismissible):**
 - "NC = contracted bonus | ADU = make-good | xADU = cross-property make-good | Bonus = added value"
-- "EUR = Net Rev / Paid eq30 (duration-normalized)"
-- "AUR = Net Rev / Paid units (count-based, skewed lower by :15s, higher by :60s)"
+- "EUR (Net) = Net Rev / Paid eq30 (volume-weighted, duration-normalized)"
+- "AUR = Net Rev / Paid units (volume-weighted in numerator, count-based; skewed lower by :15s, higher by :60s)"
 - "Sellout = (Paid + NC) / Avails"
 
 **Heat formatting:**
 - Sellout columns: standard heat
-- AUR vs EUR: when AUR < EUR by >5%, subtle yellow flag (signals length-mix drag)
+- AUR vs EUR (Net): when AUR < EUR (Net) by >5%, subtle yellow flag (signals length-mix drag)
 
 ## /about
 
