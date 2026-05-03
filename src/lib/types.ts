@@ -171,6 +171,15 @@ export interface EnrichedScheduleRow {
   broadcast_month: string;
   broadcast_year: number;
   broadcast_qtr: BroadcastQuarter;
+  // True Nielsen broadcast calendar fields (looked up against
+  // data/broadcast_calendar_2026.json). The legacy `broadcast_*` fields
+  // above are standard-calendar derived from the ISO date and remain for
+  // backwards-compat.
+  bcast_month: string;
+  bcast_year: number;
+  bcast_qtr: BroadcastQuarter;
+  bcast_week_start: string;
+  bcast_week_number: number;
   NonSpectrum: 'Spectrum' | 'NonSpectrum';
   'NS-Ancillary': string;
   'SPOT KEY': string;

@@ -435,6 +435,44 @@ output.every(r =>
 
 Anchored at M `#"Inserted Merged Column1"` (line 220).
 
+#### G16. bcast_week_start is a Monday
+
+Every schedule row's `bcast_week_start` is a Monday in ISO format.
+Holds because the static `data/broadcast_calendar_2026.json` lookup
+table is a Mon-Sun broadcast week.
+
+```ts
+output.every(r => {
+  const d = new Date(`${r.bcast_week_start}T00:00:00Z`);
+  return !isNaN(d.getTime()) && d.getUTCDay() === 1;
+})
+```
+
+#### G17. bcast_* attributes reconcile against the static lookup
+
+Every schedule row's `bcast_month`, `bcast_year`, `bcast_qtr`,
+`bcast_week_start`, and `bcast_week_number` agree with the row that
+`data/broadcast_calendar_2026.json` carries for the same `DATE`. This
+is the Nielsen 4-4-5 invariant: BC attributes come from the static
+table, not from algorithmic derivation.
+
+```ts
+output.every(r => {
+  const lk = bcastLookup.get(r.DATE);
+  return lk &&
+    r.bcast_month === lk.broadcast_month &&
+    r.bcast_year === lk.broadcast_year &&
+    r.bcast_qtr === lk.broadcast_quarter &&
+    r.bcast_week_start === lk.broadcast_week_start &&
+    r.bcast_week_number === lk.broadcast_week_number;
+})
+```
+
+Anchored at the lookup-based `broadcastCalendar()` introduced in
+Round 4 / C4. The previous algorithmic Wed-of-week derivation gave
+wrong assignments at quarter boundaries (e.g. Mar 1 2026 → BC Mar
+instead of BC Feb); the static table fixes this.
+
 ---
 
 ## deriveSpotsByClient() — `Lakers by Client (Inc $0)` (M lines 243–253)

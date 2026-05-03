@@ -45,6 +45,7 @@ next-env.d.ts
 /data/*.csv
 /data/*.xlsx
 !/data/.gitkeep
+!/data/broadcast_calendar_2026.json
 
 # editor
 .vscode/

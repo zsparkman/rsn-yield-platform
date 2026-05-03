@@ -9,8 +9,11 @@
 // contracts (those requiring large counter-example searches over the join
 // behavior) come on later.
 
+import * as fs from "node:fs";
+import * as path from "node:path";
 import type {
   AurSummaryRow,
+  BroadcastQuarter,
   EnrichedScheduleRow,
   EnrichedSpot,
   InventoryRollupRow,
@@ -18,6 +21,28 @@ import type {
   SpotsByClientRow,
 } from "./types";
 import type { EtlInputs, EtlOutputs } from "./etl";
+
+interface BroadcastDateInfo {
+  air_date: string;
+  broadcast_week_start: string;
+  broadcast_week_number: number;
+  broadcast_month: string;
+  broadcast_month_number: number;
+  broadcast_quarter: BroadcastQuarter;
+  broadcast_year: number;
+}
+
+let _bcastLookup: Map<string, BroadcastDateInfo> | null = null;
+
+function bcastLookup(): Map<string, BroadcastDateInfo> {
+  if (_bcastLookup) return _bcastLookup;
+  const file = path.join(process.cwd(), "data", "broadcast_calendar_2026.json");
+  const raw = JSON.parse(fs.readFileSync(file, "utf-8")) as BroadcastDateInfo[];
+  const m = new Map<string, BroadcastDateInfo>();
+  for (const r of raw) m.set(r.air_date, r);
+  _bcastLookup = m;
+  return m;
+}
 
 // Helper: aggregate the joined `SpotsByClientRow` rows that match a given
 // inventory rollup row's grouping key. Used by I11–I13 to assert that the
@@ -365,6 +390,43 @@ const scheduleContracts: Array<{ id: string; summary: string; check: ScheduleCon
     check: (output) => {
       const bad = output.find((r) => r["Avails Key"] !== [r.TYPE, r.TYPE2, r["INV TYPE.1"], r.Expanded].join("."));
       return bad ? fail("G15", "Avails Key = TYPE.TYPE2.INV TYPE.1.Expanded", `got ${bad["Avails Key"]}`, bad) : pass("G15", "Avails Key = TYPE.TYPE2.INV TYPE.1.Expanded");
+    },
+  },
+  {
+    id: "G16",
+    summary: "bcast_week_start is a Monday",
+    check: (output) => {
+      const bad = output.find((r) => {
+        const d = new Date(`${r.bcast_week_start}T00:00:00Z`);
+        return isNaN(d.getTime()) || d.getUTCDay() !== 1;
+      });
+      return bad
+        ? fail("G16", "bcast_week_start is a Monday",
+            `date=${bad.DATE} bcast_week_start=${bad.bcast_week_start}`, bad)
+        : pass("G16", "bcast_week_start is a Monday");
+    },
+  },
+  {
+    id: "G17",
+    summary: "bcast_* attributes reconcile against the static lookup",
+    check: (output) => {
+      const lk = bcastLookup();
+      const bad = output.find((r) => {
+        const info = lk.get(r.DATE);
+        if (!info) return true;
+        return (
+          r.bcast_month !== info.broadcast_month ||
+          r.bcast_year !== info.broadcast_year ||
+          r.bcast_qtr !== info.broadcast_quarter ||
+          r.bcast_week_start !== info.broadcast_week_start ||
+          r.bcast_week_number !== info.broadcast_week_number
+        );
+      });
+      return bad
+        ? fail("G17", "bcast_* attributes reconcile against the static lookup",
+            `date=${bad.DATE} bcast_month=${bad.bcast_month} bcast_week_start=${bad.bcast_week_start}`,
+            bad)
+        : pass("G17", "bcast_* attributes reconcile against the static lookup");
     },
   },
 ];

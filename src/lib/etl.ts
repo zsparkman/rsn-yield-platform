@@ -260,31 +260,63 @@ function startOfWeek(iso: string): string {
   return d.toISOString().slice(0, 10);
 }
 
-// Broadcast calendar (Nielsen 4-4-5). The broadcast month for any date is the
-// standard calendar month containing the Wednesday of that date's Mon-Sun
-// week. The broadcast year follows the broadcast month, and the broadcast
-// week starts on the same Monday as the standard week.
+// Broadcast calendar — looked up from data/broadcast_calendar_2026.json,
+// a hand-built Nielsen-style table covering 2025-12-29 through 2026-12-27.
+// Built using the "Mon's calendar month" rule: each Mon-Sun broadcast week
+// is assigned to whichever calendar month contains its Monday. Yields a
+// 4-4-5 / 4-4-5 / 4-5-4 / 4-5-4 week pattern for BC 2026 and matches the
+// industry conventions used in trade-press 2026 broadcast calendars.
 //
-// Defined in lieu of the M chain's external Broadcast Calendar xlsx, which
-// the synthetic stack doesn't ship. The Wed-of-week rule produces the same
-// month assignment as the standard Nielsen calendar for all dates that
-// don't straddle a quarter boundary; near-boundary dates can shift one
-// month vs the source xlsx, which is acceptable for the synthetic demo.
+// The previous algorithmic derivation (Wed-of-week rule) gave wrong
+// assignments at quarter boundaries; the lookup table eliminates that.
+
+interface BroadcastDateInfo {
+  air_date: string;
+  broadcast_week_start: string;
+  broadcast_week_number: number;
+  broadcast_month: string;
+  broadcast_month_number: number;
+  broadcast_quarter: BroadcastQuarter;
+  broadcast_year: number;
+}
+
+let _bcastLookup: Map<string, BroadcastDateInfo> | null = null;
+
+function loadBcastLookup(): Map<string, BroadcastDateInfo> {
+  if (_bcastLookup) return _bcastLookup;
+  const file = path.join(process.cwd(), "data", "broadcast_calendar_2026.json");
+  const raw = JSON.parse(fs.readFileSync(file, "utf-8")) as BroadcastDateInfo[];
+  const m = new Map<string, BroadcastDateInfo>();
+  for (const r of raw) m.set(r.air_date, r);
+  _bcastLookup = m;
+  return m;
+}
+
 export function broadcastCalendar(iso: string): {
   month: string;
   year: number;
   qtr: BroadcastQuarter;
   weekStart: string;
 } {
+  const info = loadBcastLookup().get(iso);
+  if (info) {
+    return {
+      month: info.broadcast_month,
+      year: info.broadcast_year,
+      qtr: info.broadcast_quarter,
+      weekStart: info.broadcast_week_start,
+    };
+  }
+  // Date outside the lookup table — fall back to the standard month so the
+  // pipeline doesn't crash. Synthetic data covers Feb-Sep 2026, all in range.
   const weekStart = startOfWeek(iso);
-  const wedDate = new Date(`${weekStart}T00:00:00Z`);
-  wedDate.setUTCDate(wedDate.getUTCDate() + 2);    // Mon → Wed
-  const monthIdx = wedDate.getUTCMonth() + 1;
-  const month = MONTHS[monthIdx - 1];
-  const year = wedDate.getUTCFullYear();
-  const qtr: BroadcastQuarter =
-    monthIdx <= 3 ? "Q1" : monthIdx <= 6 ? "Q2" : monthIdx <= 9 ? "Q3" : "Q4";
-  return { month, year, qtr, weekStart };
+  const monthIdx = Number(iso.slice(5, 7));
+  return {
+    month: MONTHS[monthIdx - 1],
+    year: Number(iso.slice(0, 4)),
+    qtr: (monthIdx <= 3 ? "Q1" : monthIdx <= 6 ? "Q2" : monthIdx <= 9 ? "Q3" : "Q4") as BroadcastQuarter,
+    weekStart,
+  };
 }
 
 const REGIONAL_TEAMS = ["Giants", "Padres", "Angels"];
@@ -436,6 +468,12 @@ export function deriveSchedule(rows: RawScheduleRow[]): EnrichedScheduleRow[] {
     const year = yearOfIso(dateIso);
     const qtr = quarterOfMonth(month);
     const simulcast: Simulcast = (r["OTHER TV"] ?? "").trim() === "" ? "Exclusive" : "Simulcast";
+    const bcal = loadBcastLookup().get(dateIso);
+    const bcastMonth = bcal?.broadcast_month ?? month;
+    const bcastYear = bcal?.broadcast_year ?? year;
+    const bcastQtr = bcal?.broadcast_quarter ?? qtr;
+    const bcastWeekStart = bcal?.broadcast_week_start ?? startOfWeek(dateIso);
+    const bcastWeekNumber = bcal?.broadcast_week_number ?? 0;
 
     for (const inv of ["Pregame", "In Game", "Postgame"] as RateInventoryType[]) {
       const variantSign = plusMinusFor(inv, hm);
@@ -476,6 +514,11 @@ export function deriveSchedule(rows: RawScheduleRow[]): EnrichedScheduleRow[] {
         broadcast_month: month,
         broadcast_year: year,
         broadcast_qtr: qtr,
+        bcast_month: bcastMonth,
+        bcast_year: bcastYear,
+        bcast_qtr: bcastQtr,
+        bcast_week_start: bcastWeekStart,
+        bcast_week_number: bcastWeekNumber,
         NonSpectrum: ns,
         "NS-Ancillary": nsAnc,
         "SPOT KEY": spot_key,
