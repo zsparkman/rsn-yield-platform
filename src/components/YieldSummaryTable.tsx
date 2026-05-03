@@ -20,6 +20,14 @@ import { ReportHeaderSelectors, type CalendarMode } from "@/components/ReportHea
 
 type LobFilter = "All" | "Direct" | "Repped";
 type PhaseFilter = "All" | SeasonPhase;
+type InvFilter = "Pregame" | "In Game" | "Postgame";
+
+function invKindOf(invType: string): InvFilter | null {
+  if (invType === "Pregame") return "Pregame";
+  if (invType === "Postgame") return "Postgame";
+  if (invType.startsWith("In Game")) return "In Game";
+  return null;
+}
 
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
@@ -167,6 +175,7 @@ function aggregateRows(rows: RowSlice[], standardMonth: string, bcastMonth: stri
 export function YieldSummaryTable({ rows }: { rows: AurSummaryRow[] }) {
   const [lob, setLob] = useState<LobFilter>("All");
   const [phase, setPhase] = useState<PhaseFilter>("All");
+  const [invFilter, setInvFilter] = useState<InvFilter>("Pregame");
   const [legendOpen, setLegendOpen] = useState(true);
   const [year, setYear] = useState("2026");
   const [calendar, setCalendar] = useState<CalendarMode>("standard");
@@ -174,8 +183,9 @@ export function YieldSummaryTable({ rows }: { rows: AurSummaryRow[] }) {
   const slices = useMemo(() => {
     return rows
       .map((r) => sliceFor(r, lob))
-      .filter((s) => phase === "All" || s.type2 === phase);
-  }, [rows, lob, phase]);
+      .filter((s) => phase === "All" || s.type2 === phase)
+      .filter((s) => invKindOf(s.invType) === invFilter);
+  }, [rows, lob, phase, invFilter]);
 
   const monthOf = (s: RowSlice) =>
     calendar === "broadcast" ? s.bcastMonth : s.standardMonth;
@@ -213,31 +223,6 @@ export function YieldSummaryTable({ rows }: { rows: AurSummaryRow[] }) {
           onCalendar={setCalendar}
         />
       </div>
-      <div className="flex flex-wrap items-center gap-4">
-        <Segment<LobFilter>
-          label="LOB"
-          value={lob}
-          options={[
-            { value: "All", label: "All" },
-            { value: "Direct", label: "Direct" },
-            { value: "Repped", label: "Repped" },
-          ]}
-          onChange={setLob}
-        />
-        <Segment<PhaseFilter>
-          label="Phase"
-          value={phase}
-          options={[
-            { value: "All", label: "All" },
-            { value: "PR", label: "PR" },
-            { value: "REG", label: "REG" },
-          ]}
-          onChange={setPhase}
-        />
-        <span className="ml-auto text-xs text-slate-500">
-          {slices.length} rows · {groupedByMonth.length} months
-        </span>
-      </div>
 
       {legendOpen && (
         <div className="rounded border border-slate-200 bg-white px-4 py-3 text-xs leading-relaxed text-slate-600">
@@ -271,6 +256,42 @@ export function YieldSummaryTable({ rows }: { rows: AurSummaryRow[] }) {
           </div>
         </div>
       )}
+
+      <div className="flex flex-wrap items-center gap-4">
+        <Segment<LobFilter>
+          label="LOB"
+          value={lob}
+          options={[
+            { value: "All", label: "All" },
+            { value: "Direct", label: "Direct" },
+            { value: "Repped", label: "Repped" },
+          ]}
+          onChange={setLob}
+        />
+        <Segment<PhaseFilter>
+          label="Phase"
+          value={phase}
+          options={[
+            { value: "All", label: "All" },
+            { value: "PR", label: "PR" },
+            { value: "REG", label: "REG" },
+          ]}
+          onChange={setPhase}
+        />
+        <Segment<InvFilter>
+          label="Inv"
+          value={invFilter}
+          options={[
+            { value: "Pregame", label: "Pregame" },
+            { value: "In Game", label: "In Game" },
+            { value: "Postgame", label: "Postgame" },
+          ]}
+          onChange={setInvFilter}
+        />
+        <span className="ml-auto text-xs text-slate-500">
+          {slices.length} rows · {groupedByMonth.length} months
+        </span>
+      </div>
 
       <div className="overflow-x-auto rounded border border-slate-200 bg-white">
         <table className="grid-table w-full text-[13px] leading-tight">
@@ -365,39 +386,21 @@ function MonthBlock({ month }: { month: MonthAgg }) {
 }
 
 function DateBlock({
-  date, rows, agg,
+  rows,
 }: {
   date: string;
   rows: RowSlice[];
   agg: RowSlice;
 }) {
+  // The per-date Total row was useful when all three inv-types were
+  // displayed together. With the inv-type slicer always active, only one
+  // inv-type is visible per date, so the per-date Total would mirror the
+  // single data row and is dropped.
   return (
     <>
       {rows.map((s) => (
         <DataRow key={`${s.date}|${s.invType}`} s={s} />
       ))}
-      <tr className="border-y border-slate-200 bg-slate-100 text-xs font-medium text-slate-700">
-        <td className="px-3 py-1.5">{rows[0].type2}</td>
-        <td className="px-3 py-1.5">{agg.standardMonth}</td>
-        <td className="px-3 py-1.5">{fmtIsoLong(date)}</td>
-        <td className="px-3 py-1.5 uppercase tracking-wide text-[11px]">Total</td>
-        <td className="num px-3 py-1.5 text-right">{fmtEq30(agg.avails)}</td>
-        <td className="num px-3 py-1.5 text-right">{fmtEq30(agg.paidEq30)}</td>
-        <td className="num px-3 py-1.5 text-right">{fmtEq30(agg.ncEq30)}</td>
-        <td className="num px-3 py-1.5 text-right">{fmtEq30(agg.aduEq30)}</td>
-        <td className="num px-3 py-1.5 text-right">{fmtEq30(agg.xaduEq30)}</td>
-        <td className="num px-3 py-1.5 text-right">{fmtEq30(agg.bonusEq30)}</td>
-        <td className="num px-3 py-1.5 text-right">{fmtEq30(agg.totalEq30)}</td>
-        <td className="num px-3 py-1.5 text-right">{fmtCurrencyRolled(agg.paidNetCents)}</td>
-        <td className="num px-3 py-1.5 text-right">{fmtCurrencyUnit(aurCentsOf(agg))}</td>
-        <td className="num px-3 py-1.5 text-right">{fmtCurrencyUnit(eurNetCentsOf(agg))}</td>
-        <td className={clsx("num px-3 py-1.5 text-right", selloutHeat(selloutOf(agg)))}>
-          {fmtPercent(selloutOf(agg))}
-        </td>
-        <td className={clsx("num px-3 py-1.5 text-right", selloutHeat(selloutAduOf(agg)))}>
-          {fmtPercent(selloutAduOf(agg))}
-        </td>
-      </tr>
     </>
   );
 }
