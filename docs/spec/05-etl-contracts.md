@@ -502,8 +502,8 @@ Anchored at M `#"Inserted Merged Column1"` (line 220).
 #### G16. bcast_week_start is a Monday
 
 Every schedule row's `bcast_week_start` is a Monday in ISO format.
-Holds because the static `data/broadcast_calendar_2026.json` lookup
-table is a Mon-Sun broadcast week.
+Holds because the authoritative `data/broadcast_calendar_2026.json`
+lookup table is keyed on Mon-Sun broadcast weeks.
 
 ```ts
 output.every(r => {
@@ -512,13 +512,16 @@ output.every(r => {
 })
 ```
 
-#### G17. bcast_* attributes reconcile against the static lookup
+#### G17. bcast_* attributes reconcile against the authoritative lookup
 
 Every schedule row's `bcast_month`, `bcast_year`, `bcast_qtr`,
-`bcast_week_start`, and `bcast_week_number` agree with the row that
-`data/broadcast_calendar_2026.json` carries for the same `DATE`. This
-is the Nielsen 4-4-5 invariant: BC attributes come from the static
-table, not from algorithmic derivation.
+`bcast_week_start`, and `bcast_week_number` exactly match the row
+that `data/broadcast_calendar_2026.json` carries for the same `DATE`.
+The lookup table is sourced from the project's
+`Broadcast_Calendar_Dates.xlsx` (the user-supplied authoritative
+Nielsen 2026 calendar) and IS the source of truth — no algorithmic
+derivation is permitted downstream. `broadcastCalendar()` throws on
+out-of-range dates rather than falling back to standard calendar.
 
 ```ts
 output.every(r => {
@@ -532,10 +535,21 @@ output.every(r => {
 })
 ```
 
-Anchored at the lookup-based `broadcastCalendar()` introduced in
-Round 4 / C4. The previous algorithmic Wed-of-week derivation gave
-wrong assignments at quarter boundaries (e.g. Mar 1 2026 → BC Mar
-instead of BC Feb); the static table fixes this.
+Reconciliation checks against the source xlsx (all six pass on the
+current lookup):
+
+| Air date    | DOW | BC month | Notes                       |
+|-------------|-----|----------|------------------------------|
+| 2026-02-22  | Sun | February | last day of BC Feb           |
+| 2026-02-23  | Mon | March    | first day of BC March        |
+| 2026-03-29  | Sun | March    | last day of BC March, week 13|
+| 2026-03-30  | Mon | April    | first day of BC April, week 14|
+| 2026-04-26  | Sun | April    | last day of BC April         |
+| 2026-04-27  | Mon | May      | first day of BC May          |
+
+Month-week pattern: 4-4-5 / 4-5-4 / 4-5-4 / 4-5-4 (Jan 4, Feb 4,
+Mar 5, Apr 4, May 5, Jun 4, Jul 4, Aug 5, Sep 4, Oct 4, Nov 5,
+Dec 4 = 52 weeks total).
 
 ---
 

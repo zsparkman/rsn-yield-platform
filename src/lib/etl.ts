@@ -261,14 +261,16 @@ function startOfWeek(iso: string): string {
 }
 
 // Broadcast calendar — looked up from data/broadcast_calendar_2026.json,
-// a hand-built Nielsen-style table covering 2025-12-29 through 2026-12-27.
-// Built using the "Mon's calendar month" rule: each Mon-Sun broadcast week
-// is assigned to whichever calendar month contains its Monday. Yields a
-// 4-4-5 / 4-4-5 / 4-5-4 / 4-5-4 week pattern for BC 2026 and matches the
-// industry conventions used in trade-press 2026 broadcast calendars.
+// the authoritative Nielsen 2026 table sourced from the project's
+// Broadcast_Calendar_Dates.xlsx. Covers 2025-12-29 through 2026-12-27
+// (52 Mon-Sun broadcast weeks). Each broadcast week's month is determined
+// by the calendar month of its Sunday (the standard Nielsen rule), giving
+// the 4-4-5 / 4-5-4 / 4-5-4 / 4-5-4 pattern: Jan 4, Feb 4, Mar 5, Apr 4,
+// May 5, Jun 4, Jul 4, Aug 5, Sep 4, Oct 4, Nov 5, Dec 4 = 52 weeks.
 //
-// The previous algorithmic derivation (Wed-of-week rule) gave wrong
-// assignments at quarter boundaries; the lookup table eliminates that.
+// The lookup IS the source of truth — no algorithmic derivation lives
+// downstream. Out-of-range dates throw rather than silently falling back
+// to the standard calendar.
 
 interface BroadcastDateInfo {
   air_date: string;
@@ -299,23 +301,16 @@ export function broadcastCalendar(iso: string): {
   weekStart: string;
 } {
   const info = loadBcastLookup().get(iso);
-  if (info) {
-    return {
-      month: info.broadcast_month,
-      year: info.broadcast_year,
-      qtr: info.broadcast_quarter,
-      weekStart: info.broadcast_week_start,
-    };
+  if (!info) {
+    throw new Error(
+      `broadcastCalendar: ${iso} is outside data/broadcast_calendar_2026.json (covers 2025-12-29 to 2026-12-27). Extend the lookup file rather than computing.`,
+    );
   }
-  // Date outside the lookup table — fall back to the standard month so the
-  // pipeline doesn't crash. Synthetic data covers Feb-Sep 2026, all in range.
-  const weekStart = startOfWeek(iso);
-  const monthIdx = Number(iso.slice(5, 7));
   return {
-    month: MONTHS[monthIdx - 1],
-    year: Number(iso.slice(0, 4)),
-    qtr: (monthIdx <= 3 ? "Q1" : monthIdx <= 6 ? "Q2" : monthIdx <= 9 ? "Q3" : "Q4") as BroadcastQuarter,
-    weekStart,
+    month: info.broadcast_month,
+    year: info.broadcast_year,
+    qtr: info.broadcast_quarter,
+    weekStart: info.broadcast_week_start,
   };
 }
 
