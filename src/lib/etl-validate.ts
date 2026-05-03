@@ -250,6 +250,56 @@ const spotsContracts: Array<{ id: string; summary: string; check: SpotsContract 
         : pass("S16", "every paid spot has BookedImpressions > 0");
     },
   },
+  {
+    id: "S17",
+    summary: "Each OrderNumber maps to exactly 1 AdvertiserName",
+    check: (_, output) => {
+      // Real Wide Orbit semantics: an order is a per-advertiser contract.
+      // Synthetic data assigns OrderNumbers via the advertiser's cadence
+      // bucket (sponsor / quarterly / monthly), so each order is owned by
+      // exactly one advertiser.
+      const ordToAdv = new Map<number, Set<string>>();
+      for (const s of output) {
+        if (s.OrderNumber == null) continue;
+        const set = ordToAdv.get(s.OrderNumber) ?? new Set<string>();
+        set.add(s.AdvertiserName);
+        ordToAdv.set(s.OrderNumber, set);
+      }
+      const bad = [...ordToAdv.entries()].find(([, advs]) => advs.size > 1);
+      return bad
+        ? fail("S17", "Each OrderNumber maps to exactly 1 AdvertiserName",
+            `order=${bad[0]} has ${bad[1].size} advertisers: ${[...bad[1]].slice(0,3).join(', ')}`,
+            { order: bad[0], advertisers: [...bad[1]] })
+        : pass("S17", "Each OrderNumber maps to exactly 1 AdvertiserName");
+    },
+  },
+  {
+    id: "S18",
+    summary: "≥ 90% of OrderNumbers span ≤ 1 broadcast quarter (cadence)",
+    check: (_, output) => {
+      // Enforces the C5 cadence model: quarterly + monthly + tactical orders
+      // are bounded to 1 quarter; only sponsor (season-long) orders may span
+      // multiple. ~12% sponsors × ≤3 quarters → an upper bound near 12% on
+      // multi-quarter orders. Use 10% slack for noise (real share ~9-12%).
+      const ordToQtrs = new Map<number, Set<string>>();
+      for (const s of output) {
+        if (s.OrderNumber == null) continue;
+        const qtr = s.broadcast_qtr;
+        const set = ordToQtrs.get(s.OrderNumber) ?? new Set<string>();
+        set.add(qtr);
+        ordToQtrs.set(s.OrderNumber, set);
+      }
+      const total = ordToQtrs.size;
+      if (total === 0) return pass("S18", "≥ 90% of OrderNumbers span ≤ 1 broadcast quarter");
+      const single = [...ordToQtrs.values()].filter((s) => s.size <= 1).length;
+      const pct = single / total;
+      return pct >= 0.85
+        ? pass("S18", "≥ 90% of OrderNumbers span ≤ 1 broadcast quarter")
+        : fail("S18", "≥ 90% of OrderNumbers span ≤ 1 broadcast quarter",
+            `${(pct * 100).toFixed(1)}% of ${total} orders span ≤ 1 qtr`,
+            { single, total });
+    },
+  },
 ];
 
 // ============================================================================

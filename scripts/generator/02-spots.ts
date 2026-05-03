@@ -21,6 +21,7 @@ import {
   pickFromMix,
   pickWeighted,
   poisson,
+  quarterOf,
   rngFor,
   shuffle,
   timeWithSeconds,
@@ -360,10 +361,47 @@ const TOP_INTENSITY = 6.0;
 const MID_INTENSITY = 1.3;
 const LOW_INTENSITY = 0.07;
 
+// ------------------------------ order cadence ------------------------------
+//
+// Real Wide Orbit OrderNumbers represent an advertiser's signed contract for
+// a flight of spots — typically one per active billing period (quarterly is
+// the modal cadence, with annual sponsorships and monthly retail flights as
+// the long-tail). The pre-C5 generator allocated one OrderNumber per
+// (game, inv-type), which inflated order count and conflated multiple
+// advertisers under each order. Cadence is now assigned per-advertiser at
+// pool-build time and OrderNumbers are looked up lazily per-spot:
+//   - sponsor (~12%): 1 season order, plus ~10% of those carry a tactical
+//     quarterly overlay (concurrent secondary order in their tactical Q)
+//   - quarterly (~80%): 1 order per active broadcast quarter (Q1/Q2/Q3)
+//   - monthly (~8%): 1 order per active broadcast month (Feb..Sep)
+//
+// Non-paid spots (NC / ADU / xADU / Bonus) reuse the same allocator, so they
+// inherit the advertiser's order for the period in which they air. If a
+// non-paid spot lands in a period the advertiser hasn't transacted in yet,
+// the allocator opens a fresh order (rare; bonus inventory house-orders
+// behave similarly in production).
+
+type Cadence = "sponsor" | "quarterly" | "monthly";
+
+const CADENCE_MIX: Record<Cadence, number> = {
+  sponsor: 0.12,
+  quarterly: 0.80,
+  monthly: 0.08,
+};
+
+const SPONSOR_TACTICAL_PROB = 0.10;
+const SPONSOR_TACTICAL_QUARTERS = ["Q2", "Q3"]; // playoff-push windows
+// In a sponsor's tactical quarter, fraction of paid In Game spots that
+// route to the tactical (overlay) order rather than the season order.
+const TACTICAL_ROUTE_PROB = 0.40;
+
 interface AdvertiserWithIntensity {
   adv: Advertiser;
   intensity: number;
   ae: string;
+  cadence: Cadence;
+  tacticalQtr: string | null;          // 'Q2' | 'Q3' | null
+  orders: Map<string, number>;          // periodKey → OrderNumber
 }
 
 function buildAdvertiserPool(rng: () => number): AdvertiserWithIntensity[] {
@@ -381,8 +419,50 @@ function buildAdvertiserPool(rng: () => number): AdvertiserWithIntensity[] {
     else if (midSet.has(idx)) intensity = MID_INTENSITY + rng() * 0.2;
     else intensity = LOW_INTENSITY + rng() * 0.03;
     const ae = a.lob === "Repped" ? rep_firm_ae(rng) : direct_ae(rng);
-    return { adv: a, intensity, ae };
+    const cadence = pickFromMix(rng, CADENCE_MIX);
+    const tacticalQtr = cadence === "sponsor" && rng() < SPONSOR_TACTICAL_PROB
+      ? SPONSOR_TACTICAL_QUARTERS[Math.floor(rng() * SPONSOR_TACTICAL_QUARTERS.length)]
+      : null;
+    return { adv: a, intensity, ae, cadence, tacticalQtr, orders: new Map() };
   });
+}
+
+function periodKeyFor(cadence: Cadence, isoDate: string, monthName: string): string {
+  if (cadence === "sponsor") return "S";
+  if (cadence === "quarterly") return quarterOf(isoDate);
+  return monthName;
+}
+
+function allocateOrder(
+  rng: () => number,
+  adv: AdvertiserWithIntensity,
+  isoDate: string,
+  monthName: string,
+  isInGame: boolean,
+  counter: { id: number },
+): number {
+  if (
+    adv.cadence === "sponsor" &&
+    adv.tacticalQtr &&
+    quarterOf(isoDate) === adv.tacticalQtr &&
+    isInGame &&
+    rng() < TACTICAL_ROUTE_PROB
+  ) {
+    const tk = `T:${adv.tacticalQtr}`;
+    let n = adv.orders.get(tk);
+    if (n == null) {
+      n = ++counter.id;
+      adv.orders.set(tk, n);
+    }
+    return n;
+  }
+  const k = periodKeyFor(adv.cadence, isoDate, monthName);
+  let n = adv.orders.get(k);
+  if (n == null) {
+    n = ++counter.id;
+    adv.orders.set(k, n);
+  }
+  return n;
 }
 
 function clientWeight(c: AdvertiserWithIntensity, matchup: MatchupTier): number {
@@ -437,7 +517,6 @@ interface SpotCtx {
   airDate: string; // MM/DD/YYYY
   hour: number;
   minute: number;
-  orderRef: { id: number };
   lineRef: { id: number };
   spotIdRef: { id: number };
 }
@@ -445,8 +524,8 @@ interface SpotCtx {
 function buildSpotRow(
   rng: () => number,
   ctx: SpotCtx,
-  pool: AdvertiserWithIntensity[],
-  cacheEntry: WeightCache,
+  adv: AdvertiserWithIntensity,
+  orderNumber: number,
   opts: {
     paid: boolean;
     length: SpotLength;
@@ -455,7 +534,6 @@ function buildSpotRow(
     priorityCode: string;
   },
 ): RawSpot {
-  const adv = sampleAdvertiser(rng, pool, cacheEntry);
   const eq30 = LENGTH_TO_EQ30[opts.length];
   const demo = (() => {
     if (rng() < 0.8) return adv.adv.preferred_demo || "HH";
@@ -474,7 +552,7 @@ function buildSpotRow(
     ChannelName: "BSWN",
     AdvertiserName: adv.adv.raw,
     RevenueCode2: adv.adv.channel || "National",
-    OrderNumber: ctx.orderRef.id,
+    OrderNumber: orderNumber,
     LineNumber: ctx.lineRef.id,
     SpotNumber: ctx.spotIdRef.id,
     SpotLength: opts.length,
@@ -589,7 +667,7 @@ export function buildSpots(schedule: RawScheduleRow[]): RawSpot[] {
   const rows = describeSchedule(schedule);
 
   const out: RawSpot[] = [];
-  let orderCounter = 40000;
+  const orderCtr = { id: 40000 };
   let lineCounter = 0;
   const spotIdRef = { id: 0 };
 
@@ -602,12 +680,18 @@ export function buildSpots(schedule: RawScheduleRow[]): RawSpot[] {
       const score = demandScore(rng, sr, invType);
       const targetFill = fillRateForScore(score);
       const targetEq30 = Math.max(0, targetFill * cap + gaussian(rng, 0, 2));
+      const isInGame = invType === "In Game";
 
-      // Paid loop
+      const ctx: SpotCtx = {
+        schedule: sr.schedule, phase: sr.phase, invType, variant: sr.variant, matchup: sr.matchup,
+        format: sr.format, airDate: sr.airDate, hour: sr.hour, minute: sr.minute,
+        lineRef: { id: 0 }, spotIdRef,
+      };
+
+      // Paid loop — allocate OrderNumber per advertiser×period (lazy)
       let remaining = targetEq30;
       let paidEq30 = 0;
       let safety = 0;
-      const orderId = ++orderCounter;
       while (remaining > 0.25 && safety < 500) {
         safety += 1;
         const length = sampleSpotLength(rng, invType);
@@ -619,17 +703,19 @@ export function buildSpots(schedule: RawScheduleRow[]): RawSpot[] {
         const lengthMult = LENGTH_RATE_MULT[length];
         const noise = clip(SOLD_RATE_DISCOUNT_MEAN + gaussian(rng, 0, SOLD_RATE_DISCOUNT_SIGMA), 0.72, 1.0);
         const grossRate = base * lengthMult * noise;
-        const lineId = ++lineCounter;
-        out.push(buildSpotRow(rng, {
-          schedule: sr.schedule, phase: sr.phase, invType, variant: sr.variant, matchup: sr.matchup,
-          format: sr.format, airDate: sr.airDate, hour: sr.hour, minute: sr.minute,
-          orderRef: { id: orderId }, lineRef: { id: lineId }, spotIdRef,
-        }, pool, ce, { paid: true, length, grossRate, rateTier: tier, priorityCode: PAID_PRIORITY }));
+        const adv = sampleAdvertiser(rng, pool, ce);
+        const orderNumber = allocateOrder(rng, adv, sr.isoDate, sr.monthName, isInGame, orderCtr);
+        ctx.lineRef = { id: ++lineCounter };
+        out.push(buildSpotRow(rng, ctx, adv, orderNumber,
+          { paid: true, length, grossRate, rateTier: tier, priorityCode: PAID_PRIORITY }));
         remaining -= eq30;
         paidEq30 += eq30;
       }
 
-      // Non-paid groups: NC, ADU, xADU, Bonus
+      // Non-paid groups: NC, ADU, xADU, Bonus.
+      // Each non-paid spot samples its own advertiser and inherits that
+      // advertiser's order for the broadcast period (or opens a new one
+      // on first encounter — the same allocator is reused).
       const groups: Array<{ priority: string; prob: number; lambda: number; isNC?: boolean }> = [
         { priority: NC_PRIORITIES[0], prob: NC_PROB, lambda: NC_LAMBDA, isNC: true },
         { priority: ADU_PRIORITY, prob: ADU_PROB * (1 + (0.6 - score)), lambda: ADU_LAMBDA },
@@ -643,12 +729,11 @@ export function buildSpots(schedule: RawScheduleRow[]): RawSpot[] {
           const length = sampleSpotLength(rng, invType);
           // NC group splits between P-80 and P-19 (per reference distribution)
           const pri = g.isNC && rng() < 0.30 ? "P-19" : g.priority;
-          const lineId = ++lineCounter;
-          out.push(buildSpotRow(rng, {
-            schedule: sr.schedule, phase: sr.phase, invType, variant: sr.variant, matchup: sr.matchup,
-            format: sr.format, airDate: sr.airDate, hour: sr.hour, minute: sr.minute,
-            orderRef: { id: orderId }, lineRef: { id: lineId }, spotIdRef,
-          }, pool, ce, { paid: false, length, grossRate: 0, rateTier: "Base", priorityCode: pri }));
+          const adv = sampleAdvertiser(rng, pool, ce);
+          const orderNumber = allocateOrder(rng, adv, sr.isoDate, sr.monthName, isInGame, orderCtr);
+          ctx.lineRef = { id: ++lineCounter };
+          out.push(buildSpotRow(rng, ctx, adv, orderNumber,
+            { paid: false, length, grossRate: 0, rateTier: "Base", priorityCode: pri }));
         }
       }
     }

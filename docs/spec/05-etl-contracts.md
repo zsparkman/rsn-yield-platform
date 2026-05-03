@@ -265,6 +265,45 @@ a per-`(demo, inv-type)` Gaussian (centred at `mean × 0.85`, σ =
 impressions. NC, ADU, xADU, and Bonus spots may still carry zero
 impressions per the source-data convention.
 
+#### S17. Each OrderNumber maps to exactly 1 AdvertiserName
+
+```ts
+const ordToAdv = new Map<number, Set<string>>();
+for (const s of output) {
+  const set = ordToAdv.get(s.OrderNumber) ?? new Set();
+  set.add(s.AdvertiserName);
+  ordToAdv.set(s.OrderNumber, set);
+}
+[...ordToAdv.values()].every(s => s.size === 1)
+```
+
+Real Wide Orbit semantics: an OrderNumber is a per-advertiser
+contract. The C5 cadence model assigns each advertiser one or more
+OrderNumbers based on their cadence bucket (sponsor / quarterly /
+monthly), and every spot for that advertiser routes to one of those
+orders — no order is ever shared across advertisers.
+
+#### S18. ≥ 90% of OrderNumbers span ≤ 1 broadcast quarter
+
+```ts
+const ordToQtrs = new Map<number, Set<string>>();
+for (const s of output) {
+  const set = ordToQtrs.get(s.OrderNumber) ?? new Set();
+  set.add(s.broadcast_qtr);
+  ordToQtrs.set(s.OrderNumber, set);
+}
+const single = [...ordToQtrs.values()].filter(s => s.size <= 1).length;
+single / ordToQtrs.size >= 0.85
+```
+
+Enforces the C5 cadence model: quarterly + monthly + tactical orders
+are bounded to 1 broadcast quarter; only sponsor (season-long) orders
+may span multiple. With ~12% sponsor advertisers, multi-quarter
+orders should sit near 9–12% of total — the 85% lower bound leaves
+slack for stochastic noise. Pre-C5 every order spanned exactly 1
+(date, inv-type) intersection, so this contract is the structural
+gate for the new cadence model.
+
 ---
 
 ## deriveSchedule() — `Lakers Combined Schedules` (M lines 196–233)
