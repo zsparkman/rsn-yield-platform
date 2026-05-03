@@ -76,13 +76,18 @@ function sumOpen(games: GameRow[], pick: (g: GameRow) => CellFig | null): number
   return total;
 }
 
-function avgRate(games: GameRow[], pick: (g: GameRow) => CellFig | null): number {
-  let sum = 0; let count = 0;
+// Week-total Rate column: minimum resolved rate across the week's games.
+// The operational meaning is the floor quote for a non-targeted week-of-air
+// buy ("if I'm shopping into this week without specifying a date or matchup,
+// what's the lowest rate I could be quoted"). Open columns continue to be
+// sums; rates take the minimum.
+function minRate(games: GameRow[], pick: (g: GameRow) => CellFig | null): number {
+  let m = Infinity;
   for (const g of games) {
     const c = pick(g);
-    if (c && c.rateCents > 0) { sum += c.rateCents; count += 1; }
+    if (c && c.rateCents > 0 && c.rateCents < m) m = c.rateCents;
   }
-  return count > 0 ? Math.round(sum / count) : 0;
+  return isFinite(m) ? m : 0;
 }
 
 export function RatesTable({ rows }: { rows: InventoryRollupRow[] }) {
@@ -223,11 +228,11 @@ function WeekBlock({ weekStart, games }: { weekStart: string; games: GameRow[] }
           Week total
         </td>
         <td className="num px-2 py-2 text-right text-slate-700">{fmtAvails(sumOpen(games, (g) => g.pregame))}</td>
-        <td className="num px-2 py-2 text-right text-slate-700">{fmtCurrencyUnit(avgRate(games, (g) => g.pregame))}</td>
+        <td className="num px-2 py-2 text-right text-slate-700">{fmtCurrencyUnit(minRate(games, (g) => g.pregame))}</td>
         <td className="num px-2 py-2 text-right text-slate-700">{fmtAvails(sumOpen(games, (g) => g.inGame))}</td>
-        <td className="num px-2 py-2 text-right text-slate-700">{fmtCurrencyUnit(avgRate(games, (g) => g.inGame))}</td>
+        <td className="num px-2 py-2 text-right text-slate-700">{fmtCurrencyUnit(minRate(games, (g) => g.inGame))}</td>
         <td className="num px-2 py-2 text-right text-slate-700">{fmtAvails(sumOpen(games, (g) => g.postgame))}</td>
-        <td className="num px-2 py-2 text-right text-slate-700">{fmtCurrencyUnit(avgRate(games, (g) => g.postgame))}</td>
+        <td className="num px-2 py-2 text-right text-slate-700">{fmtCurrencyUnit(minRate(games, (g) => g.postgame))}</td>
       </tr>
     </>
   );
