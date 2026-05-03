@@ -53,20 +53,47 @@ export function BookingMatrix({
 
   const valueOf = (c: SpotGridCell) => (metric === "Units" ? c.units : c.eq30);
 
+  // When the inv filter pins a specific inv-type, the matrix should only
+  // surface clients/orders that actually transacted PAID inventory in that
+  // segment — a client with only ADU/NC In Game spots isn't an "In Game
+  // advertiser" in the sales-facing sense. Compute the qualifying sets up
+  // front; null means no gating (inv === "All").
+  const qualifyingClients = useMemo(() => {
+    if (inv === "All") return null;
+    const set = new Set<string>();
+    for (const c of cells) {
+      if (c.inv_type === inv && c.group === "Paid" && c.eq30 > 0) set.add(c.client);
+    }
+    return set;
+  }, [cells, inv]);
+
+  const qualifyingOrders = useMemo(() => {
+    if (inv === "All") return null;
+    const set = new Set<string>();
+    for (const c of orderCells) {
+      if (c.inv_type === inv && c.group === "Paid" && c.eq30 > 0) {
+        set.add(`${c.client}|${c.order_number}`);
+      }
+    }
+    return set;
+  }, [orderCells, inv]);
+
   const filtered = useMemo(
     () => cells.filter((c) =>
       (inv === "All" || c.inv_type === inv) &&
-      (status === "All" || c.group === status),
+      (status === "All" || c.group === status) &&
+      (qualifyingClients === null || qualifyingClients.has(c.client)),
     ),
-    [cells, inv, status],
+    [cells, inv, status, qualifyingClients],
   );
 
   const filteredOrders = useMemo(
     () => orderCells.filter((c) =>
       (inv === "All" || c.inv_type === inv) &&
-      (status === "All" || c.group === status),
+      (status === "All" || c.group === status) &&
+      (qualifyingOrders === null || qualifyingOrders.has(`${c.client}|${c.order_number}`)),
     ),
-    [orderCells, inv, status],
+    [orderCells, inv, status, qualifyingOrders],
   );
 
   // (client, date) → cell value
@@ -250,10 +277,10 @@ function ClientRow({
 }) {
   return (
     <>
-      <tr className="h-9">
+      <tr>
         <th
           scope="row"
-          className="sticky left-0 z-10 h-9 w-52 min-w-52 max-w-52 border-b border-r border-slate-200 bg-white px-2 py-1 text-left font-normal text-slate-700"
+          className="sticky left-0 z-10 w-52 min-w-52 max-w-52 border-b border-r border-slate-200 bg-white px-2 py-1 text-left font-normal text-slate-700"
         >
           <div className="flex items-center gap-1 overflow-hidden">
             <button
@@ -278,7 +305,7 @@ function ClientRow({
             <td
               key={d}
               className={clsx(
-                "num h-9 border-b border-l border-slate-200 px-1 text-center",
+                "num border-b border-l border-slate-200 px-1 text-center",
                 v === 0 ? "bg-white text-slate-300" : gridDensityHeat(v),
               )}
             >
@@ -288,10 +315,10 @@ function ClientRow({
         })}
       </tr>
       {expanded && orders.map((order) => (
-        <tr key={`${client}-${order}`} className="h-9 bg-slate-50/40">
+        <tr key={`${client}-${order}`} className="bg-slate-50/40">
           <th
             scope="row"
-            className="sticky left-0 z-10 h-9 w-52 min-w-52 max-w-52 border-b border-r border-slate-200 bg-slate-50/80 px-2 py-1 text-left font-normal text-slate-600"
+            className="sticky left-0 z-10 w-52 min-w-52 max-w-52 border-b border-r border-slate-200 bg-slate-50/80 px-2 py-1 text-left font-normal text-slate-600"
           >
             <div className="flex items-center gap-1 overflow-hidden pl-5">
               <span
@@ -308,7 +335,7 @@ function ClientRow({
               <td
                 key={d}
                 className={clsx(
-                  "num h-9 border-b border-l border-slate-200 px-1 text-center",
+                  "num border-b border-l border-slate-200 px-1 text-center",
                   v === 0 ? "bg-white text-slate-300" : gridDensityHeat(v),
                 )}
               >
