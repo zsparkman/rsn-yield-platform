@@ -1,7 +1,8 @@
 // Persistent top navigation per docs/spec/02-information-architecture.md.
 // - Left: project name "RSN Yield Platform" → /
-// - Center: five view links (Inventory, Rates, Heatmap, Spot Grid, AUR Report)
-// - Right: season selector (defaults to 2026) + About link
+// - Center: five view links
+// - Right: About link (Year/Calendar selectors live on the report pages
+//   themselves rather than the global nav)
 
 import Link from "next/link";
 
@@ -9,8 +10,8 @@ const VIEW_LINKS: ReadonlyArray<{ href: string; label: string }> = [
   { href: "/inventory", label: "Inventory" },
   { href: "/rates", label: "Rates" },
   { href: "/heatmap", label: "Heatmap" },
-  { href: "/spot-grid", label: "Spot Grid" },
-  { href: "/aur-report", label: "AUR Report" },
+  { href: "/booking-matrix", label: "Booking Matrix" },
+  { href: "/yield-summary", label: "Yield Summary" },
 ];
 
 export function TopNav() {

@@ -262,9 +262,9 @@ export interface InventoryRollupRow {
   // - eur_gross_cents: sum(gross_rev) / sum(total_eq30) — sales-facing.
   //   Used by the Inventory and Rates views ("EUR (Gross)" column).
   // - eur_net_cents:   sum(net_rev)   / sum(total_eq30) — yield/finance-facing.
-  //   Used by the AUR Report view ("EUR (Net)" column).
+  //   Used by the Yield Summary view ("EUR (Net)" column).
   // - aur_cents:       sum(net_rev)   / count(paid_spots) — length-agnostic.
-  //   Used by the AUR Report view alongside eur_net_cents.
+  //   Used by the Yield Summary view alongside eur_net_cents.
   // 0 for Floaters A&B (no double-counting; revenue lives on the In Game row).
   eur_gross_cents: number;
   eur_net_cents: number;
@@ -320,7 +320,7 @@ export interface AurSummaryRow {
   Avails: number;
   Sellout: number;
   'Sellout + ADU': number;
-  // Volume-weighted yield metrics for the AUR Report view. All in integer cents.
+  // Volume-weighted yield metrics for the Yield Summary view. All in integer cents.
   // eur_net_cents = sum(Total Paid.Net REV) / sum(Total Paid.EQ30); aur_cents
   // = sum(Total Paid.Net REV) / count(paid spots). 0 when there are no paid
   // spots in the bucket.
@@ -328,7 +328,7 @@ export interface AurSummaryRow {
   aur_cents: number;
 }
 
-// Spot Grid view aggregate. Pre-aggregated in deriveSpotGridCells() so the
+// Booking Matrix view aggregate. Pre-aggregated in deriveSpotGrid() so the
 // client component receives ~5k rows instead of ~18k.
 export type SpotGroupKind = 'Paid' | 'NC' | 'ADU' | 'xADU' | 'Bonus' | 'Other';
 

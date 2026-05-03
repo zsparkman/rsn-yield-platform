@@ -160,7 +160,7 @@ function aggregateRows(rows: RowSlice[], month: string): RowSlice {
   return agg;
 }
 
-export function AurReportTable({ rows }: { rows: AurSummaryRow[] }) {
+export function YieldSummaryTable({ rows }: { rows: AurSummaryRow[] }) {
   const [lob, setLob] = useState<LobFilter>("All");
   const [phase, setPhase] = useState<PhaseFilter>("All");
   const [legendOpen, setLegendOpen] = useState(true);

@@ -1,6 +1,6 @@
 "use client";
 
-// Spot Grid view per IA View 4. Top-N clients × dates matrix; cell value
+// Booking Matrix view per IA View 4. Top-N clients × dates matrix; cell value
 // = total EQ30 matching active filters; green saturation by intensity.
 // Sticky client column on the left, sticky date row on top.
 
@@ -14,7 +14,7 @@ type InvFilter = "All" | "Pregame" | "In Game" | "Postgame";
 type StatusFilter = "All" | SpotGroupKind;
 type TopNFilter = "25" | "50" | "100";
 
-export function SpotGridMatrix({ cells }: { cells: SpotGridCell[] }) {
+export function BookingMatrix({ cells }: { cells: SpotGridCell[] }) {
   const [inv, setInv] = useState<InvFilter>("All");
   const [status, setStatus] = useState<StatusFilter>("All");
   const [topN, setTopN] = useState<TopNFilter>("50");

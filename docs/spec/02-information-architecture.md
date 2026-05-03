@@ -11,8 +11,8 @@ Five views plus a landing page. One persistent navigation pattern. The visual ta
 /inventory         Inventory view
 /rates             Rates view
 /heatmap           Heatmap view
-/spot-grid         Spot Grid view
-/aur-report        AUR Report view
+/booking-matrix    Booking Matrix view
+/yield-summary     Yield Summary view
 /about             Sanitization disclosure + spec link
 ```
 
@@ -22,7 +22,7 @@ Static export. Each route prerenders to a static HTML file at build.
 
 Top bar:
 - Left: Project name "RSN Yield Platform" (links to /)
-- Center: five view links (Inventory, Rates, Heatmap, Spot Grid, AUR Report)
+- Center: five view links (Inventory, Rates, Heatmap, Booking Matrix, Yield Summary)
 - Right: Season selector (defaulted to current synthetic year), "About" link
 
 Below the nav, a contextual filter strip per view (date range, season phase filter, etc.) where applicable.
@@ -45,7 +45,7 @@ Below the nav, a contextual filter strip per view (date range, season phase filt
 ### Heat scales
 - Sellout %: red-500 (low fill) → amber-400 (mid) → green-500 (high). Use `bg-` with opacity tier (e.g., `bg-green-500/40`)
 - Oversell: white (no oversell) → amber-300 (mild) → red-400 (FL) → red-600 (Bump)
-- Spot Grid density: white → green-200 → green-400 → green-600 (saturation by spot count)
+- Booking Matrix density: white → green-200 → green-400 → green-600 (saturation by spot count)
 
 ### Numerical formatting
 - Currency rolled-up: `$1,234,567` (no cents, with commas)
@@ -98,7 +98,7 @@ The flagship view. Mirrors the real Inventory tab.
 - Numeric columns: Avail, Cap, Sold, Sellout%, REV (Net), EUR (Gross)
   - "EUR (Gross)" is `eur_gross_cents` — sales-facing, volume-weighted
     sum(gross_rev) / sum(total_eq30). The Rates view consumes the same
-    field. The AUR Report uses `eur_net_cents` instead.
+    field. The Yield Summary uses `eur_net_cents` instead.
 - Per-game total row beneath each game's 4 rows: total Net REV, weighted average EUR (Gross)
 
 **Heat formatting:**
@@ -163,9 +163,10 @@ Mirrors the real Heatmap tab.
 - Month subtotal row: weighted average sellout % per inv type
 - Section divider every month
 
-## View 4: Spot Grid (/spot-grid)
+## View 4: Booking Matrix (/booking-matrix)
 
-Mirrors the real Spot Grid tab.
+Mirrors the real Spot Grid tab. Renamed from "Spot Grid" to "Booking
+Matrix" in 2026 to align with sales-team vocabulary.
 
 **Layout:** Two-axis matrix. Clients down, dates across. Generous horizontal scroll.
 
@@ -192,9 +193,11 @@ Mirrors the real Spot Grid tab.
 - Client column sticky on left during horizontal scroll
 - Date row sticky on top during vertical scroll
 
-## View 5: AUR Report (/aur-report)
+## View 5: Yield Summary (/yield-summary)
 
-The senior view. Mirrors the real AUR Report tab.
+The senior view. Mirrors the real AUR Report tab. Renamed to "Yield
+Summary" in 2026 to better describe what the view actually surfaces
+(volume-weighted yield metrics across LOB × spot-group decomposition).
 
 **Layout:** Wide dense table, vertically scrollable.
 

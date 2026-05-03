@@ -21,13 +21,13 @@ const VIEWS: ReadonlyArray<{
     desc: "Per-game sellout percentage by inventory type, monthly groupings.",
   },
   {
-    href: "/spot-grid",
-    name: "Spot Grid",
+    href: "/booking-matrix",
+    name: "Booking Matrix",
     desc: "Top advertisers × dates matrix of EQ30 by spot status and inventory type.",
   },
   {
-    href: "/aur-report",
-    name: "AUR Report",
+    href: "/yield-summary",
+    name: "Yield Summary",
     desc: "LOB × spot-group decomposition with EUR (Net), AUR, and sellout per game.",
   },
 ];
