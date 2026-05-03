@@ -140,30 +140,34 @@ export function RatesTable({ rows }: { rows: InventoryRollupRow[] }) {
         <table className="w-full text-[13px] leading-tight">
           <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
             <tr>
-              <th rowSpan={2} className="px-3 py-2">Week</th>
-              <th rowSpan={2} className="px-3 py-2">Date · Event</th>
-              <th colSpan={2} className="px-3 py-2 text-center">Pregame</th>
-              <th colSpan={2} className="px-3 py-2 text-center">In Game</th>
-              <th colSpan={2} className="px-3 py-2 text-center">Postgame</th>
+              <th rowSpan={2} className="px-2 py-2">Week</th>
+              <th rowSpan={2} className="px-2 py-2">Day</th>
+              <th rowSpan={2} className="px-2 py-2">Date</th>
+              <th rowSpan={2} className="px-2 py-2">Matchup</th>
+              <th rowSpan={2} className="px-2 py-2">Phase</th>
+              <th rowSpan={2} className="px-2 py-2">Tier</th>
+              <th colSpan={2} className="px-2 py-2 text-center">Pregame</th>
+              <th colSpan={2} className="px-2 py-2 text-center">In Game</th>
+              <th colSpan={2} className="px-2 py-2 text-center">Postgame</th>
             </tr>
             <tr>
-              <th className="px-3 py-1 text-right num">Open</th>
+              <th className="px-2 py-1 text-right num">Open</th>
               <th
-                className="px-3 py-1 text-right num"
+                className="px-2 py-1 text-right num"
                 title="Base when avails > 0, FL when oversold within floater band, Bump when oversold beyond floater cap"
               >
                 Rate
               </th>
-              <th className="px-3 py-1 text-right num">Open</th>
+              <th className="px-2 py-1 text-right num">Open</th>
               <th
-                className="px-3 py-1 text-right num"
+                className="px-2 py-1 text-right num"
                 title="Base when avails > 0, FL when oversold within floater band, Bump when oversold beyond floater cap"
               >
                 Rate
               </th>
-              <th className="px-3 py-1 text-right num">Open</th>
+              <th className="px-2 py-1 text-right num">Open</th>
               <th
-                className="px-3 py-1 text-right num"
+                className="px-2 py-1 text-right num"
                 title="Base when avails > 0, FL when oversold within floater band, Bump when oversold beyond floater cap"
               >
                 Rate
@@ -181,22 +185,31 @@ export function RatesTable({ rows }: { rows: InventoryRollupRow[] }) {
   );
 }
 
+function stripPRPrefix(evt: string): string {
+  return evt.startsWith("PR: ") ? evt.slice(4) : evt;
+}
+
 function WeekBlock({ weekStart, games }: { weekStart: string; games: GameRow[] }) {
   return (
     <>
       {games.map((g, i) => (
         <tr key={`${g.date}|${g.evtProgram}`} className="border-b border-slate-100 last:border-b-0">
           {i === 0 ? (
-            <td rowSpan={games.length + 1} className="border-r border-slate-100 px-3 py-2 align-top text-xs uppercase tracking-wide text-slate-500">
+            <td
+              rowSpan={games.length + 1}
+              className="border-r border-slate-100 px-2 py-2 align-top text-xs uppercase tracking-wide text-slate-500"
+            >
               Wk {fmtIsoLong(weekStart)}
-              <div className="mt-1 text-[11px] normal-case text-slate-400">{games.length} game{games.length === 1 ? "" : "s"}</div>
+              <div className="mt-1 text-[11px] normal-case text-slate-400">
+                {games.length} game{games.length === 1 ? "" : "s"}
+              </div>
             </td>
           ) : null}
-          <td className="px-3 py-2 text-slate-700">
-            <span className="text-xs text-slate-500">{fmtDow(g.date)} </span>
-            {fmtIsoLong(g.date)}
-            <div className="text-[11px] text-slate-400">{g.evtProgram} · {g.matchup}</div>
-          </td>
+          <td className="px-2 py-1 text-xs text-slate-500">{fmtDow(g.date)}</td>
+          <td className="px-2 py-1 text-slate-700">{fmtIsoLong(g.date)}</td>
+          <td className="px-2 py-1 text-slate-700">{stripPRPrefix(g.evtProgram)}</td>
+          <td className="px-2 py-1 text-xs text-slate-600">{g.type2}</td>
+          <td className="px-2 py-1 text-xs text-slate-600">{g.matchup}</td>
           <RateOpenCell cell={g.pregame} />
           <RateRateCell cell={g.pregame} />
           <RateOpenCell cell={g.inGame} />
@@ -206,34 +219,34 @@ function WeekBlock({ weekStart, games }: { weekStart: string; games: GameRow[] }
         </tr>
       ))}
       <tr className="border-y-2 border-slate-300 bg-slate-50 text-xs font-medium">
-        <td className="px-3 py-2 text-right uppercase tracking-wide text-slate-500">
+        <td colSpan={5} className="px-2 py-2 text-right uppercase tracking-wide text-slate-500">
           Week total
         </td>
-        <td className="num px-3 py-2 text-right text-slate-700">{fmtAvails(sumOpen(games, (g) => g.pregame))}</td>
-        <td className="num px-3 py-2 text-right text-slate-700">{fmtCurrencyUnit(avgRate(games, (g) => g.pregame))}</td>
-        <td className="num px-3 py-2 text-right text-slate-700">{fmtAvails(sumOpen(games, (g) => g.inGame))}</td>
-        <td className="num px-3 py-2 text-right text-slate-700">{fmtCurrencyUnit(avgRate(games, (g) => g.inGame))}</td>
-        <td className="num px-3 py-2 text-right text-slate-700">{fmtAvails(sumOpen(games, (g) => g.postgame))}</td>
-        <td className="num px-3 py-2 text-right text-slate-700">{fmtCurrencyUnit(avgRate(games, (g) => g.postgame))}</td>
+        <td className="num px-2 py-2 text-right text-slate-700">{fmtAvails(sumOpen(games, (g) => g.pregame))}</td>
+        <td className="num px-2 py-2 text-right text-slate-700">{fmtCurrencyUnit(avgRate(games, (g) => g.pregame))}</td>
+        <td className="num px-2 py-2 text-right text-slate-700">{fmtAvails(sumOpen(games, (g) => g.inGame))}</td>
+        <td className="num px-2 py-2 text-right text-slate-700">{fmtCurrencyUnit(avgRate(games, (g) => g.inGame))}</td>
+        <td className="num px-2 py-2 text-right text-slate-700">{fmtAvails(sumOpen(games, (g) => g.postgame))}</td>
+        <td className="num px-2 py-2 text-right text-slate-700">{fmtCurrencyUnit(avgRate(games, (g) => g.postgame))}</td>
       </tr>
     </>
   );
 }
 
 function RateOpenCell({ cell }: { cell: CellFig | null }) {
-  if (!cell) return <td className="px-3 py-2 text-right text-xs italic text-slate-300">—</td>;
+  if (!cell) return <td className="px-2 py-2 text-right text-xs italic text-slate-300">—</td>;
   return (
-    <td className={clsx("num px-3 py-2 text-right", openHeat(cell.avail))}>
+    <td className={clsx("num px-2 py-2 text-right", openHeat(cell.avail))}>
       {fmtAvails(cell.avail)}
     </td>
   );
 }
 
 function RateRateCell({ cell }: { cell: CellFig | null }) {
-  if (!cell) return <td className="px-3 py-2 text-right text-xs italic text-slate-300">—</td>;
+  if (!cell) return <td className="px-2 py-2 text-right text-xs italic text-slate-300">—</td>;
   const isShifted = cell.tier === "FL" || cell.tier === "Bump";
   return (
-    <td className={clsx("num px-3 py-2 text-right text-slate-700", isShifted && "font-semibold text-slate-900")}>
+    <td className={clsx("num px-2 py-2 text-right text-slate-700", isShifted && "font-semibold text-slate-900")}>
       {fmtCurrencyUnit(cell.rateCents)}
       {isShifted && (
         <span className="ml-1 text-[10px] uppercase tracking-wide text-amber-700">{cell.tier}</span>
