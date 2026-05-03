@@ -284,19 +284,21 @@ export interface AurSummaryRow {
   'INV TYPE': InGameWithVariant | RateInventoryType;
   'Primary Avails Key': string;
 
-  // HTS LOB
+  // HTS LOB ("Repped")
   'HTS Paid.EQ30': number;
   'HTS Paid.Gross REV': number;
   'HTS Paid.Net REV': number;
+  'HTS Paid.count': number;            // count of paid HTS spots — for per-LOB AUR
   'HTS NC.EQ30': number;
   'HTS ADU.EQ30': number;
   'HTS Cross Property ADU.EQ30': number;
   'HTS Bonus.EQ30': number;
 
-  // Non-HTS LOB
+  // Non-HTS LOB ("Direct")
   'Non-HTS Paid.EQ30': number;
   'Non-HTS Paid.Gross REV': number;
   'Non-HTS Paid.Net REV': number;
+  'Non-HTS Paid.count': number;        // count of paid Non-HTS spots
   'Non-HTS NC.EQ30': number;
   'Non-HTS ADU.EQ30': number;
   'Non-HTS Cross Property ADU.EQ30': number;
