@@ -6,7 +6,7 @@
 // date row on top. Per-client twirl-down expands to one sub-row per
 // OrderNumber the client booked, with the same date×cell layout.
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import type { SpotGridCell, SpotGridOrderCell, SpotGroupKind } from "@/lib/types";
 import { fmtEq30, fmtIntCount, fmtIsoShort, gridDensityHeat } from "@/lib/format";
@@ -17,6 +17,8 @@ type InvFilter = "All" | "Pregame" | "In Game" | "Postgame";
 type StatusFilter = "All" | SpotGroupKind;
 type TopNFilter = "25" | "50" | "100";
 type MetricFilter = "EQ30" | "Units";
+
+const SEARCH_DEBOUNCE_MS = 150;
 
 function ChevronRight({ className }: { className?: string }) {
   return (
@@ -49,7 +51,15 @@ export function BookingMatrix({
   const [year, setYear] = useState("2026");
   const [calendar, setCalendar] = useState<CalendarMode>("standard");
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   void calendar; // selector mounted; matrix is per-day so calendar mode is informational only
+
+  // Debounce the search input — typing fires once per 150ms quiet window.
+  useEffect(() => {
+    const id = setTimeout(() => setSearchQuery(searchInput.trim().toLowerCase()), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(id);
+  }, [searchInput]);
 
   const valueOf = (c: SpotGridCell) => (metric === "Units" ? c.units : c.eq30);
 
@@ -142,12 +152,47 @@ export function BookingMatrix({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredOrders, metric]);
 
+  // Search match: clients whose name contains the query OR who have an
+  // OrderNumber whose digits contain the query. Returns null when no
+  // search is active so downstream code can short-circuit.
+  const searchMatch = useMemo(() => {
+    if (!searchQuery) return null;
+    const matchedClients = new Set<string>();
+    const matchedOrders = new Set<string>(); // key = client|order
+    for (const [client] of clientTotals) {
+      if (client.toLowerCase().includes(searchQuery)) matchedClients.add(client);
+    }
+    for (const [client, orders] of ordersByClient) {
+      for (const order of orders) {
+        if (String(order).includes(searchQuery)) {
+          matchedClients.add(client);
+          matchedOrders.add(`${client}|${order}`);
+        }
+      }
+    }
+    return { clients: matchedClients, orders: matchedOrders };
+  }, [searchQuery, clientTotals, ordersByClient]);
+
+  // When the search matches an OrderNumber, auto-expand that client's
+  // twirl-down so the order surfaces without a manual click.
+  useEffect(() => {
+    if (!searchMatch || searchMatch.orders.size === 0) return;
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      for (const k of searchMatch.orders) next.add(k.split("|")[0]);
+      return next;
+    });
+  }, [searchMatch]);
+
   const topClients = useMemo(() => {
-    return Array.from(clientTotals.entries())
+    const ranked = Array.from(clientTotals.entries())
       .sort((a, b) => b[1] - a[1])
-      .slice(0, Number(topN))
       .map(([client]) => client);
-  }, [clientTotals, topN]);
+    const gated = searchMatch
+      ? ranked.filter((c) => searchMatch.clients.has(c))
+      : ranked.slice(0, Number(topN));
+    return gated;
+  }, [clientTotals, topN, searchMatch]);
 
   const dates = useMemo(() => {
     const set = new Set<string>();
@@ -174,55 +219,70 @@ export function BookingMatrix({
           onCalendar={setCalendar}
         />
       </div>
-      <div className="flex flex-wrap items-center gap-4">
-        <Segment<InvFilter>
-          label="Inventory"
-          value={inv}
-          options={[
-            { value: "All", label: "All" },
-            { value: "Pregame", label: "Pregame" },
-            { value: "In Game", label: "In Game" },
-            { value: "Postgame", label: "Postgame" },
-          ]}
-          onChange={setInv}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <input
+          type="search"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          placeholder="Search client or order…"
+          aria-label="Search client or order"
+          className="w-[300px] rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-300"
         />
-        <Segment<MetricFilter>
-          label="Metric"
-          value={metric}
-          options={[
-            { value: "EQ30", label: "EQ30" },
-            { value: "Units", label: "Units" },
-          ]}
-          onChange={setMetric}
-        />
-        <Segment<StatusFilter>
-          label="Status"
-          value={status}
-          options={[
-            { value: "All", label: "All" },
-            { value: "Paid", label: "Paid" },
-            { value: "NC", label: "NC" },
-            { value: "ADU", label: "ADU" },
-            { value: "xADU", label: "xADU" },
-            { value: "Bonus", label: "Bonus" },
-          ]}
-          onChange={setStatus}
-        />
-        <Segment<TopNFilter>
-          label="Top"
-          value={topN}
-          options={[
-            { value: "25", label: "25" },
-            { value: "50", label: "50" },
-            { value: "100", label: "100" },
-          ]}
-          onChange={setTopN}
-        />
-        <span className="ml-auto text-xs text-slate-500">
-          {topClients.length} clients · {dates.length} dates
-        </span>
+        <div className="flex flex-wrap items-center gap-4">
+          <Segment<InvFilter>
+            label="Inventory"
+            value={inv}
+            options={[
+              { value: "All", label: "All" },
+              { value: "Pregame", label: "Pregame" },
+              { value: "In Game", label: "In Game" },
+              { value: "Postgame", label: "Postgame" },
+            ]}
+            onChange={setInv}
+          />
+          <Segment<MetricFilter>
+            label="Metric"
+            value={metric}
+            options={[
+              { value: "EQ30", label: "EQ30" },
+              { value: "Units", label: "Units" },
+            ]}
+            onChange={setMetric}
+          />
+          <Segment<StatusFilter>
+            label="Status"
+            value={status}
+            options={[
+              { value: "All", label: "All" },
+              { value: "Paid", label: "Paid" },
+              { value: "NC", label: "NC" },
+              { value: "ADU", label: "ADU" },
+              { value: "xADU", label: "xADU" },
+              { value: "Bonus", label: "Bonus" },
+            ]}
+            onChange={setStatus}
+          />
+          <Segment<TopNFilter>
+            label="Top"
+            value={topN}
+            options={[
+              { value: "25", label: "25" },
+              { value: "50", label: "50" },
+              { value: "100", label: "100" },
+            ]}
+            onChange={setTopN}
+          />
+        </div>
+      </div>
+      <div className="text-right text-xs text-slate-500">
+        {topClients.length} clients · {dates.length} dates
       </div>
 
+      {searchMatch && topClients.length === 0 ? (
+        <p className="rounded border border-slate-200 bg-white p-6 text-sm text-slate-500">
+          No clients or orders match your search.
+        </p>
+      ) : (
       <div className="relative max-h-[78vh] overflow-auto rounded border border-slate-200 bg-white">
         <table className="table-fixed border-separate border-spacing-0 text-[11px] leading-tight">
           <thead>
@@ -259,6 +319,7 @@ export function BookingMatrix({
           </tbody>
         </table>
       </div>
+      )}
     </div>
   );
 }
