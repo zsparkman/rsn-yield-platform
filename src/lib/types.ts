@@ -29,7 +29,6 @@ export type InventoryGroup =
   | 'Pregame'
   | 'In Game'
   | 'Postgame'
-  | 'Floaters A&B'
   | 'Ancillary';
 
 export type InGameWithVariant =
@@ -40,8 +39,7 @@ export type InGameWithVariant =
 export type InventoryGroupWithVariant =
   | InGameWithVariant
   | 'Pregame'
-  | 'Postgame'
-  | 'Floaters A&B';
+  | 'Postgame';
 
 export type RateInventoryType = 'Pregame' | 'In Game' | 'Postgame';
 export type RateTier = 'Base' | 'FL' | 'Bump';
@@ -103,6 +101,8 @@ export interface RawInventoryCapRow {
   Syscode: number;
   Team: string;                  // "Sentinels"
   Type: SeasonPhase;             // "PR" / "REG"
+  // Inventory is restricted to the resolved In Game variant + Pregame +
+  // Postgame after the Floaters A&B collapse — no separate floater rows.
   Inventory: InventoryGroupWithVariant;
   Format: Format;
   Avails: number;
@@ -232,15 +232,16 @@ export interface InventoryRollupRow {
   DATE: string;                       // YYYY-MM-DD
   EVENT_PROGRAM: string;
   TYPE2: SeasonPhase;
-  'INV TYPE': InventoryGroupWithVariant | 'Floaters A&B';
+  'INV TYPE': InventoryGroupWithVariant;
   'Avails Key': string;
   broadcast_month: string;
   broadcast_year: number;
   SEASON: string;
   Matchup: MatchupTier;
   Format: Format;                     // 'Standard' | 'Expanded' | 'DH' | 'Expanded DH'
-  Cap: number;                        // Avails (or 6 for Floaters A&B)
-  Sold: number;                       // sum of TotalEquivSold (or FL Sold for Floaters A&B)
+  Cap: number;                        // primary cap from inventory_capacity (includes the
+                                      // first floater break since the Floaters A&B collapse)
+  Sold: number;                       // sum of TotalEquivSold (paid-only when Exc-$0)
   avail: number;                      // max(0, Cap - Sold); the Inventory view's "Avail"
   Sellout: number;                    // Sold / Cap
   Oversell: number;                   // M sign: Avails - Sold
@@ -249,9 +250,9 @@ export interface InventoryRollupRow {
   Rate: number;                       // looked up from rate_card (dollars)
   current_rate_cents: number;         // round(Rate * 100); the Rates view's rate column
   'Start of Week': string;            // YYYY-MM-DD (Monday)
-  'Gross Rev': number;                // dollars; 0 for Floaters A&B
-  'Net Rev': number;                  // dollars; 0 for Floaters A&B
-  gross_rev_cents: number;            // round(Gross Rev * 100); 0 for Floaters A&B
+  'Gross Rev': number;
+  'Net Rev': number;
+  gross_rev_cents: number;            // round(Gross Rev * 100)
   net_rev_cents: number;              // round(Net Rev * 100); the Inventory view's "REV (Net)"
   // Three volume-weighted unit-rate metrics, all in integer cents.
   // ALL THREE COMPUTED OVER PAID SPOTS ONLY (spot.SpotRate > 0).

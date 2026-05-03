@@ -29,7 +29,6 @@ interface GameRow {
   pregame: CellFig | null;
   inGame: CellFig | null;
   postgame: CellFig | null;
-  floater: CellFig | null;
 }
 
 function cellOf(rows: InventoryRollupRow[], inv: (s: string) => boolean): CellFig | null {
@@ -62,7 +61,6 @@ function buildGameRows(rows: InventoryRollupRow[]): GameRow[] {
       pregame: cellOf(list, (s) => s === "Pregame"),
       inGame: cellOf(list, (s) => s === "In Game" || s === "In Game+" || s === "In Game-"),
       postgame: cellOf(list, (s) => s === "Postgame"),
-      floater: cellOf(list, (s) => s === "Floaters A&B"),
     });
   }
   out.sort((a, b) => a.date.localeCompare(b.date));
@@ -147,7 +145,6 @@ export function RatesTable({ rows }: { rows: InventoryRollupRow[] }) {
               <th colSpan={2} className="px-3 py-2 text-center">Pregame</th>
               <th colSpan={2} className="px-3 py-2 text-center">In Game</th>
               <th colSpan={2} className="px-3 py-2 text-center">Postgame</th>
-              <th rowSpan={2} className="px-3 py-2 text-right num">FL A&B Open</th>
             </tr>
             <tr>
               <th className="px-3 py-1 text-right num">Open</th>
@@ -206,7 +203,6 @@ function WeekBlock({ weekStart, games }: { weekStart: string; games: GameRow[] }
           <RateRateCell cell={g.inGame} />
           <RateOpenCell cell={g.postgame} />
           <RateRateCell cell={g.postgame} />
-          <RateOpenCell cell={g.floater} />
         </tr>
       ))}
       <tr className="border-y-2 border-slate-300 bg-slate-50 text-xs font-medium">
@@ -219,7 +215,6 @@ function WeekBlock({ weekStart, games }: { weekStart: string; games: GameRow[] }
         <td className="num px-3 py-2 text-right text-slate-700">{fmtCurrencyUnit(avgRate(games, (g) => g.inGame))}</td>
         <td className="num px-3 py-2 text-right text-slate-700">{fmtAvails(sumOpen(games, (g) => g.postgame))}</td>
         <td className="num px-3 py-2 text-right text-slate-700">{fmtCurrencyUnit(avgRate(games, (g) => g.postgame))}</td>
-        <td className="num px-3 py-2 text-right text-slate-700">{fmtAvails(sumOpen(games, (g) => g.floater))}</td>
       </tr>
     </>
   );

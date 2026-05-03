@@ -21,9 +21,9 @@ ETL invariants.
 - All sub-generators receive a derived seed via
   `seedrandom(topSeed + ':' + namespace)` so changes to one section
   don't shift all downstream randomness
-- Per-game RNG (`rngForKey('floater-fires', game_id)`) for any sub-
-  routine whose distribution must stay stable when sampling order
-  elsewhere shifts
+- Per-game RNG (`rngForKey(namespace, game_id)`) for any sub-routine
+  whose distribution must stay stable when sampling order elsewhere
+  shifts
 
 ## Generator order
 
@@ -163,7 +163,11 @@ center-of-gravity that lands ~30% of In Game cells under cap, ~50% in the
 - In Game (incl. ± variants): 1.00
 - Pregame: 0.85
 - Postgame: 0.65
-- Floaters A&B: 0.90 (when fired they fill at high rates)
+
+(Floaters A&B was collapsed into In Game in 2026; the +3 eq30 of
+term-break capacity is now part of the In Game primary cap and the
+FL band is contingent capacity surfaced via tier resolution, not a
+separate inv-type.)
 
 **format_multiplier**:
 - Standard: 1.00
@@ -225,8 +229,10 @@ synthetic generator.
 - :15s: 10%
 - :60s: 1%
 
-**Floaters A&B:**
-- :30s: 100% (operationally always :30s in floater rotation)
+(No separate Floaters A&B mix after the 2026 collapse — what were
+floater spots are now ordinary In Game spots and follow the In Game
+length mix. Their rate tier resolves to FL or Bump based on cumulative
+sellout per Step 3 below.)
 
 ### Step 3: Generate paid spots
 
@@ -241,10 +247,11 @@ While remaining_eq30 > 0:
   spec match/mismatch ratios bottom-tier clients collapse below the
   validation floor.
 - Sample spot length per the inv-type mix
-- Determine rate tier:
-  - In Game oversell → FL or Bump per the rules
-  - Floaters A&B → FL
-  - Otherwise Base
+- Determine rate tier (In Game): cumulative paid eq30 vs primary cap
+  - sold ≤ cap → Base
+  - 0 < sold − cap ≤ 3 → FL    (3-eq30 floater band; the "second" floater break)
+  - sold − cap > 3 → Bump
+- Determine rate tier (Pregame / Postgame): Base when avails > 0, else Bump
 - Look up gross_rate from rate_card
 - Apply spot-length multiplier: :15 = 0.55×, :30 = 1.0×, :60 = 1.85×
 - Apply rack-to-sold discount (see "Rate distribution" below)
@@ -272,8 +279,7 @@ Independent of paid fill, sample additional spots per inv-type cell.
 Probabilities and Poisson rates here are tuned against the 78% paid-spot
 share validation target — the literal-rate version (NC 0.35×Pois(2), ADU
 0.25×Pois(1.5), xADU 0.10×Pois(1), Bonus 0.20×Pois(2)) lands paid share
-near 93% and misses by ~15 points. Skip non-paid generation for
-`Floaters A&B` cells (those are firing-only).
+near 93% and misses by ~15 points.
 
 NC (contracted bonus):
 - Probability: 0.85 per game-inventory-cell having at least one NC spot
@@ -296,28 +302,15 @@ Bonus (added value):
 
 These all generate $0-rate spots with full eq30 contribution. They show up in AUR Report decomposition but do not affect EUR/AUR (which divide by paid only).
 
-### Step 5: Floater spots
+### Step 5: Demo and impressions assignment
 
-Per game, sample floaters_fired from the empirical distribution. The
-sampling RNG is per-game (seeded from `game_id`) so that the firing count
-stays stable when sampling order elsewhere shifts.
+(The previous "Step 5: Floater spots" was removed in the 2026 model.
+The first floater break is folded into the In Game primary cap; the
+second floater break is the FL band in tier resolution; the third+
+breaks become Bump-tier In Game spots. None of those are emitted as
+separate spot rows — they're regular In Game spots whose rate tier
+is determined by their position in the cumulative-sellout sequence.)
 
-- 13% probability of extras game
-- Regulation: discrete distribution — 0:11.5%, 1:13.3%, 2:25.5%, 3:37.8%, 4:9.7%, 5:0%, 6:2.2% (P(0) bumped slightly above the 8.9% from the source worksheet so the "% games firing 0 floaters" target lands inside the Monte-Carlo noise floor for a 145-game season)
-- Extras: shifted distribution — discrete PMF concentrated 3–7, mean ~5.0
-
-If `fires == 0` → emit no Floaters A&B spots.
-
-If `fires >= 1` → emit one :30 floater spot tagged `priority='bonus'`,
-`rate=$0` to represent the term break ("first one free" per spec). This
-is what the validation counts to determine whether a game "fired" floaters.
-
-For each floater fired beyond the first:
-- Generate 3 :30s spots at FL tier rate
-- Same client sampling as In Game
-- Tag with priority='paid', inv_type='Floaters A&B'
-
-### Step 6: Demo and impressions assignment
 
 Per spot, demo_code = client.preferred_demo with 80% probability, otherwise sampled from {HH, A25-54, A18-49, M25-54, A35+, A21-49}.
 

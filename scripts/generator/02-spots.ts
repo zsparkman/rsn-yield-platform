@@ -226,30 +226,30 @@ function readInventoryCaps(): Cap[] {
 }
 
 // Mirror of docs/reference/Inventory_Table_synthetic.xlsx (Sentinels rows).
+// In Game capacities include the previously-separate "Floaters A&B" term-
+// break of +3 eq30. The remaining FL band (3 eq30 above primary) is
+// contingent capacity surfaced as the FL rate tier — no separate inv-type
+// row anywhere in the chain.
 const INVENTORY_CAPS: Cap[] = [
   { phase: "PR", inventory: "Pregame", format: "Standard", avails: 21 },
-  { phase: "PR", inventory: "In Game", format: "Standard", avails: 43.5 },
-  { phase: "PR", inventory: "In Game+", format: "Standard", avails: 47.5 },
-  { phase: "PR", inventory: "In Game-", format: "Standard", avails: 39.5 },
-  { phase: "PR", inventory: "Floaters A&B", format: "Standard", avails: 6 },
+  { phase: "PR", inventory: "In Game", format: "Standard", avails: 46.5 },
+  { phase: "PR", inventory: "In Game+", format: "Standard", avails: 50.5 },
+  { phase: "PR", inventory: "In Game-", format: "Standard", avails: 42.5 },
   { phase: "PR", inventory: "Postgame", format: "Standard", avails: 17 },
   { phase: "PR", inventory: "Pregame", format: "Expanded", avails: 21 },
-  { phase: "PR", inventory: "In Game", format: "Expanded", avails: 52.5 },
-  { phase: "PR", inventory: "In Game+", format: "Expanded", avails: 56.5 },
-  { phase: "PR", inventory: "In Game-", format: "Expanded", avails: 48.5 },
-  { phase: "PR", inventory: "Floaters A&B", format: "Expanded", avails: 6 },
+  { phase: "PR", inventory: "In Game", format: "Expanded", avails: 55.5 },
+  { phase: "PR", inventory: "In Game+", format: "Expanded", avails: 59.5 },
+  { phase: "PR", inventory: "In Game-", format: "Expanded", avails: 51.5 },
   { phase: "PR", inventory: "Postgame", format: "Expanded", avails: 17 },
   { phase: "REG", inventory: "Pregame", format: "Standard", avails: 21 },
-  { phase: "REG", inventory: "In Game", format: "Standard", avails: 51 },
-  { phase: "REG", inventory: "In Game+", format: "Standard", avails: 55 },
-  { phase: "REG", inventory: "In Game-", format: "Standard", avails: 47 },
-  { phase: "REG", inventory: "Floaters A&B", format: "Standard", avails: 6 },
+  { phase: "REG", inventory: "In Game", format: "Standard", avails: 54 },
+  { phase: "REG", inventory: "In Game+", format: "Standard", avails: 58 },
+  { phase: "REG", inventory: "In Game-", format: "Standard", avails: 50 },
   { phase: "REG", inventory: "Postgame", format: "Standard", avails: 17 },
   { phase: "REG", inventory: "Pregame", format: "Expanded", avails: 21 },
-  { phase: "REG", inventory: "In Game", format: "Expanded", avails: 58 },
-  { phase: "REG", inventory: "In Game+", format: "Expanded", avails: 62 },
-  { phase: "REG", inventory: "In Game-", format: "Expanded", avails: 54 },
-  { phase: "REG", inventory: "Floaters A&B", format: "Expanded", avails: 6 },
+  { phase: "REG", inventory: "In Game", format: "Expanded", avails: 61 },
+  { phase: "REG", inventory: "In Game+", format: "Expanded", avails: 65 },
+  { phase: "REG", inventory: "In Game-", format: "Expanded", avails: 57 },
   { phase: "REG", inventory: "Postgame", format: "Expanded", avails: 17 },
 ];
 
@@ -303,9 +303,11 @@ function rackRate(phase: SeasonPhase, inv: RateInventoryType, matchup: MatchupTi
 }
 
 function rateTierForOversell(invType: RateInventoryType, oversellEq30: number): RateTier {
+  // FL band is now 3 eq30 wide above primary cap (the second floater break,
+  // pitching-change-driven). Beyond the FL band → Bump.
   if (invType === "In Game") {
     if (oversellEq30 <= 0) return "Base";
-    if (oversellEq30 <= 6) return "FL";
+    if (oversellEq30 <= 3) return "FL";
     return "Bump";
   }
   return oversellEq30 <= 0 ? "Base" : "Bump";

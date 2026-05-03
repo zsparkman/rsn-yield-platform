@@ -587,14 +587,17 @@ function rateLookup(card: RawRateCardRow[]): Map<string, number> {
 }
 
 function rateTierForOversell(invType: string, oversellMSign: number): RateTier {
-  // M sign: oversell = avails - sold. Positive = under cap.
+  // M sign convention: oversell = avails - sold. Positive = under primary cap.
+  // After the Floaters A&B collapse, In Game capacity already includes the
+  // first floater break; the FL band is the next 3 eq30 of contingent
+  // capacity (second floater break, pitching-change-driven), beyond which
+  // the rate jumps to Bump.
   if (invType === "In Game" || invType === "In Game+" || invType === "In Game-") {
-    if (oversellMSign > 0) return "Base";
-    if (oversellMSign > -6) return "FL";
-    return "Bump";
+    if (oversellMSign >= 0) return "Base";    // sold ≤ primary cap
+    if (oversellMSign >= -3) return "FL";     // 0 < (sold − cap) ≤ 3
+    return "Bump";                              // sold − cap > 3
   }
-  if (invType === "Floaters A&B") return "FL";
-  return oversellMSign > 0 ? "Base" : "Bump";
+  return oversellMSign >= 0 ? "Base" : "Bump";
 }
 
 function rateInvFor(invType: string): RateInventoryType {
@@ -683,93 +686,70 @@ export function deriveInventory(
   for (const g of grouped.values()) {
     const avails = capLookup.get(g.avails_key) ?? 0;
     const oversellMSign = avails - g.sold;
-    const floaterAvail = oversellMSign < 0
-      ? Math.max(0, oversellMSign + 6)
-      : 6;
 
-    // Emit two rows for In Game (one as "In Game", one as "Floaters A&B").
-    const isInGameish = g.invType1 === "In Game" || g.invType1 === "In Game+" || g.invType1 === "In Game-";
-    const variants: Array<{ inv: string; cap: number; sold: number; primaryAvail: number }> = [];
-    if (isInGameish) {
-      variants.push({
-        inv: g.invType1,
-        cap: avails,
-        sold: g.sold,
-        primaryAvail: oversellMSign >= 0 ? oversellMSign : 0,
-      });
-      variants.push({
-        inv: "Floaters A&B",
-        cap: 6,
-        sold: oversellMSign < 0 ? -oversellMSign : 0,
-        primaryAvail: floaterAvail,
-      });
-    } else {
-      variants.push({
-        inv: g.invType1,
-        cap: avails,
-        sold: g.sold,
-        primaryAvail: oversellMSign >= 0 ? oversellMSign : 0,
-      });
-    }
-    for (const v of variants) {
-      const rateTier = rateTierForOversell(v.inv, oversellMSign);
-      const rateKey = [g.type2, v.inv, g.matchup, rateTier].join(".");
-      // M: rate card has FL only for In Game; for non-In Game lookup falls back to Base.
-      const rateInv = rateInvFor(v.inv);
-      const lookupTier = rateInv === "In Game" ? rateTier : (rateTier === "FL" ? "Bump" : rateTier);
-      const rate = rateLk.get([g.type2, rateInv, g.matchup, lookupTier].join(".")) ?? 0;
+    // One row per (game, INV TYPE.1) — Pregame / In Game variant / Postgame.
+    // The previous Floaters A&B unpivot is gone: In Game capacity already
+    // includes the first floater break and the FL band lives in tier
+    // resolution.
+    const v = {
+      inv: g.invType1,
+      cap: avails,
+      sold: g.sold,
+    };
 
-      const isFloater = v.inv === "Floaters A&B";
-      const grossRev = isFloater ? 0 : g.grossRev;
-      const netRev = isFloater ? 0 : g.netRev;
-      // Volume-weighted unit-rate metrics. All in integer cents.
-      // For Floaters A&B all three resolve to 0 (revenue lives on the In Game row).
-      const eur_gross_cents = isFloater || g.paidEq30 <= 0
-        ? 0
-        : Math.round((g.paidGross / g.paidEq30) * 100);
-      const eur_net_cents = isFloater || g.paidEq30 <= 0
-        ? 0
-        : Math.round((g.paidNet / g.paidEq30) * 100);
-      const aur_cents = isFloater || g.paidCount <= 0
-        ? 0
-        : Math.round((g.paidNet / g.paidCount) * 100);
+    const rateTier = rateTierForOversell(v.inv, oversellMSign);
+    const rateKey = [g.type2, v.inv, g.matchup, rateTier].join(".");
+    const rateInv = rateInvFor(v.inv);
+    const rate = rateLk.get([g.type2, rateInv, g.matchup, rateTier].join(".")) ?? 0;
 
-      const dateIso = g.date;
-      const startWeek = startOfWeek(dateIso);
-      const dateMillis = new Date(`${dateIso}T00:00:00Z`).getTime();
+    const grossRev = g.grossRev;
+    const netRev = g.netRev;
+    // Volume-weighted unit-rate metrics. All in integer cents. Paid-only.
+    const eur_gross_cents = g.paidEq30 <= 0
+      ? 0
+      : Math.round((g.paidGross / g.paidEq30) * 100);
+    const eur_net_cents = g.paidEq30 <= 0
+      ? 0
+      : Math.round((g.paidNet / g.paidEq30) * 100);
+    const aur_cents = g.paidCount <= 0
+      ? 0
+      : Math.round((g.paidNet / g.paidCount) * 100);
 
-      const soldRounded = Math.round(v.sold * 100) / 100;
-      out.push({
-        DATE: dateIso,
-        EVENT_PROGRAM: g.evtProgram,
-        TYPE2: g.type2,
-        "INV TYPE": v.inv as InventoryRollupRow["INV TYPE"],
-        "Avails Key": g.avails_key,
-        broadcast_month: g.broadcast_month,
-        broadcast_year: g.broadcast_year,
-        SEASON: g.season,
-        Matchup: g.matchup,
-        Format: g.expanded,
-        Cap: v.cap,
-        Sold: soldRounded,
-        avail: Math.max(0, Math.round((v.cap - v.sold) * 100) / 100),
-        Sellout: v.cap > 0 ? Math.round((v.sold / v.cap) * 10000) / 10000 : 0,
-        Oversell: Math.round(oversellMSign * 100) / 100,
-        "Rate Tier": rateTier,
-        "Rate Key": rateKey,
-        Rate: rate,
-        current_rate_cents: Math.round(rate * 100),
-        "Start of Week": startWeek,
-        "Gross Rev": Math.round(grossRev * 100) / 100,
-        "Net Rev": Math.round(netRev * 100) / 100,
-        gross_rev_cents: Math.round(grossRev * 100),
-        net_rev_cents: Math.round(netRev * 100),
-        eur_gross_cents,
-        eur_net_cents,
-        aur_cents,
-        AfterToday: dateMillis > today ? 1 : 0,
-      });
-    }
+    const dateIso = g.date;
+    const startWeek = startOfWeek(dateIso);
+    const dateMillis = new Date(`${dateIso}T00:00:00Z`).getTime();
+
+    const soldRounded = Math.round(v.sold * 100) / 100;
+    out.push({
+      DATE: dateIso,
+      EVENT_PROGRAM: g.evtProgram,
+      TYPE2: g.type2,
+      "INV TYPE": v.inv as InventoryRollupRow["INV TYPE"],
+      "Avails Key": g.avails_key,
+      broadcast_month: g.broadcast_month,
+      broadcast_year: g.broadcast_year,
+      SEASON: g.season,
+      Matchup: g.matchup,
+      Format: g.expanded,
+      Cap: v.cap,
+      Sold: soldRounded,
+      avail: Math.max(0, Math.round((v.cap - v.sold) * 100) / 100),
+      Sellout: v.cap > 0 ? Math.round((v.sold / v.cap) * 10000) / 10000 : 0,
+      Oversell: Math.round(oversellMSign * 100) / 100,
+      "Rate Tier": rateTier,
+      "Rate Key": rateKey,
+      Rate: rate,
+      current_rate_cents: Math.round(rate * 100),
+      "Start of Week": startWeek,
+      "Gross Rev": Math.round(grossRev * 100) / 100,
+      "Net Rev": Math.round(netRev * 100) / 100,
+      gross_rev_cents: Math.round(grossRev * 100),
+      net_rev_cents: Math.round(netRev * 100),
+      eur_gross_cents,
+      eur_net_cents,
+      aur_cents,
+      AfterToday: dateMillis > today ? 1 : 0,
+    });
   }
   return out;
 }

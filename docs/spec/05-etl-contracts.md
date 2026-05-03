@@ -594,60 +594,49 @@ clarity; the implementation may use either internally.
 
 ### Contracts
 
-#### I1. Exactly four INV TYPE rows per game
+#### I1. Exactly three INV TYPE rows per game
 
 ```ts
 const gamesByPair = groupBy(output, r => `${r.DATE}|${r['EVENT/PROGRAM']}`);
 gamesByPair.every(g =>
-  new Set(g.map(r => r['INV TYPE'])).size === 4 &&
-  ['Pregame', 'In Game', 'Postgame', 'Floaters A&B'].every(t =>
-    g.some(r => r['INV TYPE'] === t))
+  new Set(g.map(r => r['INV TYPE'])).size === 3 &&
+  ['Pregame', 'Postgame'].every(t => g.some(r => r['INV TYPE'] === t)) &&
+  ['In Game', 'In Game+', 'In Game-'].some(t => g.some(r => r['INV TYPE'] === t))
 )
 ```
 
-Anchored at M `#"Unpivoted Columns"` (line 268) which splits "In Game"
-into "In Game" and "Floaters A&B".
+The previous "four rows + Floaters A&B" shape was a Power-Query-era
+artifact. After the 2026 collapse, In Game primary capacity already
+includes the term-break (+3 eq30), and the FL band lives in tier
+resolution — there is no separate Floaters A&B row anywhere in the
+chain.
 
-#### I2. Cap = 6 for Floaters A&B, else from Inventory Table
+#### I2. No Floaters A&B inventory rows exist
 
 ```ts
-output.every(r =>
-  r['INV TYPE'] === 'Floaters A&B'
-    ? r.Cap === 6
-    : approxEq(r.Cap, capacityLookup(r['Avails Key']), 0.01)
-)
+output.every(r => r['INV TYPE'] !== 'Floaters A&B')
 ```
 
-Anchored at M `#"Added Custom10"` (line 286).
+Defensive contract — guards against any future regression that
+re-introduces the Floaters A&B unpivot.
 
-#### I3. Floater Sold derives from In Game oversell
+#### I3. (Removed.) Floater Sold from In Game oversell — n/a after collapse
 
-```ts
-output
-  .filter(r => r['INV TYPE'] === 'Floaters A&B')
-  .every(r => {
-    const inGameRow = inGameSiblingOf(r, output);
-    const m_oversell = inGameRow.Avail_initial - inGameRow.Primary_Sold; // M sign
-    const expected = m_oversell < 0 ? -m_oversell : 0;
-    return approxEq(r.Sold, expected, 0.01);
-  })
-```
+The previous I3 derived a Floaters A&B `Sold` value from the In Game
+oversell. With the collapse this is no longer meaningful: oversell
+beyond the primary cap is now signaled via the `Rate Tier` field
+itself (FL or Bump).
 
-Anchored at M `#"Added Custom9"` (FL Sold) and `#"Added Custom11"`
-(Sold) (lines 285, 287).
-
-#### I4. Sold for non-Floaters = sum of TotalEquivSold from joined paid spots
+#### I4. Sold = sum of TotalEquivSold from joined paid spots (Exc-$0)
 
 ```ts
-output
-  .filter(r => r['INV TYPE'] !== 'Floaters A&B')
-  .every(r => {
-    const matched = spotsByClient.filter(s =>
-      s.DATE === r.DATE && s['EVENT/PROGRAM'] === r['EVENT/PROGRAM'] &&
-      s['INV TYPE'] === r['INV TYPE']);
-    const expected = sum(matched, s => s['Lakers Spot Data 19-22.TotalEquivSold']);
-    return approxEq(r.Sold, expected, 0.01);
-  })
+output.every(r => {
+  const matched = spotsByClient.filter(s =>
+    s.DATE === r.DATE && s['EVENT/PROGRAM'] === r['EVENT/PROGRAM'] &&
+    s['INV TYPE'] === r['INV TYPE']);
+  const expected = sum(matched, s => s['Lakers Spot Data 19-22.TotalEquivSold']);
+  return approxEq(r.Sold, expected, 0.01);
+})
 ```
 
 Anchored at M `#"Grouped Rows"` aggregator (line 260).
@@ -660,44 +649,51 @@ output.every(r => approxEq(r.Sellout, r.Sold / r.Cap, 1e-4))
 
 Anchored at M `#"Added Custom12"` (line 289).
 
-#### I6. Rate Tier follows the M rule
+#### I6. Rate Tier follows the new (post-2026-collapse) rule
+
+The FL band is **3 eq30** wide above the primary cap (formerly 6, when
+Floaters A&B was a separate inv-type with its own 6-cap row). In Game
+capacity now includes the first floater break in primary; the FL band
+is the second floater break (pitching-change-driven contingent
+capacity); Bump is everything beyond.
 
 In the M sign convention (`Oversell = Avails - Sold`):
 
 ```
-INV TYPE = 'In Game' && Oversell > 0   → 'Base'
-INV TYPE = 'In Game' && Oversell > -6  → 'FL'
-INV TYPE = 'In Game' && Oversell <= -6 → 'Bump'
-else if Avail > 0                       → 'Base'
-else                                    → 'Bump'
+INV TYPE = 'In Game' && Oversell >= 0   → 'Base'
+INV TYPE = 'In Game' && Oversell >= -3  → 'FL'
+INV TYPE = 'In Game' && Oversell <  -3  → 'Bump'
+else if Avail > 0                        → 'Base'
+else                                     → 'Bump'
 ```
 
 Equivalent in `oversell_eq30 = sold - cap` form:
 
 ```
-INV TYPE = 'In Game' && oversell_eq30 < 0  → 'Base'
-INV TYPE = 'In Game' && 0 <= oversell_eq30 < 6 → 'FL'
-INV TYPE = 'In Game' && oversell_eq30 >= 6 → 'Bump'
-else if cap - sold > 0                      → 'Base'
-else                                        → 'Bump'
+INV TYPE = 'In Game' && sold − cap <= 0     → 'Base'
+INV TYPE = 'In Game' && 0 < sold − cap <= 3 → 'FL'
+INV TYPE = 'In Game' && sold − cap > 3      → 'Bump'
+else if cap - sold > 0                       → 'Base'
+else                                         → 'Bump'
 ```
 
 Predicate (using M sign internally):
 
 ```ts
 output.every(r => {
-  const m_oversell = r.Avails_raw - r.Primary_Sold;
+  const m_oversell = r.Avails_raw - r.Sold;
   const expected =
-    r['INV TYPE'] === 'In Game'
-      ? m_oversell > 0 ? 'Base' : m_oversell > -6 ? 'FL' : 'Bump'
+    r['INV TYPE'].startsWith('In Game')
+      ? m_oversell >= 0 ? 'Base' : m_oversell >= -3 ? 'FL' : 'Bump'
       : r.Avail > 0 ? 'Base' : 'Bump';
   return r['Rate Tier'] === expected;
 })
 ```
 
-Anchored at M `#"Added Custom7"` (line 276).
+Anchored at M `#"Added Custom7"` (line 276), modified to a 3-eq30
+band. The 6-eq30 band of the M era is no longer correct.
 
-#### I7. Pregame / Postgame / Floaters A&B never resolve to FL
+#### I7. Pregame / Postgame never resolve to FL (FL is In-Game-only)
 
 ```ts
 output
@@ -716,25 +712,31 @@ output.every(r => r['Dynamic Rates.Rate'] >= 0)
 
 Anchored at M `#"Expanded Dynamic Rates"` (line 279).
 
-#### I9. Floaters A&B rows have zeroed Gross/Net/EUR/AUR
+#### I9. Rate Tier follows the new band (3-eq30 FL above primary)
+
+The 2026 Floaters A&B collapse re-purposed I9. Asserts that every
+row's stored `Rate Tier` is consistent with the formula in I6:
 
 ```ts
-output
-  .filter(r => r['INV TYPE'] === 'Floaters A&B')
-  .every(r =>
-    r['Gross Rev'] === 0 && r['Net Rev'] === 0 &&
-    r.eur_gross_cents === 0 && r.eur_net_cents === 0 && r.aur_cents === 0)
+output.every(r => {
+  const oversell = r.Sold - r.Cap; // sold-cap convention
+  const expected =
+    r['INV TYPE'] === 'Pregame' || r['INV TYPE'] === 'Postgame'
+      ? oversell <= 0 ? 'Base' : 'Bump'
+      : oversell <= 0 ? 'Base' : oversell <= 3 ? 'FL' : 'Bump';
+  return r['Rate Tier'] === expected;
+})
 ```
 
-Anchored at M `#"Added Conditional Column"` through `#"Added
-Conditional Column5"` (lines 292–296). Floater capacity is tracked
-without double-counting revenue.
+Replaces the prior I9 ("Floaters A&B rows have zeroed Gross/Net/
+EUR/AUR"), which is no longer applicable since no Floaters A&B rows
+exist after the collapse.
 
-#### I10. Net Rev = Gross Rev × 0.85 for non-Floater rows
+#### I10. Net Rev = Gross Rev × 0.85 for paid rows
 
 ```ts
 output
-  .filter(r => r['INV TYPE'] !== 'Floaters A&B' && r['Gross Rev'] > 0)
+  .filter(r => r['Gross Rev'] > 0)
   .every(r => approxEq(r['Net Rev'], r['Gross Rev'] * 0.85, 1.0))
 ```
 

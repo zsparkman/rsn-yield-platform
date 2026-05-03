@@ -38,7 +38,7 @@ type SortDir = "asc" | "desc";
 
 const INV_ORDER: Record<string, number> = {
   Pregame: 0, "In Game": 1, "In Game+": 1, "In Game-": 1,
-  Postgame: 2, "Floaters A&B": 3,
+  Postgame: 2,
 };
 
 function compareCells(a: InventoryRollupRow, b: InventoryRollupRow, key: SortKey, dir: SortDir): number {
@@ -53,8 +53,7 @@ function compareCells(a: InventoryRollupRow, b: InventoryRollupRow, key: SortKey
 // Sort whole *games* by the chosen column (using the In Game row's value as the
 // game-level proxy for non-DATE/non-EVENT/non-INV-TYPE sorts).
 function gameKey(rows: InventoryRollupRow[], key: SortKey): number | string {
-  const inGame = rows.find((r) => r["INV TYPE"].startsWith("In Game") && r["INV TYPE"] !== "Floaters A&B")
-    ?? rows[0];
+  const inGame = rows.find((r) => r["INV TYPE"].startsWith("In Game")) ?? rows[0];
   if (key === "DATE") return inGame.DATE;
   if (key === "EVENT_PROGRAM") return inGame.EVENT_PROGRAM;
   if (key === "INV TYPE") return inGame["INV TYPE"];

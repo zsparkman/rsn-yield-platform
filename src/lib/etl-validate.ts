@@ -90,7 +90,7 @@ const spotsContracts: Array<{ id: string; summary: string; check: SpotsContract 
   },
   {
     id: "S2",
-    summary: "inventory_type ∈ closed set",
+    summary: "inventory_type ∈ closed set (no Floaters A&B post-collapse)",
     check: (_, output) => {
       const allowed = new Set(["In Game", "Pregame", "Postgame", "Ancillary"]);
       const bad = output.find((s) => !allowed.has(s.inventory_type));
@@ -429,7 +429,7 @@ const sbcContracts: Array<{ id: string; summary: string; check: SbcContract }> =
 const inventoryContracts: Array<{ id: string; summary: string; check: InventoryContract }> = [
   {
     id: "I1",
-    summary: "Every game has 4 INV TYPE rows (Pregame, In Game±/, Postgame, Floaters A&B)",
+    summary: "Every game has 3 INV TYPE rows (Pregame, In Game±/, Postgame)",
     check: (output) => {
       const groups = new Map<string, string[]>();
       for (const r of output) {
@@ -440,20 +440,20 @@ const inventoryContracts: Array<{ id: string; summary: string; check: InventoryC
       }
       const bad = [...groups.entries()].find(([, types]) => {
         const set = new Set(types);
-        return !set.has("Pregame") || !set.has("Postgame") || !set.has("Floaters A&B") ||
+        return set.size !== 3 || !set.has("Pregame") || !set.has("Postgame") ||
           !["In Game", "In Game+", "In Game-"].some((t) => set.has(t));
       });
       return bad
-        ? fail("I1", "Every game has 4 INV TYPE rows", `${bad[0]} has [${bad[1].join(", ")}]`, bad[1])
-        : pass("I1", "Every game has 4 INV TYPE rows");
+        ? fail("I1", "Every game has 3 INV TYPE rows", `${bad[0]} has [${bad[1].join(", ")}]`, bad[1])
+        : pass("I1", "Every game has 3 INV TYPE rows");
     },
   },
   {
     id: "I2",
-    summary: "Cap = 6 for Floaters A&B, else from inventory_capacity",
+    summary: "No Floaters A&B inventory rows exist (collapsed into In Game)",
     check: (output) => {
-      const bad = output.find((r) => r["INV TYPE"] === "Floaters A&B" && r.Cap !== 6);
-      return bad ? fail("I2", "Cap = 6 for Floaters A&B", `cap=${bad.Cap}`, bad) : pass("I2", "Cap = 6 for Floaters A&B");
+      const bad = output.find((r) => (r["INV TYPE"] as string) === "Floaters A&B");
+      return bad ? fail("I2", "No Floaters A&B rows", `inv=${bad["INV TYPE"]}`, bad) : pass("I2", "No Floaters A&B rows");
     },
   },
   {
@@ -466,7 +466,7 @@ const inventoryContracts: Array<{ id: string; summary: string; check: InventoryC
   },
   {
     id: "I7",
-    summary: "Pregame / Postgame / Floaters A&B never resolve to FL... actually Floaters A&B is always FL per spec",
+    summary: "Pregame / Postgame never resolve to FL (FL band is In-Game-only)",
     check: (output) => {
       const bad = output.find((r) =>
         (r["INV TYPE"] === "Pregame" || r["INV TYPE"] === "Postgame") &&
@@ -485,27 +485,33 @@ const inventoryContracts: Array<{ id: string; summary: string; check: InventoryC
   },
   {
     id: "I9",
-    summary: "Floaters A&B rows have zeroed Gross/Net/EUR/AUR",
+    summary: "Rate Tier ∈ {Base, FL, Bump}; FL band is sold − cap ≤ 3 (not 6)",
     check: (output) => {
-      const bad = output.find((r) =>
-        r["INV TYPE"] === "Floaters A&B" &&
-        (r["Gross Rev"] !== 0 || r["Net Rev"] !== 0 ||
-         r.eur_gross_cents !== 0 || r.eur_net_cents !== 0 || r.aur_cents !== 0)
-      );
-      return bad ? fail("I9", "Floaters A&B rows have zeroed Gross/Net/EUR/AUR", JSON.stringify(bad), bad) : pass("I9", "Floaters A&B rows have zeroed Gross/Net/EUR/AUR");
+      // Replaces the old Floaters-A&B-zeroing contract. FL band shrank from 6
+      // eq30 to 3 eq30 with the Floaters collapse.
+      const bad = output.find((r) => {
+        const oversell = r.Sold - r.Cap; // sold-cap convention
+        const expected =
+          r["INV TYPE"] === "Pregame" || r["INV TYPE"] === "Postgame"
+            ? oversell <= 0 ? "Base" : "Bump"
+            : oversell <= 0 ? "Base" : oversell <= 3 ? "FL" : "Bump";
+        return r["Rate Tier"] !== expected;
+      });
+      return bad
+        ? fail("I9", "Rate Tier follows new band", `inv=${bad["INV TYPE"]} sold-cap=${(bad.Sold - bad.Cap).toFixed(1)} tier=${bad["Rate Tier"]}`, bad)
+        : pass("I9", "Rate Tier follows new band");
     },
   },
   {
     id: "I10",
-    summary: "Net Rev ≈ Gross Rev × 0.85 for non-Floater paid rows",
+    summary: "Net Rev ≈ Gross Rev × 0.85 for paid rows",
     check: (output) => {
       const bad = output.find((r) =>
-        r["INV TYPE"] !== "Floaters A&B" &&
         r["Gross Rev"] > 0 &&
         !approxEq(r["Net Rev"], r["Gross Rev"] * 0.85, 1.5)
       );
-      return bad ? fail("I10", "Net Rev ≈ Gross Rev × 0.85 for non-Floater paid rows",
-        `gross=${bad["Gross Rev"]} net=${bad["Net Rev"]}`, bad) : pass("I10", "Net Rev ≈ Gross Rev × 0.85 for non-Floater paid rows");
+      return bad ? fail("I10", "Net Rev ≈ Gross Rev × 0.85",
+        `gross=${bad["Gross Rev"]} net=${bad["Net Rev"]}`, bad) : pass("I10", "Net Rev ≈ Gross Rev × 0.85");
     },
   },
   {
@@ -513,7 +519,7 @@ const inventoryContracts: Array<{ id: string; summary: string; check: InventoryC
     summary: "eur_gross_cents = sum(gross_rev) / sum(total_eq30) over paid spots (volume-weighted)",
     check: (output, spotsByClient) => {
       for (const r of output) {
-        if (r["INV TYPE"] === "Floaters A&B") continue;
+        // Floaters A&B was collapsed into In Game; no inv-type filter needed.
         const a = paidSpotsForCell(spotsByClient, r);
         const expected = a.sumEq30 > 0 ? Math.round((a.sumGross / a.sumEq30) * 100) : 0;
         // Allow 1¢ tolerance for rounding drift on the dollar→cent conversion.
@@ -531,7 +537,7 @@ const inventoryContracts: Array<{ id: string; summary: string; check: InventoryC
     summary: "eur_net_cents = sum(net_rev) / sum(total_eq30) over paid spots (volume-weighted)",
     check: (output, spotsByClient) => {
       for (const r of output) {
-        if (r["INV TYPE"] === "Floaters A&B") continue;
+        // Floaters A&B was collapsed into In Game; no inv-type filter needed.
         const a = paidSpotsForCell(spotsByClient, r);
         const expected = a.sumEq30 > 0 ? Math.round((a.sumNet / a.sumEq30) * 100) : 0;
         if (Math.abs(r.eur_net_cents - expected) > 1) {
@@ -574,7 +580,7 @@ const inventoryContracts: Array<{ id: string; summary: string; check: InventoryC
     summary: "aur_cents = sum(net_rev) / count(paid_spots) (length-agnostic)",
     check: (output, spotsByClient) => {
       for (const r of output) {
-        if (r["INV TYPE"] === "Floaters A&B") continue;
+        // Floaters A&B was collapsed into In Game; no inv-type filter needed.
         const a = paidSpotsForCell(spotsByClient, r);
         const expected = a.count > 0 ? Math.round((a.sumNet / a.count) * 100) : 0;
         if (Math.abs(r.aur_cents - expected) > 1) {

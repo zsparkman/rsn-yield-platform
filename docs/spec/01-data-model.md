@@ -112,8 +112,7 @@ interface RawInventoryCapRow {
   Team: string;                    // 'Sentinels'
   Type: 'PR' | 'REG';
   Inventory:
-    | 'Pregame' | 'In Game' | 'In Game+' | 'In Game-'
-    | 'Postgame' | 'Floaters A&B';
+    | 'Pregame' | 'In Game' | 'In Game+' | 'In Game-' | 'Postgame';
   Format: 'Standard' | 'Expanded' | 'DH' | 'Expanded DH';
   Avails: number;                  // eq30 capacity
 }
@@ -199,17 +198,21 @@ Per-game-per-inv-type rollup. Two variants by `opts.include0`:
 - `Exc $0` filters paid spots only before grouping (`SpotRate > 0`).
 - `Inc $0` groups everything.
 
-Each game emits four rows: Pregame, the resolved In Game variant
-(`In Game` / `In Game+` / `In Game-`), Postgame, and Floaters A&B.
-The Floaters row's `Cap` is fixed at 6; its `Sold` derives from the
-In Game oversell (`max(0, -Oversell_M)`); its revenue / EUR / AUR are
-forced to 0 (no double-counting — revenue lives on the In Game row).
+Each game emits **three** rows: Pregame, the resolved In Game variant
+(`In Game` / `In Game+` / `In Game-`), and Postgame.
+
+> **Note (2026 model change).** The previous "Floaters A&B" inv-type
+> row has been collapsed into In Game. In Game's primary capacity now
+> includes the term-break (the first floater break, +3 eq30), and the
+> FL band — formerly the Floaters A&B contingent capacity — now lives
+> entirely in the rate-tier resolution rule below as the next 3 eq30
+> beyond primary. This matches operator semantics: the FL band is a
+> tier signal, not a separate inventory pool.
 
 Rate tier (M sign convention `Oversell = Avails - Sold`):
-- In Game with `Oversell > 0` → `Base`
-- In Game with `Oversell > -6` → `FL`
-- In Game with `Oversell <= -6` → `Bump`
-- Floaters A&B → `FL` (priced at the floater rack rate)
+- In Game with `Oversell >= 0` → `Base`     (sold ≤ primary cap)
+- In Game with `Oversell >= -3` → `FL`      (0 < sold − cap ≤ 3)
+- In Game with `Oversell < -3` → `Bump`     (sold − cap > 3)
 - Pregame / Postgame with `Avail > 0` → `Base`
 - Pregame / Postgame else → `Bump`
 
@@ -247,13 +250,11 @@ NC/ADU/xADU/Bonus EQ30 is tracked in their own columns on
 `AurSummaryRow` and contributes to `Sellout` / `Sellout + ADU`,
 which are the capacity-utilization metrics.
 
-For Floaters A&B rows all three resolve to 0 (no double-counting —
-revenue lives on the In Game row).
-
 ### `AurSummaryRow[]` — `deriveAurSummary()` ← *AUR Summary*
 
-Per-`(DATE, INV TYPE)` wide-form pivot. Floaters A&B rows are
-filtered out. One column per `(LOB Group × Spot Group × metric)`
+Per-`(DATE, INV TYPE)` wide-form pivot over the three remaining
+inv-type buckets (Pregame / In Game variant / Postgame). One column
+per `(LOB Group × Spot Group × metric)`
 bucket plus totals. Empty intersections resolve to `0`, never
 `null` or `undefined`.
 
