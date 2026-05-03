@@ -83,14 +83,16 @@ export function openHeat(open: number): string {
   return "bg-green-500/35 text-slate-900";
 }
 
-// Spot Grid green-saturation by EQ30 count.
+// Booking Matrix density heat — emerald scale capped at emerald-300 so black
+// text remains legible at every saturation level. The signal still reads
+// (lighter = lower volume, darker = higher volume) on a shallower curve;
+// any text-color flip to white at high values is gone.
 export function gridDensityHeat(eq: number): string {
   if (eq <= 0) return "";
-  if (eq < 0.5) return "bg-green-100";
-  if (eq < 1.5) return "bg-green-200";
-  if (eq < 3.0) return "bg-green-300";
-  if (eq < 5.0) return "bg-green-400";
-  return "bg-green-500 text-white";
+  if (eq < 0.5) return "bg-emerald-50";
+  if (eq < 1.5) return "bg-emerald-100";
+  if (eq < 3.0) return "bg-emerald-200";
+  return "bg-emerald-300";
 }
 
 // Date formatting -------------------------------------------------------------

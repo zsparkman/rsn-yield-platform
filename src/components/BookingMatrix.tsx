@@ -306,7 +306,7 @@ function ClientRow({
               key={d}
               className={clsx(
                 "num border-b border-l border-slate-200 px-1 text-center",
-                v === 0 ? "bg-white text-slate-300" : gridDensityHeat(v),
+                v === 0 ? "bg-white text-slate-300" : clsx(gridDensityHeat(v), "text-slate-900"),
               )}
             >
               {v === 0 ? "" : metric === "Units" ? fmtIntCount(v) : fmtEq30(v)}
@@ -336,7 +336,7 @@ function ClientRow({
                 key={d}
                 className={clsx(
                   "num border-b border-l border-slate-200 px-1 text-center",
-                  v === 0 ? "bg-white text-slate-300" : gridDensityHeat(v),
+                  v === 0 ? "bg-white text-slate-300" : clsx(gridDensityHeat(v), "text-slate-900"),
                 )}
               >
                 {v === 0 ? "" : metric === "Units" ? fmtIntCount(v) : fmtEq30(v)}
