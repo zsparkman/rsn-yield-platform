@@ -33,6 +33,8 @@ import type {
   RawSpot,
   SeasonPhase,
   Simulcast,
+  SpotGridCell,
+  SpotGroupKind,
   SpotsByClientRow,
 } from "./types";
 
@@ -59,6 +61,7 @@ export interface EtlOutputs {
   inventoryExc0: InventoryRollupRow[];
   inventoryInc0: InventoryRollupRow[];
   aurSummary: AurSummaryRow[];
+  spotGrid: SpotGridCell[];
 }
 
 // ---- CSV: minimal, comma-only, supports quoted fields with embedded quotes ----
@@ -934,6 +937,42 @@ export function deriveAurSummary(
 // Orchestrator
 // ============================================================================
 
+// Per-(client, date, inv_type, spot_group) eq30 aggregate. Pre-aggregated
+// here so the Spot Grid view doesn't ship 18k spots to the client.
+export function deriveSpotGrid(spots: EnrichedSpot[]): SpotGridCell[] {
+  const tally = new Map<string, SpotGridCell>();
+  for (const s of spots) {
+    if (s.inventory_type !== "Pregame" && s.inventory_type !== "In Game" && s.inventory_type !== "Postgame") {
+      continue; // Spot Grid view excludes Ancillary
+    }
+    const group: SpotGroupKind =
+      s.SpotRate > 0 ? "Paid"
+      : s.PriorityCode === "P-80" || s.PriorityCode === "P-19" ? "NC"
+      : s.PriorityCode === "P-09" ? "ADU"
+      : s.PriorityCode === "P-08" ? "xADU"
+      : s.PriorityCode === "P-04" ? "Bonus"
+      : "Other";
+    const key = `${s.AdvertiserName}||${s.air_date_iso}||${s.inventory_type}||${group}`;
+    const cell = tally.get(key);
+    if (cell) {
+      cell.eq30 += s.TotalEquivSold;
+    } else {
+      tally.set(key, {
+        client: s.AdvertiserName,
+        date: s.air_date_iso,
+        inv_type: s.inventory_type as "Pregame" | "In Game" | "Postgame",
+        group,
+        eq30: s.TotalEquivSold,
+      });
+    }
+  }
+  // Round per-cell eq30 to 1 decimal for stable display.
+  for (const cell of tally.values()) {
+    cell.eq30 = Math.round(cell.eq30 * 10) / 10;
+  }
+  return Array.from(tally.values());
+}
+
 export function runEtl(inputs: EtlInputs): EtlOutputs {
   const spots = deriveSpots(inputs.spots);
   const schedule = deriveSchedule(inputs.schedule);
@@ -941,5 +980,6 @@ export function runEtl(inputs: EtlInputs): EtlOutputs {
   const inventoryExc0 = deriveInventory(spotsByClient, inputs.inventoryCapacity, inputs.rateCard, { include0: false });
   const inventoryInc0 = deriveInventory(spotsByClient, inputs.inventoryCapacity, inputs.rateCard, { include0: true });
   const aurSummary = deriveAurSummary(spotsByClient, inputs.inventoryCapacity);
-  return { spots, schedule, spotsByClient, inventoryExc0, inventoryInc0, aurSummary };
+  const spotGrid = deriveSpotGrid(spots);
+  return { spots, schedule, spotsByClient, inventoryExc0, inventoryInc0, aurSummary, spotGrid };
 }

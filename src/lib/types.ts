@@ -324,3 +324,15 @@ export interface AurSummaryRow {
   eur_net_cents: number;
   aur_cents: number;
 }
+
+// Spot Grid view aggregate. Pre-aggregated in deriveSpotGridCells() so the
+// client component receives ~5k rows instead of ~18k.
+export type SpotGroupKind = 'Paid' | 'NC' | 'ADU' | 'xADU' | 'Bonus' | 'Other';
+
+export interface SpotGridCell {
+  client: string;            // AdvertiserName (canonical, "/Repped" suffix preserved)
+  date: string;              // YYYY-MM-DD
+  inv_type: 'Pregame' | 'In Game' | 'Postgame';
+  group: SpotGroupKind;
+  eq30: number;
+}
