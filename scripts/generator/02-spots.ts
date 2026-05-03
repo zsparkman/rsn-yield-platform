@@ -105,16 +105,21 @@ function seriesPositionMult(num: number): number {
 }
 
 function fillRateForScore(score: number): number {
+  // Recalibrated under C6 to land mean paid sellout near ~80%, not the
+  // pre-C6 ~110% (which oversold most cells into FL/Bump bands).
   if (score <= 0) return 0;
-  return Math.max(0, Math.min(1.20, 0.21 + score * 1.12));
+  return Math.max(0.10, Math.min(1.10, 0.22 + score * 0.85));
 }
 
 // ------------------------------ length & rate mix ------------------------------
 
 const LENGTH_MIX: Record<RateInventoryType, Record<"15" | "30" | "60", number>> = {
   "In Game": { "15": 0.04, "30": 0.96, "60": 0 },
-  Pregame: { "15": 0.07, "30": 0.92, "60": 0.01 },
-  Postgame: { "15": 0.10, "30": 0.89, "60": 0.01 },
+  // Pregame/Postgame have a per-advertiser cap of 1.0 eq30, so :60s
+  // (2.0 eq30) cannot fit — drop them from the length mix entirely.
+  // The pre-C6 distribution had :60 at ~1% which is below source-data noise.
+  Pregame: { "15": 0.07, "30": 0.93, "60": 0 },
+  Postgame: { "15": 0.10, "30": 0.90, "60": 0 },
 };
 const LENGTH_TO_EQ30: Record<SpotLength, number> = { 15: 0.5, 30: 1.0, 60: 2.0 };
 const LENGTH_RATE_MULT: Record<SpotLength, number> = { 15: 0.55, 30: 1.0, 60: 1.85 };
@@ -500,6 +505,95 @@ function sampleAdvertiser(
   return pool[pool.length - 1];
 }
 
+// ------------------------------ per-cell sampler ------------------------------
+//
+// C6 model: each (advertiser, game, inv-type) cell has a hard eq30 cap, so
+// no single advertiser dominates a game's paid inventory. Pregame and
+// Postgame are 1.0 eq30 (one :30 unit) per advertiser; In Game is 4.0 eq30
+// (four :30 units) for ordinary advertisers and 6.0 eq30 for sponsor+
+// tactical pairs (their tactical overlay buys extra concurrent units).
+//
+// Implementation: per-cell mutable copy of the global weight cache. Each
+// time a paid spot is built, we sample from the still-eligible weights;
+// when an advertiser's used + new eq30 would exceed their cap, their
+// weight is zeroed out and they're excluded for the rest of the cell.
+// When the eligible set is exhausted, the paid loop terminates early.
+
+function perAdvertiserCap(adv: AdvertiserWithIntensity, invType: RateInventoryType): number {
+  if (invType !== "In Game") return 1.0;
+  return adv.cadence === "sponsor" && adv.tacticalQtr ? 6.0 : 4.0;
+}
+
+interface CellSampler {
+  list: AdvertiserWithIntensity[];
+  weights: number[];                  // mutated in place; 0 = excluded
+  total: number;                      // running sum of remaining weights
+  used: Map<number, number>;          // pool index → eq30 paid in this cell
+  caps: number[];                     // per-advertiser cap, parallel to list
+}
+
+function makeCellSampler(
+  pool: AdvertiserWithIntensity[],
+  cacheEntry: WeightCache,
+  invType: RateInventoryType,
+): CellSampler {
+  return {
+    list: pool,
+    weights: cacheEntry.weights.slice(),
+    total: cacheEntry.total,
+    used: new Map(),
+    caps: pool.map((a) => perAdvertiserCap(a, invType)),
+  };
+}
+
+function pickEligible(
+  rng: () => number,
+  cs: CellSampler,
+  eq30Wanted: number,
+): { adv: AdvertiserWithIntensity; idx: number } | null {
+  // Up to 16 attempts before giving up — accounts for the case where the
+  // weighted draw lands on an advertiser whose remaining cap is 0.5 (room
+  // for a :15 only) but the spot is :30 and won't fit.
+  for (let attempt = 0; attempt < 16; attempt += 1) {
+    if (cs.total <= 1e-9) return null;
+    let r = rng() * cs.total;
+    let idx = -1;
+    for (let i = 0; i < cs.list.length; i += 1) {
+      const w = cs.weights[i];
+      if (w <= 0) continue;
+      r -= w;
+      if (r <= 0) { idx = i; break; }
+    }
+    if (idx < 0) {
+      for (let i = cs.list.length - 1; i >= 0; i -= 1) {
+        if (cs.weights[i] > 0) { idx = i; break; }
+      }
+      if (idx < 0) return null;
+    }
+    const used = cs.used.get(idx) ?? 0;
+    const remaining = cs.caps[idx] - used;
+    if (eq30Wanted - 1e-9 <= remaining) {
+      return { adv: cs.list[idx], idx };
+    }
+    // No room for this length, but they may fit a shorter spot — only
+    // fully exclude when even a :15 (0.5 eq30) wouldn't fit.
+    if (remaining < 0.5 - 1e-9) {
+      cs.total -= cs.weights[idx];
+      cs.weights[idx] = 0;
+    }
+  }
+  return null;
+}
+
+function chargeCell(cs: CellSampler, idx: number, eq30: number): void {
+  const used = (cs.used.get(idx) ?? 0) + eq30;
+  cs.used.set(idx, used);
+  if (cs.caps[idx] - used < 0.5 - 1e-9) {
+    cs.total -= cs.weights[idx];
+    cs.weights[idx] = 0;
+  }
+}
+
 function sampleSpotLength(rng: () => number, invType: RateInventoryType): SpotLength {
   const mix = LENGTH_MIX[invType];
   return Number(pickWeighted(rng, ["15", "30", "60"], [mix["15"], mix["30"], mix["60"]])) as SpotLength;
@@ -679,7 +773,14 @@ export function buildSpots(schedule: RawScheduleRow[]): RawSpot[] {
       const cap = capFor(sr.phase, invType, sr.variant, sr.format);
       const score = demandScore(rng, sr, invType);
       const targetFill = fillRateForScore(score);
-      const targetEq30 = Math.max(0, targetFill * cap + gaussian(rng, 0, 2));
+      // Multiplicative noise keeps target positive even for low-demand cells
+      // (March REG Postgame, etc.). The 1.0 eq30 floor when score > 0
+      // guarantees at least one :30 paid spot per active cell — without it
+      // I1 (every game has 3 INV TYPE rows in inventoryExc0) breaks for
+      // the lowest-demand Postgame edges.
+      const noiseMult = clip(1 + gaussian(rng, 0, 0.10), 0.7, 1.3);
+      const rawTarget = targetFill * cap * noiseMult;
+      const targetEq30 = score > 0 ? Math.max(1.0, rawTarget) : 0;
       const isInGame = invType === "In Game";
 
       const ctx: SpotCtx = {
@@ -688,7 +789,9 @@ export function buildSpots(schedule: RawScheduleRow[]): RawSpot[] {
         lineRef: { id: 0 }, spotIdRef,
       };
 
-      // Paid loop — allocate OrderNumber per advertiser×period (lazy)
+      // Paid loop — per-cell advertiser sampler enforces the C6 eq30 caps
+      // (Pregame/Postgame max 1.0, In Game max 4.0 / 6.0 sponsor+tactical).
+      const cellSampler = makeCellSampler(pool, ce, invType);
       let remaining = targetEq30;
       let paidEq30 = 0;
       let safety = 0;
@@ -697,17 +800,19 @@ export function buildSpots(schedule: RawScheduleRow[]): RawSpot[] {
         const length = sampleSpotLength(rng, invType);
         const eq30 = LENGTH_TO_EQ30[length];
         if (eq30 > remaining + 0.5) break;
+        const pick = pickEligible(rng, cellSampler, eq30);
+        if (!pick) break; // pool exhausted at this cap structure
         const oversell = paidEq30 - cap;
         const tier = rateTierForOversell(invType, oversell);
         const base = rackRate(sr.phase, invType, sr.matchup, tier);
         const lengthMult = LENGTH_RATE_MULT[length];
         const noise = clip(SOLD_RATE_DISCOUNT_MEAN + gaussian(rng, 0, SOLD_RATE_DISCOUNT_SIGMA), 0.72, 1.0);
         const grossRate = base * lengthMult * noise;
-        const adv = sampleAdvertiser(rng, pool, ce);
-        const orderNumber = allocateOrder(rng, adv, sr.isoDate, sr.monthName, isInGame, orderCtr);
+        const orderNumber = allocateOrder(rng, pick.adv, sr.isoDate, sr.monthName, isInGame, orderCtr);
         ctx.lineRef = { id: ++lineCounter };
-        out.push(buildSpotRow(rng, ctx, adv, orderNumber,
+        out.push(buildSpotRow(rng, ctx, pick.adv, orderNumber,
           { paid: true, length, grossRate, rateTier: tier, priorityCode: PAID_PRIORITY }));
+        chargeCell(cellSampler, pick.idx, eq30);
         remaining -= eq30;
         paidEq30 += eq30;
       }

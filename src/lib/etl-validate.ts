@@ -274,6 +274,34 @@ const spotsContracts: Array<{ id: string; summary: string; check: SpotsContract 
     },
   },
   {
+    id: "S19",
+    summary: "Paid eq30 per (advertiser, game, inv_type) ≤ 6.0 (loose cap)",
+    check: (_, output) => {
+      // C6 caps: 1.0 eq30 for Pregame/Postgame, 4.0 for In Game (6.0 for
+      // sponsor + tactical pairs). The loose 6.0 In Game ceiling and 1.0
+      // Pregame/Postgame ceiling are hard upper bounds — no advertiser may
+      // exceed them in any single (game, inv-type) cell. Half-cents of
+      // floating-point slack are tolerated.
+      const tally = new Map<string, number>();
+      for (const s of output) {
+        if (s.SpotRate <= 0) continue; // paid only
+        const inv = s.inventory_type;
+        if (inv !== "Pregame" && inv !== "In Game" && inv !== "Postgame") continue;
+        const k = `${s.AdvertiserName}|${s.air_date_iso}|${inv}`;
+        tally.set(k, (tally.get(k) ?? 0) + s.TotalEquivSold);
+      }
+      const bad = [...tally.entries()].find(([k, v]) => {
+        const inv = k.split("|")[2];
+        const cap = inv === "In Game" ? 6.0 : 1.0;
+        return v > cap + 0.01;
+      });
+      return bad
+        ? fail("S19", "Paid eq30 per (advertiser, game, inv_type) ≤ cap",
+            `${bad[0]} = ${bad[1].toFixed(2)} eq30`, bad)
+        : pass("S19", "Paid eq30 per (advertiser, game, inv_type) ≤ cap");
+    },
+  },
+  {
     id: "S18",
     summary: "≥ 90% of OrderNumbers span ≤ 1 broadcast quarter (cadence)",
     check: (_, output) => {

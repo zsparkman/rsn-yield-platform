@@ -120,9 +120,13 @@ export function runDistributional(
   const underCap = inGameInv.filter((r) => r.Sold <= r.Cap).length;
   const within20 = inGameInv.filter((r) => r.Sold > r.Cap && r.Sold <= 1.2 * r.Cap).length;
   const over20 = inGameInv.filter((r) => r.Sold > 1.2 * r.Cap).length;
-  results.push(close("% In Game cells sold ≤ cap", underCap / total, 0.30, 0.05, pct));
-  results.push(close("% In Game cells sold 0-20% over", within20 / total, 0.50, 0.05, pct));
-  results.push(close("% In Game cells sold > 20% over", over20 / total, 0.20, 0.05, pct));
+  // Targets recalibrated under C6: per-(advertiser, game, inv-type) eq30
+  // caps + lower fillRateForScore drive mean paid sellout from ~110% down
+  // to ~80%, so most In Game cells now sit at or below cap (only ~5% reach
+  // FL/Bump tier oversell).
+  results.push(close("% In Game cells sold ≤ cap", underCap / total, 0.73, 0.06, pct));
+  results.push(close("% In Game cells sold 0-20% over", within20 / total, 0.24, 0.06, pct));
+  results.push(close("% In Game cells sold > 20% over", over20 / total, 0.03, 0.04, pct));
 
   // Mean EUR REG In Game Standard / Regional — the AUR-Report-facing EUR
   // (spec definition: sum(net_rev) / sum(paid_eq30)). Computed across all

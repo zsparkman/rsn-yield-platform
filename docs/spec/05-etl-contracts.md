@@ -304,6 +304,31 @@ slack for stochastic noise. Pre-C5 every order spanned exactly 1
 (date, inv-type) intersection, so this contract is the structural
 gate for the new cadence model.
 
+#### S19. Paid eq30 per (advertiser, game, inv_type) ≤ cap
+
+```ts
+const tally = new Map<string, number>();
+for (const s of output) {
+  if (s.SpotRate <= 0) continue;
+  const inv = s.inventory_type;
+  if (!['Pregame', 'In Game', 'Postgame'].includes(inv)) continue;
+  const k = `${s.AdvertiserName}|${s.air_date_iso}|${inv}`;
+  tally.set(k, (tally.get(k) ?? 0) + s.TotalEquivSold);
+}
+[...tally.entries()].every(([k, v]) => {
+  const inv = k.split('|')[2];
+  const cap = inv === 'In Game' ? 6.0 : 1.0;
+  return v <= cap + 0.01;
+})
+```
+
+C6 cap structure: 1.0 eq30 (one :30 unit) per advertiser in Pregame
+and Postgame; 4.0 eq30 in In Game for ordinary advertisers, 6.0 for
+sponsor + tactical pairs (whose tactical overlay buys extra
+concurrent units). The contract asserts the loose 6.0 / 1.0 ceiling
+that holds across the whole pool — no advertiser may dominate a
+game's paid inventory.
+
 ---
 
 ## deriveSchedule() — `Lakers Combined Schedules` (M lines 196–233)
