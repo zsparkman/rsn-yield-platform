@@ -305,7 +305,7 @@ export function YieldSummaryTable({ rows }: { rows: AurSummaryRow[] }) {
               <th className="px-3 py-2 text-right num">Paid</th>
               <th className="px-3 py-2 text-right num">NC</th>
               <th className="px-3 py-2 text-right num">ADU</th>
-              <th className="px-3 py-2 text-right num">xADU</th>
+              <th className="px-3 py-2 text-right num normal-case">xADU</th>
               <th className="px-3 py-2 text-right num">Bonus</th>
               <th className="px-3 py-2 text-right num">Total</th>
               <th className="px-3 py-2 text-right num">Net REV</th>
