@@ -319,20 +319,20 @@ function GameBlock({ g }: { g: GroupedGame }) {
           <td className="num px-3 py-2 text-right text-slate-700">{fmtCurrencyUnit(r.eur_gross_cents)}</td>
         </tr>
       ))}
-      <tr className="bg-slate-50 text-slate-700">
+      <tr className="bg-slate-50 font-semibold text-slate-900">
         {/* Date and Event/Program are rowspan-merged from the first data row,
             so the GAME TOTAL row only fills the remaining 7 columns:
             Inv + Avail + Cap + Sold + Sellout + REV (Net) + EUR (Gross). */}
         <td
           colSpan={5}
-          className="px-3 py-2 text-right text-xs font-medium uppercase tracking-wide text-slate-500"
+          className="px-3 py-2 text-right text-xs font-semibold uppercase tracking-wide text-slate-700"
         >
           Game total
         </td>
-        <td className="num px-3 py-2 text-right text-xs font-medium">
+        <td className="num px-3 py-2 text-right text-xs font-semibold">
           {fmtCurrencyRolled(g.totalNetCents)}
         </td>
-        <td className="num px-3 py-2 text-right text-xs font-medium">
+        <td className="num px-3 py-2 text-right text-xs font-semibold">
           {fmtCurrencyUnit(g.weightedEurGrossCents)}
         </td>
       </tr>
