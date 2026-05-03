@@ -170,21 +170,21 @@ export function RatesTable({ rows }: { rows: InventoryRollupRow[] }) {
             <tr>
               <th className="min-w-[72px] px-2 py-1 text-right num">Open</th>
               <th
-                className="min-w-[96px] px-2 py-1 text-right num"
+                className="min-w-[140px] px-2 py-1 text-right num"
                 title="Base when avails > 0, FL when oversold within floater band, Bump when oversold beyond floater cap"
               >
                 Rate
               </th>
               <th className="min-w-[72px] px-2 py-1 text-right num">Open</th>
               <th
-                className="min-w-[120px] px-2 py-1 text-right num"
+                className="min-w-[140px] px-2 py-1 text-right num"
                 title="Base when avails > 0, FL when oversold within floater band, Bump when oversold beyond floater cap"
               >
                 Rate
               </th>
               <th className="min-w-[72px] px-2 py-1 text-right num">Open</th>
               <th
-                className="min-w-[96px] px-2 py-1 text-right num"
+                className="min-w-[140px] px-2 py-1 text-right num"
                 title="Base when avails > 0, FL when oversold within floater band, Bump when oversold beyond floater cap"
               >
                 Rate
