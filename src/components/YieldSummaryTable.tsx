@@ -16,6 +16,7 @@ import {
   selloutHeat,
 } from "@/lib/format";
 import { Segment } from "@/components/FilterStrip";
+import { ReportHeaderSelectors, type CalendarMode } from "@/components/ReportHeaderSelectors";
 
 type LobFilter = "All" | "Direct" | "Repped";
 type PhaseFilter = "All" | SeasonPhase;
@@ -29,7 +30,8 @@ interface RowSlice {
   date: string;
   type2: SeasonPhase;
   invType: string;
-  broadcastMonth: string;
+  standardMonth: string;
+  bcastMonth: string;
   paidEq30: number;
   ncEq30: number;
   aduEq30: number;
@@ -76,7 +78,8 @@ function sliceFor(row: AurSummaryRow, lob: LobFilter): RowSlice {
     date: row.DATE,
     type2: row.TYPE2,
     invType: row["INV TYPE"],
-    broadcastMonth: row.broadcast_month,
+    standardMonth: row.broadcast_month,
+    bcastMonth: row.bcast_month,
     paidEq30,
     ncEq30,
     aduEq30,
@@ -134,15 +137,16 @@ function groupRowsByDate(rows: RowSlice[]): Array<{ date: string; rows: RowSlice
   const out: Array<{ date: string; rows: RowSlice[]; agg: RowSlice }> = [];
   for (const [date, rs] of map.entries()) {
     rs.sort((a, b) => invSort(a.invType) - invSort(b.invType));
-    out.push({ date, rows: rs, agg: aggregateRows(rs, rs[0].broadcastMonth) });
+    out.push({ date, rows: rs, agg: aggregateRows(rs, rs[0].standardMonth, rs[0].bcastMonth) });
   }
   out.sort((a, b) => a.date.localeCompare(b.date));
   return out;
 }
 
-function aggregateRows(rows: RowSlice[], month: string): RowSlice {
+function aggregateRows(rows: RowSlice[], standardMonth: string, bcastMonth: string): RowSlice {
   const agg: RowSlice = {
-    date: "", type2: "REG", invType: "Total", broadcastMonth: month,
+    date: "", type2: "REG", invType: "Total",
+    standardMonth, bcastMonth,
     paidEq30: 0, ncEq30: 0, aduEq30: 0, xaduEq30: 0, bonusEq30: 0,
     totalEq30: 0, paidNetCents: 0, paidCount: 0, avails: 0,
   };
@@ -164,6 +168,8 @@ export function YieldSummaryTable({ rows }: { rows: AurSummaryRow[] }) {
   const [lob, setLob] = useState<LobFilter>("All");
   const [phase, setPhase] = useState<PhaseFilter>("All");
   const [legendOpen, setLegendOpen] = useState(true);
+  const [year, setYear] = useState("2026");
+  const [calendar, setCalendar] = useState<CalendarMode>("standard");
 
   const slices = useMemo(() => {
     return rows
@@ -171,26 +177,42 @@ export function YieldSummaryTable({ rows }: { rows: AurSummaryRow[] }) {
       .filter((s) => phase === "All" || s.type2 === phase);
   }, [rows, lob, phase]);
 
+  const monthOf = (s: RowSlice) =>
+    calendar === "broadcast" ? s.bcastMonth : s.standardMonth;
+
   const groupedByMonth = useMemo(() => {
     const map = new Map<string, RowSlice[]>();
     for (const s of slices) {
-      const list = map.get(s.broadcastMonth) ?? [];
+      const k = monthOf(s);
+      const list = map.get(k) ?? [];
       list.push(s);
-      map.set(s.broadcastMonth, list);
+      map.set(k, list);
     }
     const out: MonthAgg[] = [];
     for (const [month, rs] of map.entries()) {
       rs.sort((a, b) => a.date.localeCompare(b.date) || invSort(a.invType) - invSort(b.invType));
-      out.push({ month, rows: rs, agg: aggregateRows(rs, month) });
+      out.push({ month, rows: rs, agg: aggregateRows(rs, month, month) });
     }
     out.sort((a, b) => MONTHS.indexOf(a.month) - MONTHS.indexOf(b.month));
     return out;
-  }, [slices]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slices, calendar]);
 
-  const seasonAgg = useMemo(() => aggregateRows(slices, "Season"), [slices]);
+  const seasonAgg = useMemo(
+    () => aggregateRows(slices, "Season", "Season"),
+    [slices],
+  );
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-end gap-5">
+        <ReportHeaderSelectors
+          year={year}
+          onYear={setYear}
+          calendar={calendar}
+          onCalendar={setCalendar}
+        />
+      </div>
       <div className="flex flex-wrap items-center gap-4">
         <Segment<LobFilter>
           label="LOB"
@@ -212,7 +234,6 @@ export function YieldSummaryTable({ rows }: { rows: AurSummaryRow[] }) {
           ]}
           onChange={setPhase}
         />
-        <span className="text-xs text-slate-500">Year 2026</span>
         <span className="ml-auto text-xs text-slate-500">
           {slices.length} rows · {groupedByMonth.length} months
         </span>
@@ -357,7 +378,7 @@ function DateBlock({
       ))}
       <tr className="border-y border-slate-200 bg-slate-100 text-xs font-medium text-slate-700">
         <td className="px-3 py-1.5">{rows[0].type2}</td>
-        <td className="px-3 py-1.5">{agg.broadcastMonth}</td>
+        <td className="px-3 py-1.5">{agg.standardMonth}</td>
         <td className="px-3 py-1.5">{fmtIsoLong(date)}</td>
         <td className="px-3 py-1.5 uppercase tracking-wide text-[11px]">Total</td>
         <td className="num px-3 py-1.5 text-right">{fmtEq30(agg.avails)}</td>
@@ -389,7 +410,7 @@ function DataRow({ s }: { s: RowSlice }) {
   return (
     <tr className="border-b border-slate-50 last:border-b-0">
       <td className="px-3 py-1.5 text-slate-700">{s.type2}</td>
-      <td className="px-3 py-1.5 text-slate-700">{s.broadcastMonth}</td>
+      <td className="px-3 py-1.5 text-slate-700">{s.standardMonth}</td>
       <td className="px-3 py-1.5 text-slate-700">{fmtIsoLong(s.date)}</td>
       <td className="px-3 py-1.5 text-slate-700">{s.invType}</td>
       <td className="num px-3 py-1.5 text-right text-slate-700">{fmtEq30(s.avails)}</td>

@@ -239,6 +239,13 @@ export interface InventoryRollupRow {
   SEASON: string;
   Matchup: MatchupTier;
   Format: Format;                     // 'Standard' | 'Expanded' | 'DH' | 'Expanded DH'
+  // Broadcast calendar — Mon-Sun week containing the air date, with the
+  // week's broadcast-month assignment determined by which standard month
+  // contains the Wednesday of that week (Nielsen-style 4-4-5).
+  bcast_month: string;
+  bcast_year: number;
+  bcast_qtr: BroadcastQuarter;
+  bcast_week_start: string;           // YYYY-MM-DD (Monday)
   Cap: number;                        // primary cap from inventory_capacity (includes the
                                       // first floater break since the Floaters A&B collapse)
   Sold: number;                       // sum of TotalEquivSold (paid-only when Exc-$0)
@@ -284,6 +291,10 @@ export interface AurSummaryRow {
   DATE: string;                       // YYYY-MM-DD
   'INV TYPE': InGameWithVariant | RateInventoryType;
   'Primary Avails Key': string;
+  // Broadcast calendar parallel fields (see InventoryRollupRow for derivation).
+  bcast_month: string;
+  bcast_year: number;
+  bcast_qtr: BroadcastQuarter;
 
   // HTS LOB ("Repped")
   'HTS Paid.EQ30': number;

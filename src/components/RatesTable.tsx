@@ -10,6 +10,7 @@ import clsx from "clsx";
 import type { InventoryRollupRow, MatchupTier, SeasonPhase } from "@/lib/types";
 import { fmtAvails, fmtCurrencyUnit, fmtIsoLong, fmtDow, openHeat } from "@/lib/format";
 import { Segment } from "@/components/FilterStrip";
+import { ReportHeaderSelectors, type CalendarMode } from "@/components/ReportHeaderSelectors";
 
 type PhaseFilter = "All" | SeasonPhase;
 type MatchupFilter = "All" | MatchupTier;
@@ -93,6 +94,9 @@ function minRate(games: GameRow[], pick: (g: GameRow) => CellFig | null): number
 export function RatesTable({ rows }: { rows: InventoryRollupRow[] }) {
   const [phase, setPhase] = useState<PhaseFilter>("All");
   const [matchup, setMatchup] = useState<MatchupFilter>("All");
+  const [year, setYear] = useState("2026");
+  const [calendar, setCalendar] = useState<CalendarMode>("standard");
+  void calendar; // selector mounted; week grouping uses Mon-Sun regardless of calendar mode
 
   const allGames = useMemo(() => buildGameRows(rows), [rows]);
   const filtered = useMemo(
@@ -115,6 +119,14 @@ export function RatesTable({ rows }: { rows: InventoryRollupRow[] }) {
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-end gap-5">
+        <ReportHeaderSelectors
+          year={year}
+          onYear={setYear}
+          calendar={calendar}
+          onCalendar={setCalendar}
+        />
+      </div>
       <div className="flex flex-wrap items-center gap-4">
         <Segment<PhaseFilter>
           label="Phase"
@@ -137,7 +149,7 @@ export function RatesTable({ rows }: { rows: InventoryRollupRow[] }) {
           onChange={setMatchup}
         />
         <span className="ml-auto text-xs text-slate-500">
-          Year 2026 · {filtered.length} games
+          {filtered.length} games
         </span>
       </div>
 

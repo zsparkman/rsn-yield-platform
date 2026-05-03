@@ -37,9 +37,6 @@ export function TopNav() {
           ))}
         </ul>
         <div className="flex items-center gap-4 text-sm text-slate-600">
-          <span className="rounded border border-slate-200 px-2 py-1 text-xs font-medium text-slate-700">
-            Season 2026
-          </span>
           <Link href="/about" className="hover:text-indigo-600">
             About
           </Link>

@@ -8,6 +8,7 @@ import { useMemo, useState } from "react";
 import type { InventoryRollupRow, SeasonPhase } from "@/lib/types";
 import { fmtIsoLong, fmtDow, fmtPercent, heatmapRedGradient } from "@/lib/format";
 import { Segment } from "@/components/FilterStrip";
+import { ReportHeaderSelectors, type CalendarMode } from "@/components/ReportHeaderSelectors";
 
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
@@ -21,7 +22,8 @@ interface GameRow {
   evtProgram: string;
   type2: SeasonPhase;
   matchup: string;
-  broadcastMonth: string;
+  standardMonth: string;
+  bcastMonth: string;
   pregame: { sellout: number; sold: number; cap: number } | null;
   inGame: { sellout: number; sold: number; cap: number } | null;
   postgame: { sellout: number; sold: number; cap: number } | null;
@@ -47,7 +49,8 @@ function buildGameRows(rows: InventoryRollupRow[]): GameRow[] {
       evtProgram: head.EVENT_PROGRAM,
       type2: head.TYPE2,
       matchup: head.Matchup,
-      broadcastMonth: head.broadcast_month,
+      standardMonth: head.broadcast_month,  // existing field is standard-derived
+      bcastMonth: head.bcast_month,
       pregame: find((s) => s === "Pregame"),
       inGame: find((s) => s === "In Game" || s === "In Game+" || s === "In Game-"),
       postgame: find((s) => s === "Postgame"),
@@ -70,36 +73,53 @@ function weighted(rows: GameRow[], pick: (g: GameRow) => { sellout: number; sold
 export function HeatmapTable({ rows }: { rows: InventoryRollupRow[] }) {
   const [phase, setPhase] = useState<PhaseFilter>("All");
   const [month, setMonth] = useState<MonthFilter>("All");
+  const [year, setYear] = useState("2026");
+  const [calendar, setCalendar] = useState<CalendarMode>("standard");
+
+  const monthOf = (g: GameRow) =>
+    calendar === "broadcast" ? g.bcastMonth : g.standardMonth;
 
   const allGames = useMemo(() => buildGameRows(rows), [rows]);
   const months = useMemo(() => {
     const set = new Set<string>();
-    for (const g of allGames) set.add(g.broadcastMonth);
+    for (const g of allGames) set.add(monthOf(g));
     return Array.from(set).sort((a, b) => MONTHS.indexOf(a) - MONTHS.indexOf(b));
-  }, [allGames]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allGames, calendar]);
 
   const filtered = useMemo(() => {
     return allGames.filter((g) => {
       if (phase !== "All" && g.type2 !== phase) return false;
-      if (month !== "All" && g.broadcastMonth !== month) return false;
+      if (month !== "All" && monthOf(g) !== month) return false;
       return true;
     });
-  }, [allGames, phase, month]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allGames, phase, month, calendar]);
 
   const groupedByMonth = useMemo(() => {
     const map = new Map<string, GameRow[]>();
     for (const g of filtered) {
-      const list = map.get(g.broadcastMonth) ?? [];
+      const k = monthOf(g);
+      const list = map.get(k) ?? [];
       list.push(g);
-      map.set(g.broadcastMonth, list);
+      map.set(k, list);
     }
     return Array.from(map.entries()).sort(
       (a, b) => MONTHS.indexOf(a[0]) - MONTHS.indexOf(b[0]),
     );
-  }, [filtered]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filtered, calendar]);
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-end gap-5">
+        <ReportHeaderSelectors
+          year={year}
+          onYear={setYear}
+          calendar={calendar}
+          onCalendar={setCalendar}
+        />
+      </div>
       <div className="flex flex-wrap items-center gap-4">
         <Segment<PhaseFilter>
           label="Phase"

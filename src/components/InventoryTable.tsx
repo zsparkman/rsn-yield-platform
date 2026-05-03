@@ -23,6 +23,7 @@ import {
   selloutHeat,
 } from "@/lib/format";
 import { DateRangeFilter, Segment } from "@/components/FilterStrip";
+import { ReportHeaderSelectors, type CalendarMode } from "@/components/ReportHeaderSelectors";
 
 const PAGE_SIZE_GAMES = 50;
 
@@ -122,6 +123,9 @@ export function InventoryTable({
   const [sortKey, setSortKey] = useState<SortKey>("DATE");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [page, setPage] = useState(0);
+  const [year, setYear] = useState("2026");
+  const [calendar, setCalendar] = useState<CalendarMode>("standard");
+  void calendar; // selector mounted as placeholder; calendar mode does not change date-range filter behavior
 
   const filtered = useMemo(() => {
     return rows.filter((r) => {
@@ -155,6 +159,14 @@ export function InventoryTable({
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-end gap-5">
+        <ReportHeaderSelectors
+          year={year}
+          onYear={setYear}
+          calendar={calendar}
+          onCalendar={setCalendar}
+        />
+      </div>
       <div className="flex flex-wrap items-center gap-4">
         <DateRangeFilter
           startDate={startDate}

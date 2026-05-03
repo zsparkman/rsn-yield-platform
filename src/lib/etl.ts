@@ -258,6 +258,33 @@ function startOfWeek(iso: string): string {
   return d.toISOString().slice(0, 10);
 }
 
+// Broadcast calendar (Nielsen 4-4-5). The broadcast month for any date is the
+// standard calendar month containing the Wednesday of that date's Mon-Sun
+// week. The broadcast year follows the broadcast month, and the broadcast
+// week starts on the same Monday as the standard week.
+//
+// Defined in lieu of the M chain's external Broadcast Calendar xlsx, which
+// the synthetic stack doesn't ship. The Wed-of-week rule produces the same
+// month assignment as the standard Nielsen calendar for all dates that
+// don't straddle a quarter boundary; near-boundary dates can shift one
+// month vs the source xlsx, which is acceptable for the synthetic demo.
+export function broadcastCalendar(iso: string): {
+  month: string;
+  year: number;
+  qtr: BroadcastQuarter;
+  weekStart: string;
+} {
+  const weekStart = startOfWeek(iso);
+  const wedDate = new Date(`${weekStart}T00:00:00Z`);
+  wedDate.setUTCDate(wedDate.getUTCDate() + 2);    // Mon → Wed
+  const monthIdx = wedDate.getUTCMonth() + 1;
+  const month = MONTHS[monthIdx - 1];
+  const year = wedDate.getUTCFullYear();
+  const qtr: BroadcastQuarter =
+    monthIdx <= 3 ? "Q1" : monthIdx <= 6 ? "Q2" : monthIdx <= 9 ? "Q3" : "Q4";
+  return { month, year, qtr, weekStart };
+}
+
 const REGIONAL_TEAMS = ["Giants", "Padres", "Angels"];
 
 function matchupOf(opponentLabel: string): MatchupTier {
@@ -718,6 +745,7 @@ export function deriveInventory(
     const dateIso = g.date;
     const startWeek = startOfWeek(dateIso);
     const dateMillis = new Date(`${dateIso}T00:00:00Z`).getTime();
+    const bcal = broadcastCalendar(dateIso);
 
     const soldRounded = Math.round(v.sold * 100) / 100;
     out.push({
@@ -731,6 +759,10 @@ export function deriveInventory(
       SEASON: g.season,
       Matchup: g.matchup,
       Format: g.expanded,
+      bcast_month: bcal.month,
+      bcast_year: bcal.year,
+      bcast_qtr: bcal.qtr,
+      bcast_week_start: bcal.weekStart,
       Cap: v.cap,
       Sold: soldRounded,
       avail: Math.max(0, Math.round((v.cap - v.sold) * 100) / 100),
@@ -865,6 +897,7 @@ export function deriveAurSummary(
     // Volume-weighted yield metrics for the AUR Report view (integer cents).
     const eur_net_cents = totalPaid > 0 ? Math.round((totalPaidNet / totalPaid) * 100) : 0;
     const aur_cents = totalPaidCount > 0 ? Math.round((totalPaidNet / totalPaidCount) * 100) : 0;
+    const bcal = broadcastCalendar(b.date);
     out.push({
       SEASON: b.season,
       broadcast_year: b.broadcast_year,
@@ -874,6 +907,9 @@ export function deriveAurSummary(
       DATE: b.date,
       "INV TYPE": b.invType as AurSummaryRow["INV TYPE"],
       "Primary Avails Key": b.primary_avails_key,
+      bcast_month: bcal.month,
+      bcast_year: bcal.year,
+      bcast_qtr: bcal.qtr,
       "HTS Paid.EQ30": Math.round(b.hts.Paid.eq30 * 100) / 100,
       "HTS Paid.Gross REV": Math.round(b.hts.Paid.gross * 100) / 100,
       "HTS Paid.Net REV": Math.round(b.hts.Paid.net * 100) / 100,

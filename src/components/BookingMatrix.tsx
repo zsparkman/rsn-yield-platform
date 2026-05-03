@@ -9,6 +9,7 @@ import clsx from "clsx";
 import type { SpotGridCell, SpotGroupKind } from "@/lib/types";
 import { fmtEq30, fmtIsoShort, gridDensityHeat } from "@/lib/format";
 import { Segment } from "@/components/FilterStrip";
+import { ReportHeaderSelectors, type CalendarMode } from "@/components/ReportHeaderSelectors";
 
 type InvFilter = "All" | "Pregame" | "In Game" | "Postgame";
 type StatusFilter = "All" | SpotGroupKind;
@@ -18,6 +19,9 @@ export function BookingMatrix({ cells }: { cells: SpotGridCell[] }) {
   const [inv, setInv] = useState<InvFilter>("All");
   const [status, setStatus] = useState<StatusFilter>("All");
   const [topN, setTopN] = useState<TopNFilter>("50");
+  const [year, setYear] = useState("2026");
+  const [calendar, setCalendar] = useState<CalendarMode>("standard");
+  void calendar; // selector mounted; matrix is per-day so calendar mode is informational only
 
   const filtered = useMemo(
     () => cells.filter((c) =>
@@ -59,6 +63,14 @@ export function BookingMatrix({ cells }: { cells: SpotGridCell[] }) {
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-end gap-5">
+        <ReportHeaderSelectors
+          year={year}
+          onYear={setYear}
+          calendar={calendar}
+          onCalendar={setCalendar}
+        />
+      </div>
       <div className="flex flex-wrap items-center gap-4">
         <Segment<InvFilter>
           label="Inventory"
