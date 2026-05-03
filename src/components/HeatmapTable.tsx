@@ -151,14 +151,14 @@ export function HeatmapTable({ rows }: { rows: InventoryRollupRow[] }) {
         </p>
       ) : (
         <div className="overflow-x-auto rounded border border-slate-200 bg-white">
-          <table className="grid-table w-full text-[13px] leading-tight">
+          <table className="grid-table w-[736px] table-fixed text-[13px] leading-tight">
             <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
               <tr>
-                <th className="px-3 py-2">Air Date</th>
-                <th className="px-3 py-2">Event / Program</th>
-                <th className="px-3 py-2 text-right num">Pregame</th>
-                <th className="px-3 py-2 text-right num">In Game</th>
-                <th className="px-3 py-2 text-right num">Postgame</th>
+                <th className="w-[168px] px-3 py-2">Air Date</th>
+                <th className="w-[280px] px-3 py-2">Event / Program</th>
+                <th className="w-[96px] px-3 py-2 text-right num">Pregame</th>
+                <th className="w-[96px] px-3 py-2 text-right num">In Game</th>
+                <th className="w-[96px] px-3 py-2 text-right num">Postgame</th>
               </tr>
             </thead>
             <tbody>
@@ -187,7 +187,7 @@ function MonthBlock({ monthName, games }: { monthName: string; games: GameRow[] 
             <span className="text-xs text-slate-500">{fmtDow(g.date)} </span>
             {fmtIsoLong(g.date)}
           </td>
-          <td className="px-3 py-1.5 text-slate-700">
+          <td className="truncate px-3 py-1.5 text-slate-700" title={`${g.evtProgram} · ${g.type2} · ${g.matchup}`}>
             {g.evtProgram}
             <span className="ml-2 text-[11px] text-slate-400">{g.type2} · {g.matchup}</span>
           </td>

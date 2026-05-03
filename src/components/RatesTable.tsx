@@ -154,37 +154,37 @@ export function RatesTable({ rows }: { rows: InventoryRollupRow[] }) {
       </div>
 
       <div className="overflow-x-auto rounded border border-slate-200 bg-white">
-        <table className="grid-table w-full text-[13px] leading-tight">
+        <table className="grid-table w-[1180px] table-fixed text-[13px] leading-tight">
           <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
             <tr>
-              <th rowSpan={2} className="px-2 py-2">Week</th>
-              <th rowSpan={2} className="px-2 py-2">Day</th>
-              <th rowSpan={2} className="px-2 py-2">Date</th>
-              <th rowSpan={2} className="px-2 py-2">Matchup</th>
-              <th rowSpan={2} className="px-2 py-2">Phase</th>
-              <th rowSpan={2} className="px-2 py-2">Tier</th>
+              <th rowSpan={2} className="w-[144px] px-2 py-2">Week</th>
+              <th rowSpan={2} className="w-[56px] px-2 py-2">Day</th>
+              <th rowSpan={2} className="w-[132px] px-2 py-2">Date</th>
+              <th rowSpan={2} className="w-[168px] px-2 py-2">Matchup</th>
+              <th rowSpan={2} className="w-[64px] px-2 py-2">Phase</th>
+              <th rowSpan={2} className="w-[88px] px-2 py-2">Tier</th>
               <th colSpan={2} className="px-2 py-2 text-center">Pregame</th>
               <th colSpan={2} className="px-2 py-2 text-center">In Game</th>
               <th colSpan={2} className="px-2 py-2 text-center">Postgame</th>
             </tr>
             <tr>
-              <th className="px-2 py-1 text-right num">Open</th>
+              <th className="w-[72px] px-2 py-1 text-right num">Open</th>
               <th
-                className="px-2 py-1 text-right num"
+                className="w-[96px] px-2 py-1 text-right num"
                 title="Base when avails > 0, FL when oversold within floater band, Bump when oversold beyond floater cap"
               >
                 Rate
               </th>
-              <th className="px-2 py-1 text-right num">Open</th>
+              <th className="w-[72px] px-2 py-1 text-right num">Open</th>
               <th
-                className="px-2 py-1 text-right num"
+                className="w-[120px] px-2 py-1 text-right num"
                 title="Base when avails > 0, FL when oversold within floater band, Bump when oversold beyond floater cap"
               >
                 Rate
               </th>
-              <th className="px-2 py-1 text-right num">Open</th>
+              <th className="w-[72px] px-2 py-1 text-right num">Open</th>
               <th
-                className="px-2 py-1 text-right num"
+                className="w-[96px] px-2 py-1 text-right num"
                 title="Base when avails > 0, FL when oversold within floater band, Bump when oversold beyond floater cap"
               >
                 Rate
@@ -224,7 +224,7 @@ function WeekBlock({ weekStart, games }: { weekStart: string; games: GameRow[] }
           ) : null}
           <td className="px-2 py-1 text-xs text-slate-500">{fmtDow(g.date)}</td>
           <td className="px-2 py-1 text-slate-700">{fmtIsoLong(g.date)}</td>
-          <td className="px-2 py-1 text-slate-700">{stripPRPrefix(g.evtProgram)}</td>
+          <td className="truncate px-2 py-1 text-slate-700" title={stripPRPrefix(g.evtProgram)}>{stripPRPrefix(g.evtProgram)}</td>
           <td className="px-2 py-1 text-xs text-slate-600">{g.type2}</td>
           <td className="px-2 py-1 text-xs text-slate-600">{g.matchup}</td>
           <RateOpenCell cell={g.pregame} />

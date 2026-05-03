@@ -224,18 +224,18 @@ export function BookingMatrix({
       </div>
 
       <div className="relative max-h-[78vh] overflow-auto rounded border border-slate-200 bg-white">
-        <table className="border-separate border-spacing-0 text-[11px] leading-tight">
+        <table className="table-fixed border-separate border-spacing-0 text-[11px] leading-tight">
           <thead>
             <tr>
               <th
-                className="sticky left-0 top-0 z-30 w-52 min-w-52 max-w-52 border-b border-r border-slate-200 bg-slate-100 px-3 py-2 text-left text-xs font-medium uppercase tracking-wide text-slate-600"
+                className="sticky left-0 top-0 z-30 w-[220px] min-w-[220px] max-w-[220px] border-b border-r border-slate-200 bg-slate-100 px-3 py-2 text-left text-xs font-medium uppercase tracking-wide text-slate-600"
               >
                 Client
               </th>
               {dates.map((d) => (
                 <th
                   key={d}
-                  className="sticky top-0 z-20 min-w-[44px] border-b border-l border-slate-200 bg-slate-100 px-1 py-2 text-center text-[10px] font-normal text-slate-500"
+                  className="sticky top-0 z-20 w-[56px] min-w-[56px] max-w-[56px] border-b border-l border-slate-200 bg-slate-100 px-1 py-2 text-center text-[10px] font-normal text-slate-500"
                 >
                   {fmtIsoShort(d)}
                 </th>
@@ -280,7 +280,7 @@ function ClientRow({
       <tr>
         <th
           scope="row"
-          className="sticky left-0 z-10 w-52 min-w-52 max-w-52 border-b border-r border-slate-200 bg-white px-2 py-1 text-left font-normal text-slate-700"
+          className="sticky left-0 z-10 w-[220px] min-w-[220px] max-w-[220px] border-b border-r border-slate-200 bg-white px-2 py-1 text-left font-normal text-slate-700"
         >
           <div className="flex items-center gap-1 overflow-hidden">
             <button
@@ -318,7 +318,7 @@ function ClientRow({
         <tr key={`${client}-${order}`} className="bg-slate-50/40">
           <th
             scope="row"
-            className="sticky left-0 z-10 w-52 min-w-52 max-w-52 border-b border-r border-slate-200 bg-slate-50/80 px-2 py-1 text-left font-normal text-slate-600"
+            className="sticky left-0 z-10 w-[220px] min-w-[220px] max-w-[220px] border-b border-r border-slate-200 bg-slate-50/80 px-2 py-1 text-left font-normal text-slate-600"
           >
             <div className="flex items-center gap-1 overflow-hidden pl-5">
               <span
