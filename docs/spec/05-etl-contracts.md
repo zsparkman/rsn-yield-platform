@@ -251,6 +251,20 @@ output.every(s => {
 
 Lower bound matches M `#"Filtered Rows"` (line 159) range.
 
+#### S16. Every paid spot has BookedImpressions > 0
+
+```ts
+output
+  .filter(s => s.SpotRate > 0)
+  .every(s => s.BookedImpressions > 0)
+```
+
+The synthetic generator samples impressions for every paid spot from
+a per-`(demo, inv-type)` Gaussian (centred at `mean × 0.85`, σ =
+`mean × 0.18`, floor 1,000) so no paid unit ships with zero
+impressions. NC, ADU, xADU, and Bonus spots may still carry zero
+impressions per the source-data convention.
+
 ---
 
 ## deriveSchedule() — `Lakers Combined Schedules` (M lines 196–233)

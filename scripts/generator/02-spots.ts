@@ -123,6 +123,36 @@ const SOLD_RATE_DISCOUNT_SIGMA = 0.05;
 
 // ------------------------------ priority codes ------------------------------
 
+// ------------------------------ booked-impressions sampler ------------------------------
+//
+// Means by (demo, inv-type) computed from docs/reference/PPIRSNBookedSpots2026_synthetic.csv,
+// paid-only (SpotRate > 0), excluding zero-impression rows. Each generated paid
+// spot samples from a Gaussian centred on `mean × 0.85` (15% cut) with
+// `σ = mean × 0.18`, clipped at a 1,000-impression floor and rounded.
+// The 0.18 σ ratio is intentionally looser than the source data's typical
+// 0.05–0.10 σ so the synthetic distribution is clearly not a 1:1 copy.
+const IMPRESSIONS_MEAN: Record<string, Record<RateInventoryType, number>> = {
+  HH:        { Pregame: 1_162_224, "In Game":   813_120, Postgame:   683_880 },
+  "A18-49":  { Pregame:   812_070, "In Game":   776_342, Postgame:   937_158 },
+  "A25-54":  { Pregame:   867_341, "In Game":   916_241, Postgame:   739_253 },
+  "M25-54":  { Pregame:   690_530, "In Game":   993_866, Postgame:   962_017 },
+  "A35+":    { Pregame:   575_291, "In Game":   890_909, Postgame: 1_175_382 },
+  "A21-49":  { Pregame:   645_200, "In Game":   645_200, Postgame:   645_200 }, // ref had only In Game; reuse
+};
+
+const IMPRESSIONS_DISCOUNT = 0.85;
+const IMPRESSIONS_SIGMA_RATIO = 0.18;
+const IMPRESSIONS_FLOOR = 1_000;
+
+function sampleBookedImpressions(rng: () => number, demo: string, invType: RateInventoryType): number {
+  const row = IMPRESSIONS_MEAN[demo] ?? IMPRESSIONS_MEAN["HH"];
+  const mean = row[invType] ?? row["In Game"];
+  const center = mean * IMPRESSIONS_DISCOUNT;
+  const sigma = mean * IMPRESSIONS_SIGMA_RATIO;
+  const sample = gaussian(rng, center, sigma);
+  return Math.max(IMPRESSIONS_FLOOR, Math.round(sample));
+}
+
 const PAID_PRIORITY = "P-80";
 const NC_PRIORITIES: Array<"P-80" | "P-19"> = ["P-80", "P-19"]; // NC zero-rate
 const ADU_PRIORITY = "P-09";
@@ -434,7 +464,9 @@ function buildSpotRow(
   const rating = opts.paid
     ? Math.round((1.0 + rng() * 2.5) * 100) / 100
     : 0;
-  const impressions = opts.paid ? Math.round(rating * 5500 * 1000) : 0;
+  const impressions = opts.paid
+    ? sampleBookedImpressions(rng, demo, ctx.invType)
+    : 0;
 
   ctx.spotIdRef.id += 1;
 

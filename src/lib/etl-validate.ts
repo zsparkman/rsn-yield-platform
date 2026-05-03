@@ -213,6 +213,18 @@ const spotsContracts: Array<{ id: string; summary: string; check: SpotsContract 
         : pass("S15", "AirDate parses to a valid date in 2018+");
     },
   },
+  {
+    id: "S16",
+    summary: "every paid spot (SpotRate > 0) has BookedImpressions > 0",
+    check: (_, output) => {
+      const bad = output.find((s) => s.SpotRate > 0 && s.BookedImpressions <= 0);
+      return bad
+        ? fail("S16", "every paid spot has BookedImpressions > 0",
+            `order=${bad.OrderNumber} line=${bad.LineNumber} rate=${bad.SpotRate} imps=${bad.BookedImpressions}`,
+            bad)
+        : pass("S16", "every paid spot has BookedImpressions > 0");
+    },
+  },
 ];
 
 // ============================================================================
