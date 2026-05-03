@@ -349,4 +349,12 @@ export interface SpotGridCell {
   inv_type: 'Pregame' | 'In Game' | 'Postgame';
   group: SpotGroupKind;
   eq30: number;
+  units: number;             // count of paid spots (length-agnostic, for the Booking Matrix Metric=Units mode)
+}
+
+// Per-(client, order_number, date, inv_type, group) cell for the Booking
+// Matrix's per-client order-number twirl-down. Same shape as SpotGridCell
+// plus the order_number key.
+export interface SpotGridOrderCell extends SpotGridCell {
+  order_number: number;
 }

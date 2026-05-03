@@ -16,7 +16,7 @@ export default function BookingMatrixPage() {
           type. Sticky client column on the left and sticky date row on top.
         </p>
       </div>
-      <BookingMatrix cells={etl.spotGrid} />
+      <BookingMatrix cells={etl.spotGrid} orderCells={etl.spotGridByOrder} />
     </div>
   );
 }

@@ -34,6 +34,7 @@ import type {
   SeasonPhase,
   Simulcast,
   SpotGridCell,
+  SpotGridOrderCell,
   SpotGroupKind,
   SpotsByClientRow,
 } from "./types";
@@ -62,6 +63,7 @@ export interface EtlOutputs {
   inventoryInc0: InventoryRollupRow[];
   aurSummary: AurSummaryRow[];
   spotGrid: SpotGridCell[];
+  spotGridByOrder: SpotGridOrderCell[];
 }
 
 // ---- CSV: minimal, comma-only, supports quoted fields with embedded quotes ----
@@ -955,25 +957,31 @@ export function deriveAurSummary(
 // Orchestrator
 // ============================================================================
 
+function spotGroupOfRaw(s: EnrichedSpot): SpotGroupKind {
+  if (s.SpotRate > 0) return "Paid";
+  if (s.PriorityCode === "P-80" || s.PriorityCode === "P-19") return "NC";
+  if (s.PriorityCode === "P-09") return "ADU";
+  if (s.PriorityCode === "P-08") return "xADU";
+  if (s.PriorityCode === "P-04") return "Bonus";
+  return "Other";
+}
+
 // Per-(client, date, inv_type, spot_group) eq30 aggregate. Pre-aggregated
-// here so the Spot Grid view doesn't ship 18k spots to the client.
+// here so the Booking Matrix view doesn't ship 18k spots to the client.
+// Each cell carries both an eq30 value (for the default Metric=EQ30 mode)
+// and a units count (for Metric=Units, length-agnostic spot count).
 export function deriveSpotGrid(spots: EnrichedSpot[]): SpotGridCell[] {
   const tally = new Map<string, SpotGridCell>();
   for (const s of spots) {
     if (s.inventory_type !== "Pregame" && s.inventory_type !== "In Game" && s.inventory_type !== "Postgame") {
-      continue; // Spot Grid view excludes Ancillary
+      continue; // Booking Matrix excludes Ancillary
     }
-    const group: SpotGroupKind =
-      s.SpotRate > 0 ? "Paid"
-      : s.PriorityCode === "P-80" || s.PriorityCode === "P-19" ? "NC"
-      : s.PriorityCode === "P-09" ? "ADU"
-      : s.PriorityCode === "P-08" ? "xADU"
-      : s.PriorityCode === "P-04" ? "Bonus"
-      : "Other";
+    const group = spotGroupOfRaw(s);
     const key = `${s.AdvertiserName}||${s.air_date_iso}||${s.inventory_type}||${group}`;
     const cell = tally.get(key);
     if (cell) {
       cell.eq30 += s.TotalEquivSold;
+      cell.units += 1;
     } else {
       tally.set(key, {
         client: s.AdvertiserName,
@@ -981,10 +989,45 @@ export function deriveSpotGrid(spots: EnrichedSpot[]): SpotGridCell[] {
         inv_type: s.inventory_type as "Pregame" | "In Game" | "Postgame",
         group,
         eq30: s.TotalEquivSold,
+        units: 1,
       });
     }
   }
-  // Round per-cell eq30 to 1 decimal for stable display.
+  for (const cell of tally.values()) {
+    cell.eq30 = Math.round(cell.eq30 * 10) / 10;
+  }
+  return Array.from(tally.values());
+}
+
+// Per-(client, order_number, date, inv_type, group) aggregate. Drives the
+// Booking Matrix's per-client twirl-down: each visible client's row can
+// expand to show one sub-row per OrderNumber the client booked, with the
+// same date×cell layout scoped to the order.
+export function deriveSpotGridByOrder(spots: EnrichedSpot[]): SpotGridOrderCell[] {
+  const tally = new Map<string, SpotGridOrderCell>();
+  for (const s of spots) {
+    if (s.OrderNumber == null) continue;
+    if (s.inventory_type !== "Pregame" && s.inventory_type !== "In Game" && s.inventory_type !== "Postgame") {
+      continue;
+    }
+    const group = spotGroupOfRaw(s);
+    const key = `${s.AdvertiserName}||${s.OrderNumber}||${s.air_date_iso}||${s.inventory_type}||${group}`;
+    const cell = tally.get(key);
+    if (cell) {
+      cell.eq30 += s.TotalEquivSold;
+      cell.units += 1;
+    } else {
+      tally.set(key, {
+        client: s.AdvertiserName,
+        order_number: s.OrderNumber,
+        date: s.air_date_iso,
+        inv_type: s.inventory_type as "Pregame" | "In Game" | "Postgame",
+        group,
+        eq30: s.TotalEquivSold,
+        units: 1,
+      });
+    }
+  }
   for (const cell of tally.values()) {
     cell.eq30 = Math.round(cell.eq30 * 10) / 10;
   }
@@ -999,5 +1042,6 @@ export function runEtl(inputs: EtlInputs): EtlOutputs {
   const inventoryInc0 = deriveInventory(spotsByClient, inputs.inventoryCapacity, inputs.rateCard, { include0: true });
   const aurSummary = deriveAurSummary(spotsByClient, inputs.inventoryCapacity);
   const spotGrid = deriveSpotGrid(spots);
-  return { spots, schedule, spotsByClient, inventoryExc0, inventoryInc0, aurSummary, spotGrid };
+  const spotGridByOrder = deriveSpotGridByOrder(spots);
+  return { spots, schedule, spotsByClient, inventoryExc0, inventoryInc0, aurSummary, spotGrid, spotGridByOrder };
 }

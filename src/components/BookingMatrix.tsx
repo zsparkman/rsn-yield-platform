@@ -1,27 +1,57 @@
 "use client";
 
 // Booking Matrix view per IA View 4. Top-N clients × dates matrix; cell value
-// = total EQ30 matching active filters; green saturation by intensity.
-// Sticky client column on the left, sticky date row on top.
+// = total EQ30 (or paid-spot count when Metric=Units) matching active filters;
+// green saturation by intensity. Sticky client column on the left, sticky
+// date row on top. Per-client twirl-down expands to one sub-row per
+// OrderNumber the client booked, with the same date×cell layout.
 
 import { useMemo, useState } from "react";
 import clsx from "clsx";
-import type { SpotGridCell, SpotGroupKind } from "@/lib/types";
-import { fmtEq30, fmtIsoShort, gridDensityHeat } from "@/lib/format";
+import type { SpotGridCell, SpotGridOrderCell, SpotGroupKind } from "@/lib/types";
+import { fmtEq30, fmtIntCount, fmtIsoShort, gridDensityHeat } from "@/lib/format";
 import { Segment } from "@/components/FilterStrip";
 import { ReportHeaderSelectors, type CalendarMode } from "@/components/ReportHeaderSelectors";
 
 type InvFilter = "All" | "Pregame" | "In Game" | "Postgame";
 type StatusFilter = "All" | SpotGroupKind;
 type TopNFilter = "25" | "50" | "100";
+type MetricFilter = "EQ30" | "Units";
 
-export function BookingMatrix({ cells }: { cells: SpotGridCell[] }) {
+function ChevronRight({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={clsx("size-3", className)}
+    >
+      <path d="m9 18 6-6-6-6" />
+    </svg>
+  );
+}
+
+export function BookingMatrix({
+  cells,
+  orderCells,
+}: {
+  cells: SpotGridCell[];
+  orderCells: SpotGridOrderCell[];
+}) {
   const [inv, setInv] = useState<InvFilter>("All");
   const [status, setStatus] = useState<StatusFilter>("All");
   const [topN, setTopN] = useState<TopNFilter>("50");
+  const [metric, setMetric] = useState<MetricFilter>("EQ30");
   const [year, setYear] = useState("2026");
   const [calendar, setCalendar] = useState<CalendarMode>("standard");
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
   void calendar; // selector mounted; matrix is per-day so calendar mode is informational only
+
+  const valueOf = (c: SpotGridCell) => (metric === "Units" ? c.units : c.eq30);
 
   const filtered = useMemo(
     () => cells.filter((c) =>
@@ -31,22 +61,59 @@ export function BookingMatrix({ cells }: { cells: SpotGridCell[] }) {
     [cells, inv, status],
   );
 
-  // Aggregate per (client, date) for the cell value.
+  const filteredOrders = useMemo(
+    () => orderCells.filter((c) =>
+      (inv === "All" || c.inv_type === inv) &&
+      (status === "All" || c.group === status),
+    ),
+    [orderCells, inv, status],
+  );
+
+  // (client, date) → cell value
   const cellMap = useMemo(() => {
     const m = new Map<string, number>();
     for (const c of filtered) {
       const k = `${c.client}|${c.date}`;
-      m.set(k, (m.get(k) ?? 0) + c.eq30);
+      m.set(k, (m.get(k) ?? 0) + valueOf(c));
     }
     return m;
-  }, [filtered]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filtered, metric]);
 
-  // Client totals (for ranking).
+  // (client, order_number, date) → cell value
+  const orderCellMap = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const c of filteredOrders) {
+      const k = `${c.client}|${c.order_number}|${c.date}`;
+      m.set(k, (m.get(k) ?? 0) + valueOf(c));
+    }
+    return m;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredOrders, metric]);
+
+  // client → totals (for ranking)
   const clientTotals = useMemo(() => {
     const m = new Map<string, number>();
-    for (const c of filtered) m.set(c.client, (m.get(c.client) ?? 0) + c.eq30);
+    for (const c of filtered) m.set(c.client, (m.get(c.client) ?? 0) + valueOf(c));
     return m;
-  }, [filtered]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filtered, metric]);
+
+  // client → ordered list of order numbers (descending volume)
+  const ordersByClient = useMemo(() => {
+    const totals = new Map<string, Map<number, number>>();
+    for (const c of filteredOrders) {
+      let inner = totals.get(c.client);
+      if (!inner) { inner = new Map(); totals.set(c.client, inner); }
+      inner.set(c.order_number, (inner.get(c.order_number) ?? 0) + valueOf(c));
+    }
+    const out = new Map<string, number[]>();
+    for (const [client, inner] of totals) {
+      out.set(client, Array.from(inner.entries()).sort((a, b) => b[1] - a[1]).map(([o]) => o));
+    }
+    return out;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredOrders, metric]);
 
   const topClients = useMemo(() => {
     return Array.from(clientTotals.entries())
@@ -60,6 +127,15 @@ export function BookingMatrix({ cells }: { cells: SpotGridCell[] }) {
     for (const c of filtered) set.add(c.date);
     return Array.from(set).sort();
   }, [filtered]);
+
+  function toggleClient(client: string) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(client)) next.delete(client);
+      else next.add(client);
+      return next;
+    });
+  }
 
   return (
     <div className="space-y-4">
@@ -82,6 +158,15 @@ export function BookingMatrix({ cells }: { cells: SpotGridCell[] }) {
             { value: "Postgame", label: "Postgame" },
           ]}
           onChange={setInv}
+        />
+        <Segment<MetricFilter>
+          label="Metric"
+          value={metric}
+          options={[
+            { value: "EQ30", label: "EQ30" },
+            { value: "Units", label: "Units" },
+          ]}
+          onChange={setMetric}
         />
         <Segment<StatusFilter>
           label="Status"
@@ -116,7 +201,7 @@ export function BookingMatrix({ cells }: { cells: SpotGridCell[] }) {
           <thead>
             <tr>
               <th
-                className="sticky left-0 top-0 z-30 min-w-[200px] border-b border-r border-slate-200 bg-slate-100 px-3 py-2 text-left text-xs font-medium uppercase tracking-wide text-slate-600"
+                className="sticky left-0 top-0 z-30 w-52 min-w-52 max-w-52 border-b border-r border-slate-200 bg-slate-100 px-3 py-2 text-left text-xs font-medium uppercase tracking-wide text-slate-600"
               >
                 Client
               </th>
@@ -132,32 +217,107 @@ export function BookingMatrix({ cells }: { cells: SpotGridCell[] }) {
           </thead>
           <tbody>
             {topClients.map((client) => (
-              <tr key={client}>
-                <th
-                  scope="row"
-                  className="sticky left-0 z-10 min-w-[200px] border-b border-r border-slate-200 bg-white px-3 py-1 text-left font-normal text-slate-700"
-                >
-                  {client}
-                </th>
-                {dates.map((d) => {
-                  const eq = cellMap.get(`${client}|${d}`) ?? 0;
-                  return (
-                    <td
-                      key={d}
-                      className={clsx(
-                        "num border-b border-l border-slate-200 px-1 py-1 text-center",
-                        eq === 0 ? "bg-white text-slate-300" : gridDensityHeat(eq),
-                      )}
-                    >
-                      {eq === 0 ? "" : fmtEq30(eq)}
-                    </td>
-                  );
-                })}
-              </tr>
+              <ClientRow
+                key={client}
+                client={client}
+                dates={dates}
+                cellMap={cellMap}
+                metric={metric}
+                expanded={expanded.has(client)}
+                onToggle={() => toggleClient(client)}
+                orders={ordersByClient.get(client) ?? []}
+                orderCellMap={orderCellMap}
+              />
             ))}
           </tbody>
         </table>
       </div>
     </div>
+  );
+}
+
+function ClientRow({
+  client, dates, cellMap, metric, expanded, onToggle, orders, orderCellMap,
+}: {
+  client: string;
+  dates: string[];
+  cellMap: Map<string, number>;
+  metric: MetricFilter;
+  expanded: boolean;
+  onToggle: () => void;
+  orders: number[];
+  orderCellMap: Map<string, number>;
+}) {
+  return (
+    <>
+      <tr className="h-9">
+        <th
+          scope="row"
+          className="sticky left-0 z-10 h-9 w-52 min-w-52 max-w-52 border-b border-r border-slate-200 bg-white px-2 py-1 text-left font-normal text-slate-700"
+        >
+          <div className="flex items-center gap-1 overflow-hidden">
+            <button
+              type="button"
+              onClick={onToggle}
+              aria-label={expanded ? "Collapse orders" : "Expand orders"}
+              className="shrink-0 rounded p-0.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+            >
+              <ChevronRight className={clsx("transition-transform", expanded && "rotate-90")} />
+            </button>
+            <span
+              title={client}
+              className="block overflow-hidden text-ellipsis whitespace-nowrap"
+            >
+              {client}
+            </span>
+          </div>
+        </th>
+        {dates.map((d) => {
+          const v = cellMap.get(`${client}|${d}`) ?? 0;
+          return (
+            <td
+              key={d}
+              className={clsx(
+                "num h-9 border-b border-l border-slate-200 px-1 text-center",
+                v === 0 ? "bg-white text-slate-300" : gridDensityHeat(v),
+              )}
+            >
+              {v === 0 ? "" : metric === "Units" ? fmtIntCount(v) : fmtEq30(v)}
+            </td>
+          );
+        })}
+      </tr>
+      {expanded && orders.map((order) => (
+        <tr key={`${client}-${order}`} className="h-9 bg-slate-50/40">
+          <th
+            scope="row"
+            className="sticky left-0 z-10 h-9 w-52 min-w-52 max-w-52 border-b border-r border-slate-200 bg-slate-50/80 px-2 py-1 text-left font-normal text-slate-600"
+          >
+            <div className="flex items-center gap-1 overflow-hidden pl-5">
+              <span
+                title={`Order #${order}`}
+                className="block overflow-hidden text-ellipsis whitespace-nowrap text-[10px] text-slate-500"
+              >
+                Order #{order}
+              </span>
+            </div>
+          </th>
+          {dates.map((d) => {
+            const v = orderCellMap.get(`${client}|${order}|${d}`) ?? 0;
+            return (
+              <td
+                key={d}
+                className={clsx(
+                  "num h-9 border-b border-l border-slate-200 px-1 text-center",
+                  v === 0 ? "bg-white text-slate-300" : gridDensityHeat(v),
+                )}
+              >
+                {v === 0 ? "" : metric === "Units" ? fmtIntCount(v) : fmtEq30(v)}
+              </td>
+            );
+          })}
+        </tr>
+      ))}
+    </>
   );
 }
