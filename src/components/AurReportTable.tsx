@@ -117,6 +117,29 @@ interface MonthAgg {
   agg: RowSlice;
 }
 
+function invSort(invType: string): number {
+  if (invType === "Pregame") return 0;
+  if (invType.startsWith("In Game")) return 1;
+  if (invType === "Postgame") return 2;
+  return 9;
+}
+
+function groupRowsByDate(rows: RowSlice[]): Array<{ date: string; rows: RowSlice[]; agg: RowSlice }> {
+  const map = new Map<string, RowSlice[]>();
+  for (const r of rows) {
+    const list = map.get(r.date) ?? [];
+    list.push(r);
+    map.set(r.date, list);
+  }
+  const out: Array<{ date: string; rows: RowSlice[]; agg: RowSlice }> = [];
+  for (const [date, rs] of map.entries()) {
+    rs.sort((a, b) => invSort(a.invType) - invSort(b.invType));
+    out.push({ date, rows: rs, agg: aggregateRows(rs, rs[0].broadcastMonth) });
+  }
+  out.sort((a, b) => a.date.localeCompare(b.date));
+  return out;
+}
+
 function aggregateRows(rows: RowSlice[], month: string): RowSlice {
   const agg: RowSlice = {
     date: "", type2: "REG", invType: "Total", broadcastMonth: month,
@@ -157,7 +180,7 @@ export function AurReportTable({ rows }: { rows: AurSummaryRow[] }) {
     }
     const out: MonthAgg[] = [];
     for (const [month, rs] of map.entries()) {
-      rs.sort((a, b) => a.date.localeCompare(b.date) || a.invType.localeCompare(b.invType));
+      rs.sort((a, b) => a.date.localeCompare(b.date) || invSort(a.invType) - invSort(b.invType));
       out.push({ month, rows: rs, agg: aggregateRows(rs, month) });
     }
     out.sort((a, b) => MONTHS.indexOf(a.month) - MONTHS.indexOf(b.month));
@@ -283,18 +306,19 @@ export function AurReportTable({ rows }: { rows: AurSummaryRow[] }) {
 }
 
 function MonthBlock({ month }: { month: MonthAgg }) {
+  const dateGroups = groupRowsByDate(month.rows);
   return (
     <>
       <tr className="border-b border-slate-200 bg-slate-100 text-xs font-semibold uppercase tracking-wide text-slate-700">
         <td colSpan={4} className="px-3 py-2">
-          {month.month} · {month.rows.length} rows
+          {month.month} · {month.rows.length} rows · {dateGroups.length} dates
         </td>
         <td colSpan={12}></td>
       </tr>
-      {month.rows.map((s) => (
-        <DataRow key={`${s.date}|${s.invType}`} s={s} />
+      {dateGroups.map((d) => (
+        <DateBlock key={d.date} date={d.date} rows={d.rows} agg={d.agg} />
       ))}
-      <tr className="border-y border-slate-300 bg-slate-50 text-xs font-medium text-slate-700">
+      <tr className="border-y border-slate-400 bg-slate-200 text-xs font-semibold text-slate-800">
         <td colSpan={4} className="px-3 py-2 text-right uppercase tracking-wide">
           {month.month} subtotal
         </td>
@@ -313,6 +337,44 @@ function MonthBlock({ month }: { month: MonthAgg }) {
         </td>
         <td className={clsx("num px-3 py-2 text-right", selloutHeat(selloutAduOf(month.agg)))}>
           {fmtPercent(selloutAduOf(month.agg))}
+        </td>
+      </tr>
+    </>
+  );
+}
+
+function DateBlock({
+  date, rows, agg,
+}: {
+  date: string;
+  rows: RowSlice[];
+  agg: RowSlice;
+}) {
+  return (
+    <>
+      {rows.map((s) => (
+        <DataRow key={`${s.date}|${s.invType}`} s={s} />
+      ))}
+      <tr className="border-y border-slate-200 bg-slate-100 text-xs font-medium text-slate-700">
+        <td className="px-3 py-1.5">{rows[0].type2}</td>
+        <td className="px-3 py-1.5">{agg.broadcastMonth}</td>
+        <td className="px-3 py-1.5">{fmtIsoLong(date)}</td>
+        <td className="px-3 py-1.5 uppercase tracking-wide text-[11px]">Total</td>
+        <td className="num px-3 py-1.5 text-right">{fmtEq30(agg.avails)}</td>
+        <td className="num px-3 py-1.5 text-right">{fmtEq30(agg.paidEq30)}</td>
+        <td className="num px-3 py-1.5 text-right">{fmtEq30(agg.ncEq30)}</td>
+        <td className="num px-3 py-1.5 text-right">{fmtEq30(agg.aduEq30)}</td>
+        <td className="num px-3 py-1.5 text-right">{fmtEq30(agg.xaduEq30)}</td>
+        <td className="num px-3 py-1.5 text-right">{fmtEq30(agg.bonusEq30)}</td>
+        <td className="num px-3 py-1.5 text-right">{fmtEq30(agg.totalEq30)}</td>
+        <td className="num px-3 py-1.5 text-right">{fmtCurrencyRolled(agg.paidNetCents)}</td>
+        <td className="num px-3 py-1.5 text-right">{fmtCurrencyUnit(aurCentsOf(agg))}</td>
+        <td className="num px-3 py-1.5 text-right">{fmtCurrencyUnit(eurNetCentsOf(agg))}</td>
+        <td className={clsx("num px-3 py-1.5 text-right", selloutHeat(selloutOf(agg)))}>
+          {fmtPercent(selloutOf(agg))}
+        </td>
+        <td className={clsx("num px-3 py-1.5 text-right", selloutHeat(selloutAduOf(agg)))}>
+          {fmtPercent(selloutAduOf(agg))}
         </td>
       </tr>
     </>
