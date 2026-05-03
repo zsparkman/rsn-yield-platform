@@ -238,16 +238,21 @@ export interface InventoryRollupRow {
   broadcast_year: number;
   SEASON: string;
   Matchup: MatchupTier;
+  Format: Format;                     // 'Standard' | 'Expanded' | 'DH' | 'Expanded DH'
   Cap: number;                        // Avails (or 6 for Floaters A&B)
   Sold: number;                       // sum of TotalEquivSold (or FL Sold for Floaters A&B)
+  avail: number;                      // max(0, Cap - Sold); the Inventory view's "Avail"
   Sellout: number;                    // Sold / Cap
   Oversell: number;                   // M sign: Avails - Sold
   'Rate Tier': RateTier;
   'Rate Key': string;
-  Rate: number;                       // looked up from rate_card
+  Rate: number;                       // looked up from rate_card (dollars)
+  current_rate_cents: number;         // round(Rate * 100); the Rates view's rate column
   'Start of Week': string;            // YYYY-MM-DD (Monday)
   'Gross Rev': number;                // dollars; 0 for Floaters A&B
   'Net Rev': number;                  // dollars; 0 for Floaters A&B
+  gross_rev_cents: number;            // round(Gross Rev * 100); 0 for Floaters A&B
+  net_rev_cents: number;              // round(Net Rev * 100); the Inventory view's "REV (Net)"
   // Three volume-weighted unit-rate metrics, all in integer cents.
   // ALL THREE COMPUTED OVER PAID SPOTS ONLY (spot.SpotRate > 0).
   // NC, ADU, xADU, and Bonus spots are excluded from both numerator

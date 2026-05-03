@@ -40,8 +40,10 @@ import type {
 // File loaders
 // ============================================================================
 
-const REPO_ROOT = path.resolve(__dirname, "..", "..");
-const DATA_DIR = path.join(REPO_ROOT, "data");
+// Resolve relative to process.cwd(). Next.js runs both `next dev` and
+// `next build` from the project root, so this lands on /<project>/data.
+// __dirname doesn't work here — the bundler relocates the module to .next/.
+const DATA_DIR = path.join(process.cwd(), "data");
 
 export interface EtlInputs {
   spots: RawSpot[];
@@ -147,8 +149,13 @@ export function parseScheduleCsv(text: string): RawScheduleRow[] {
   }));
 }
 
+// Note on xlsx + Next.js: XLSX.readFile() doesn't survive the Next.js
+// bundler (xlsx's `fs` reference gets shimmed out). Use fs.readFileSync
+// + XLSX.read(buffer) instead — works in both Node-only contexts (the
+// generator) and bundled server contexts (App Router server components).
 export function parseInventoryCapacityXlsx(filePath: string): RawInventoryCapRow[] {
-  const wb = XLSX.readFile(filePath);
+  const buf = fs.readFileSync(filePath);
+  const wb = XLSX.read(buf, { type: "buffer" });
   const ws = wb.Sheets[wb.SheetNames[0]];
   const json = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws);
   return json.map((r) => ({
@@ -162,7 +169,8 @@ export function parseInventoryCapacityXlsx(filePath: string): RawInventoryCapRow
 }
 
 export function parseRateCardXlsx(filePath: string): RawRateCardRow[] {
-  const wb = XLSX.readFile(filePath);
+  const buf = fs.readFileSync(filePath);
+  const wb = XLSX.read(buf, { type: "buffer" });
   const ws = wb.Sheets[wb.SheetNames[0]];
   const json = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws);
   return json.map((r) => ({
@@ -727,6 +735,7 @@ export function deriveInventory(
       const startWeek = startOfWeek(dateIso);
       const dateMillis = new Date(`${dateIso}T00:00:00Z`).getTime();
 
+      const soldRounded = Math.round(v.sold * 100) / 100;
       out.push({
         DATE: dateIso,
         EVENT_PROGRAM: g.evtProgram,
@@ -737,16 +746,21 @@ export function deriveInventory(
         broadcast_year: g.broadcast_year,
         SEASON: g.season,
         Matchup: g.matchup,
+        Format: g.expanded,
         Cap: v.cap,
-        Sold: Math.round(v.sold * 100) / 100,
+        Sold: soldRounded,
+        avail: Math.max(0, Math.round((v.cap - v.sold) * 100) / 100),
         Sellout: v.cap > 0 ? Math.round((v.sold / v.cap) * 10000) / 10000 : 0,
         Oversell: Math.round(oversellMSign * 100) / 100,
         "Rate Tier": rateTier,
         "Rate Key": rateKey,
         Rate: rate,
+        current_rate_cents: Math.round(rate * 100),
         "Start of Week": startWeek,
         "Gross Rev": Math.round(grossRev * 100) / 100,
         "Net Rev": Math.round(netRev * 100) / 100,
+        gross_rev_cents: Math.round(grossRev * 100),
+        net_rev_cents: Math.round(netRev * 100),
         eur_gross_cents,
         eur_net_cents,
         aur_cents,
