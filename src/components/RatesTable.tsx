@@ -154,37 +154,37 @@ export function RatesTable({ rows }: { rows: InventoryRollupRow[] }) {
       </div>
 
       <div className="overflow-x-auto rounded border border-slate-200 bg-white">
-        <table className="grid-table w-[1180px] table-fixed text-[13px] leading-tight">
+        <table className="grid-table w-full table-fixed text-[13px] leading-tight">
           <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
             <tr>
-              <th rowSpan={2} className="w-[144px] px-2 py-2">Week</th>
-              <th rowSpan={2} className="w-[56px] px-2 py-2">Day</th>
-              <th rowSpan={2} className="w-[132px] px-2 py-2">Date</th>
-              <th rowSpan={2} className="w-[168px] px-2 py-2">Matchup</th>
-              <th rowSpan={2} className="w-[64px] px-2 py-2">Phase</th>
-              <th rowSpan={2} className="w-[88px] px-2 py-2">Tier</th>
+              <th rowSpan={2} className="min-w-[144px] px-2 py-2">Week</th>
+              <th rowSpan={2} className="min-w-[56px] px-2 py-2">Day</th>
+              <th rowSpan={2} className="min-w-[132px] px-2 py-2">Date</th>
+              <th rowSpan={2} className="min-w-[168px] px-2 py-2">Matchup</th>
+              <th rowSpan={2} className="min-w-[64px] px-2 py-2">Phase</th>
+              <th rowSpan={2} className="min-w-[88px] px-2 py-2">Tier</th>
               <th colSpan={2} className="px-2 py-2 text-center">Pregame</th>
               <th colSpan={2} className="px-2 py-2 text-center">In Game</th>
               <th colSpan={2} className="px-2 py-2 text-center">Postgame</th>
             </tr>
             <tr>
-              <th className="w-[72px] px-2 py-1 text-right num">Open</th>
+              <th className="min-w-[72px] px-2 py-1 text-right num">Open</th>
               <th
-                className="w-[96px] px-2 py-1 text-right num"
+                className="min-w-[96px] px-2 py-1 text-right num"
                 title="Base when avails > 0, FL when oversold within floater band, Bump when oversold beyond floater cap"
               >
                 Rate
               </th>
-              <th className="w-[72px] px-2 py-1 text-right num">Open</th>
+              <th className="min-w-[72px] px-2 py-1 text-right num">Open</th>
               <th
-                className="w-[120px] px-2 py-1 text-right num"
+                className="min-w-[120px] px-2 py-1 text-right num"
                 title="Base when avails > 0, FL when oversold within floater band, Bump when oversold beyond floater cap"
               >
                 Rate
               </th>
-              <th className="w-[72px] px-2 py-1 text-right num">Open</th>
+              <th className="min-w-[72px] px-2 py-1 text-right num">Open</th>
               <th
-                className="w-[96px] px-2 py-1 text-right num"
+                className="min-w-[96px] px-2 py-1 text-right num"
                 title="Base when avails > 0, FL when oversold within floater band, Bump when oversold beyond floater cap"
               >
                 Rate

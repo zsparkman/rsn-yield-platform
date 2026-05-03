@@ -217,18 +217,18 @@ export function InventoryTable({
         </p>
       ) : (
         <div className="overflow-x-auto rounded border border-slate-200 bg-white">
-          <table className="grid-table w-[1012px] table-fixed text-[13px] leading-tight">
+          <table className="grid-table w-full table-fixed text-[13px] leading-tight">
             <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
               <tr>
-                <Th width="w-[124px]" onClick={() => setSort("DATE")} active={sortKey === "DATE"} dir={sortDir}>Date</Th>
-                <Th width="w-[232px]" onClick={() => setSort("EVENT_PROGRAM")} active={sortKey === "EVENT_PROGRAM"} dir={sortDir}>Event / Program</Th>
-                <Th width="w-[96px]" onClick={() => setSort("INV TYPE")} active={sortKey === "INV TYPE"} dir={sortDir}>Inventory</Th>
-                <Th width="w-[80px]" onClick={() => setSort("avail")} active={sortKey === "avail"} dir={sortDir} numeric>Avail</Th>
-                <Th width="w-[80px]" onClick={() => setSort("Cap")} active={sortKey === "Cap"} dir={sortDir} numeric>Cap</Th>
-                <Th width="w-[80px]" onClick={() => setSort("Sold")} active={sortKey === "Sold"} dir={sortDir} numeric>Sold</Th>
-                <Th width="w-[96px]" onClick={() => setSort("Sellout")} active={sortKey === "Sellout"} dir={sortDir} numeric>Sellout%</Th>
-                <Th width="w-[112px]" onClick={() => setSort("net_rev_cents")} active={sortKey === "net_rev_cents"} dir={sortDir} numeric>REV (Net)</Th>
-                <Th width="w-[112px]" onClick={() => setSort("eur_gross_cents")} active={sortKey === "eur_gross_cents"} dir={sortDir} numeric>EUR (Gross)</Th>
+                <Th width="min-w-[124px]" onClick={() => setSort("DATE")} active={sortKey === "DATE"} dir={sortDir}>Date</Th>
+                <Th width="min-w-[232px]" onClick={() => setSort("EVENT_PROGRAM")} active={sortKey === "EVENT_PROGRAM"} dir={sortDir}>Event / Program</Th>
+                <Th width="min-w-[96px]" onClick={() => setSort("INV TYPE")} active={sortKey === "INV TYPE"} dir={sortDir}>Inventory</Th>
+                <Th width="min-w-[80px]" onClick={() => setSort("avail")} active={sortKey === "avail"} dir={sortDir} numeric>Avail</Th>
+                <Th width="min-w-[80px]" onClick={() => setSort("Cap")} active={sortKey === "Cap"} dir={sortDir} numeric>Cap</Th>
+                <Th width="min-w-[80px]" onClick={() => setSort("Sold")} active={sortKey === "Sold"} dir={sortDir} numeric>Sold</Th>
+                <Th width="min-w-[96px]" onClick={() => setSort("Sellout")} active={sortKey === "Sellout"} dir={sortDir} numeric>Sellout%</Th>
+                <Th width="min-w-[112px]" onClick={() => setSort("net_rev_cents")} active={sortKey === "net_rev_cents"} dir={sortDir} numeric>REV (Net)</Th>
+                <Th width="min-w-[112px]" onClick={() => setSort("eur_gross_cents")} active={sortKey === "eur_gross_cents"} dir={sortDir} numeric>EUR (Gross)</Th>
               </tr>
             </thead>
             <tbody>

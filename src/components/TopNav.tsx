@@ -28,7 +28,7 @@ export function TopNav() {
 
   return (
     <header className="border-b border-slate-200 bg-white">
-      <nav className="mx-auto flex max-w-[1600px] items-center gap-8 px-6 py-3">
+      <nav className="mx-auto flex max-w-[1536px] items-center gap-8 px-6 py-3">
         <Link
           href="/"
           className="text-sm font-semibold tracking-tight text-slate-900 hover:text-indigo-600"

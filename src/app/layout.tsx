@@ -17,7 +17,7 @@ export default function RootLayout({
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full bg-slate-50 text-slate-900">
         <TopNav />
-        <main className="mx-auto max-w-[1600px] px-6 py-6">{children}</main>
+        <main className="mx-auto max-w-[1536px] px-6 py-6">{children}</main>
       </body>
     </html>
   );
