@@ -137,7 +137,7 @@ export function RatesTable({ rows }: { rows: InventoryRollupRow[] }) {
       </div>
 
       <div className="overflow-x-auto rounded border border-slate-200 bg-white">
-        <table className="w-full text-[13px] leading-tight">
+        <table className="grid-table w-full text-[13px] leading-tight">
           <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
             <tr>
               <th rowSpan={2} className="px-2 py-2">Week</th>

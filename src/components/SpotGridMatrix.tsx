@@ -111,7 +111,7 @@ export function SpotGridMatrix({ cells }: { cells: SpotGridCell[] }) {
               {dates.map((d) => (
                 <th
                   key={d}
-                  className="sticky top-0 z-20 min-w-[44px] border-b border-l border-slate-100 bg-slate-100 px-1 py-2 text-center text-[10px] font-normal text-slate-500"
+                  className="sticky top-0 z-20 min-w-[44px] border-b border-l border-slate-200 bg-slate-100 px-1 py-2 text-center text-[10px] font-normal text-slate-500"
                 >
                   {fmtIsoShort(d)}
                 </th>
@@ -123,7 +123,7 @@ export function SpotGridMatrix({ cells }: { cells: SpotGridCell[] }) {
               <tr key={client}>
                 <th
                   scope="row"
-                  className="sticky left-0 z-10 min-w-[200px] border-b border-r border-slate-100 bg-white px-3 py-1 text-left font-normal text-slate-700"
+                  className="sticky left-0 z-10 min-w-[200px] border-b border-r border-slate-200 bg-white px-3 py-1 text-left font-normal text-slate-700"
                 >
                   {client}
                 </th>
@@ -133,7 +133,7 @@ export function SpotGridMatrix({ cells }: { cells: SpotGridCell[] }) {
                     <td
                       key={d}
                       className={clsx(
-                        "num border-b border-l border-slate-100 px-1 py-1 text-center",
+                        "num border-b border-l border-slate-200 px-1 py-1 text-center",
                         eq === 0 ? "bg-white text-slate-300" : gridDensityHeat(eq),
                       )}
                     >

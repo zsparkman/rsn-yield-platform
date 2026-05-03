@@ -11,3 +11,25 @@ html, body {
 .num {
   font-variant-numeric: tabular-nums;
 }
+
+/* Excel-style gridlines: right and bottom border on every cell of any
+ * table tagged with `.grid-table`. The trailing right border is suppressed
+ * so it doesn't double up with the card's outer border. Border-collapse:
+ * collapse lets thicker subtotal-row borders win over the thin gridline
+ * automatically. Heat-shaded cells render the gridline on top of the
+ * background color (slate-200 is visible against every heat tier we use).
+ */
+.grid-table {
+  border-collapse: collapse;
+}
+.grid-table th,
+.grid-table td {
+  border-right: 1px solid rgb(226 232 240);  /* slate-200 */
+  border-bottom: 1px solid rgb(226 232 240);
+}
+.grid-table tr > *:last-child {
+  border-right: 0;
+}
+.grid-table tbody tr:last-child > * {
+  border-bottom: 0;
+}
