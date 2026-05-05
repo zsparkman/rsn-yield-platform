@@ -2,70 +2,70 @@
   {
     "air_date": "2025-12-29",
     "broadcast_week_start": "2025-12-29",
-    "broadcast_week_number": 52,
-    "broadcast_month": "December",
-    "broadcast_month_number": 12,
-    "broadcast_quarter": "Q4",
-    "broadcast_year": 2025
+    "broadcast_week_number": 1,
+    "broadcast_month": "January",
+    "broadcast_month_number": 1,
+    "broadcast_quarter": "Q1",
+    "broadcast_year": 2026
   },
   {
     "air_date": "2025-12-30",
     "broadcast_week_start": "2025-12-29",
-    "broadcast_week_number": 52,
-    "broadcast_month": "December",
-    "broadcast_month_number": 12,
-    "broadcast_quarter": "Q4",
-    "broadcast_year": 2025
+    "broadcast_week_number": 1,
+    "broadcast_month": "January",
+    "broadcast_month_number": 1,
+    "broadcast_quarter": "Q1",
+    "broadcast_year": 2026
   },
   {
     "air_date": "2025-12-31",
     "broadcast_week_start": "2025-12-29",
-    "broadcast_week_number": 52,
-    "broadcast_month": "December",
-    "broadcast_month_number": 12,
-    "broadcast_quarter": "Q4",
-    "broadcast_year": 2025
+    "broadcast_week_number": 1,
+    "broadcast_month": "January",
+    "broadcast_month_number": 1,
+    "broadcast_quarter": "Q1",
+    "broadcast_year": 2026
   },
   {
     "air_date": "2026-01-01",
     "broadcast_week_start": "2025-12-29",
-    "broadcast_week_number": 52,
-    "broadcast_month": "December",
-    "broadcast_month_number": 12,
-    "broadcast_quarter": "Q4",
-    "broadcast_year": 2025
+    "broadcast_week_number": 1,
+    "broadcast_month": "January",
+    "broadcast_month_number": 1,
+    "broadcast_quarter": "Q1",
+    "broadcast_year": 2026
   },
   {
     "air_date": "2026-01-02",
     "broadcast_week_start": "2025-12-29",
-    "broadcast_week_number": 52,
-    "broadcast_month": "December",
-    "broadcast_month_number": 12,
-    "broadcast_quarter": "Q4",
-    "broadcast_year": 2025
+    "broadcast_week_number": 1,
+    "broadcast_month": "January",
+    "broadcast_month_number": 1,
+    "broadcast_quarter": "Q1",
+    "broadcast_year": 2026
   },
   {
     "air_date": "2026-01-03",
     "broadcast_week_start": "2025-12-29",
-    "broadcast_week_number": 52,
-    "broadcast_month": "December",
-    "broadcast_month_number": 12,
-    "broadcast_quarter": "Q4",
-    "broadcast_year": 2025
+    "broadcast_week_number": 1,
+    "broadcast_month": "January",
+    "broadcast_month_number": 1,
+    "broadcast_quarter": "Q1",
+    "broadcast_year": 2026
   },
   {
     "air_date": "2026-01-04",
     "broadcast_week_start": "2025-12-29",
-    "broadcast_week_number": 52,
-    "broadcast_month": "December",
-    "broadcast_month_number": 12,
-    "broadcast_quarter": "Q4",
-    "broadcast_year": 2025
+    "broadcast_week_number": 1,
+    "broadcast_month": "January",
+    "broadcast_month_number": 1,
+    "broadcast_quarter": "Q1",
+    "broadcast_year": 2026
   },
   {
     "air_date": "2026-01-05",
     "broadcast_week_start": "2026-01-05",
-    "broadcast_week_number": 1,
+    "broadcast_week_number": 2,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -74,7 +74,7 @@
   {
     "air_date": "2026-01-06",
     "broadcast_week_start": "2026-01-05",
-    "broadcast_week_number": 1,
+    "broadcast_week_number": 2,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -83,7 +83,7 @@
   {
     "air_date": "2026-01-07",
     "broadcast_week_start": "2026-01-05",
-    "broadcast_week_number": 1,
+    "broadcast_week_number": 2,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -92,7 +92,7 @@
   {
     "air_date": "2026-01-08",
     "broadcast_week_start": "2026-01-05",
-    "broadcast_week_number": 1,
+    "broadcast_week_number": 2,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -101,7 +101,7 @@
   {
     "air_date": "2026-01-09",
     "broadcast_week_start": "2026-01-05",
-    "broadcast_week_number": 1,
+    "broadcast_week_number": 2,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -110,7 +110,7 @@
   {
     "air_date": "2026-01-10",
     "broadcast_week_start": "2026-01-05",
-    "broadcast_week_number": 1,
+    "broadcast_week_number": 2,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -119,7 +119,7 @@
   {
     "air_date": "2026-01-11",
     "broadcast_week_start": "2026-01-05",
-    "broadcast_week_number": 1,
+    "broadcast_week_number": 2,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -128,7 +128,7 @@
   {
     "air_date": "2026-01-12",
     "broadcast_week_start": "2026-01-12",
-    "broadcast_week_number": 2,
+    "broadcast_week_number": 3,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -137,7 +137,7 @@
   {
     "air_date": "2026-01-13",
     "broadcast_week_start": "2026-01-12",
-    "broadcast_week_number": 2,
+    "broadcast_week_number": 3,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -146,7 +146,7 @@
   {
     "air_date": "2026-01-14",
     "broadcast_week_start": "2026-01-12",
-    "broadcast_week_number": 2,
+    "broadcast_week_number": 3,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -155,7 +155,7 @@
   {
     "air_date": "2026-01-15",
     "broadcast_week_start": "2026-01-12",
-    "broadcast_week_number": 2,
+    "broadcast_week_number": 3,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -164,7 +164,7 @@
   {
     "air_date": "2026-01-16",
     "broadcast_week_start": "2026-01-12",
-    "broadcast_week_number": 2,
+    "broadcast_week_number": 3,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -173,7 +173,7 @@
   {
     "air_date": "2026-01-17",
     "broadcast_week_start": "2026-01-12",
-    "broadcast_week_number": 2,
+    "broadcast_week_number": 3,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -182,7 +182,7 @@
   {
     "air_date": "2026-01-18",
     "broadcast_week_start": "2026-01-12",
-    "broadcast_week_number": 2,
+    "broadcast_week_number": 3,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -191,7 +191,7 @@
   {
     "air_date": "2026-01-19",
     "broadcast_week_start": "2026-01-19",
-    "broadcast_week_number": 3,
+    "broadcast_week_number": 4,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -200,7 +200,7 @@
   {
     "air_date": "2026-01-20",
     "broadcast_week_start": "2026-01-19",
-    "broadcast_week_number": 3,
+    "broadcast_week_number": 4,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -209,7 +209,7 @@
   {
     "air_date": "2026-01-21",
     "broadcast_week_start": "2026-01-19",
-    "broadcast_week_number": 3,
+    "broadcast_week_number": 4,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -218,7 +218,7 @@
   {
     "air_date": "2026-01-22",
     "broadcast_week_start": "2026-01-19",
-    "broadcast_week_number": 3,
+    "broadcast_week_number": 4,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -227,7 +227,7 @@
   {
     "air_date": "2026-01-23",
     "broadcast_week_start": "2026-01-19",
-    "broadcast_week_number": 3,
+    "broadcast_week_number": 4,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -236,7 +236,7 @@
   {
     "air_date": "2026-01-24",
     "broadcast_week_start": "2026-01-19",
-    "broadcast_week_number": 3,
+    "broadcast_week_number": 4,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -245,7 +245,7 @@
   {
     "air_date": "2026-01-25",
     "broadcast_week_start": "2026-01-19",
-    "broadcast_week_number": 3,
+    "broadcast_week_number": 4,
     "broadcast_month": "January",
     "broadcast_month_number": 1,
     "broadcast_quarter": "Q1",
@@ -254,70 +254,70 @@
   {
     "air_date": "2026-01-26",
     "broadcast_week_start": "2026-01-26",
-    "broadcast_week_number": 4,
-    "broadcast_month": "January",
-    "broadcast_month_number": 1,
+    "broadcast_week_number": 5,
+    "broadcast_month": "February",
+    "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-01-27",
     "broadcast_week_start": "2026-01-26",
-    "broadcast_week_number": 4,
-    "broadcast_month": "January",
-    "broadcast_month_number": 1,
+    "broadcast_week_number": 5,
+    "broadcast_month": "February",
+    "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-01-28",
     "broadcast_week_start": "2026-01-26",
-    "broadcast_week_number": 4,
-    "broadcast_month": "January",
-    "broadcast_month_number": 1,
+    "broadcast_week_number": 5,
+    "broadcast_month": "February",
+    "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-01-29",
     "broadcast_week_start": "2026-01-26",
-    "broadcast_week_number": 4,
-    "broadcast_month": "January",
-    "broadcast_month_number": 1,
+    "broadcast_week_number": 5,
+    "broadcast_month": "February",
+    "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-01-30",
     "broadcast_week_start": "2026-01-26",
-    "broadcast_week_number": 4,
-    "broadcast_month": "January",
-    "broadcast_month_number": 1,
+    "broadcast_week_number": 5,
+    "broadcast_month": "February",
+    "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-01-31",
     "broadcast_week_start": "2026-01-26",
-    "broadcast_week_number": 4,
-    "broadcast_month": "January",
-    "broadcast_month_number": 1,
+    "broadcast_week_number": 5,
+    "broadcast_month": "February",
+    "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-02-01",
     "broadcast_week_start": "2026-01-26",
-    "broadcast_week_number": 4,
-    "broadcast_month": "January",
-    "broadcast_month_number": 1,
+    "broadcast_week_number": 5,
+    "broadcast_month": "February",
+    "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-02-02",
     "broadcast_week_start": "2026-02-02",
-    "broadcast_week_number": 5,
+    "broadcast_week_number": 6,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -326,7 +326,7 @@
   {
     "air_date": "2026-02-03",
     "broadcast_week_start": "2026-02-02",
-    "broadcast_week_number": 5,
+    "broadcast_week_number": 6,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -335,7 +335,7 @@
   {
     "air_date": "2026-02-04",
     "broadcast_week_start": "2026-02-02",
-    "broadcast_week_number": 5,
+    "broadcast_week_number": 6,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -344,7 +344,7 @@
   {
     "air_date": "2026-02-05",
     "broadcast_week_start": "2026-02-02",
-    "broadcast_week_number": 5,
+    "broadcast_week_number": 6,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -353,7 +353,7 @@
   {
     "air_date": "2026-02-06",
     "broadcast_week_start": "2026-02-02",
-    "broadcast_week_number": 5,
+    "broadcast_week_number": 6,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -362,7 +362,7 @@
   {
     "air_date": "2026-02-07",
     "broadcast_week_start": "2026-02-02",
-    "broadcast_week_number": 5,
+    "broadcast_week_number": 6,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -371,7 +371,7 @@
   {
     "air_date": "2026-02-08",
     "broadcast_week_start": "2026-02-02",
-    "broadcast_week_number": 5,
+    "broadcast_week_number": 6,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -380,7 +380,7 @@
   {
     "air_date": "2026-02-09",
     "broadcast_week_start": "2026-02-09",
-    "broadcast_week_number": 6,
+    "broadcast_week_number": 7,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -389,7 +389,7 @@
   {
     "air_date": "2026-02-10",
     "broadcast_week_start": "2026-02-09",
-    "broadcast_week_number": 6,
+    "broadcast_week_number": 7,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -398,7 +398,7 @@
   {
     "air_date": "2026-02-11",
     "broadcast_week_start": "2026-02-09",
-    "broadcast_week_number": 6,
+    "broadcast_week_number": 7,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -407,7 +407,7 @@
   {
     "air_date": "2026-02-12",
     "broadcast_week_start": "2026-02-09",
-    "broadcast_week_number": 6,
+    "broadcast_week_number": 7,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -416,7 +416,7 @@
   {
     "air_date": "2026-02-13",
     "broadcast_week_start": "2026-02-09",
-    "broadcast_week_number": 6,
+    "broadcast_week_number": 7,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -425,7 +425,7 @@
   {
     "air_date": "2026-02-14",
     "broadcast_week_start": "2026-02-09",
-    "broadcast_week_number": 6,
+    "broadcast_week_number": 7,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -434,7 +434,7 @@
   {
     "air_date": "2026-02-15",
     "broadcast_week_start": "2026-02-09",
-    "broadcast_week_number": 6,
+    "broadcast_week_number": 7,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -443,7 +443,7 @@
   {
     "air_date": "2026-02-16",
     "broadcast_week_start": "2026-02-16",
-    "broadcast_week_number": 7,
+    "broadcast_week_number": 8,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -452,7 +452,7 @@
   {
     "air_date": "2026-02-17",
     "broadcast_week_start": "2026-02-16",
-    "broadcast_week_number": 7,
+    "broadcast_week_number": 8,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -461,7 +461,7 @@
   {
     "air_date": "2026-02-18",
     "broadcast_week_start": "2026-02-16",
-    "broadcast_week_number": 7,
+    "broadcast_week_number": 8,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -470,7 +470,7 @@
   {
     "air_date": "2026-02-19",
     "broadcast_week_start": "2026-02-16",
-    "broadcast_week_number": 7,
+    "broadcast_week_number": 8,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -479,7 +479,7 @@
   {
     "air_date": "2026-02-20",
     "broadcast_week_start": "2026-02-16",
-    "broadcast_week_number": 7,
+    "broadcast_week_number": 8,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -488,7 +488,7 @@
   {
     "air_date": "2026-02-21",
     "broadcast_week_start": "2026-02-16",
-    "broadcast_week_number": 7,
+    "broadcast_week_number": 8,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -497,7 +497,7 @@
   {
     "air_date": "2026-02-22",
     "broadcast_week_start": "2026-02-16",
-    "broadcast_week_number": 7,
+    "broadcast_week_number": 8,
     "broadcast_month": "February",
     "broadcast_month_number": 2,
     "broadcast_quarter": "Q1",
@@ -506,70 +506,70 @@
   {
     "air_date": "2026-02-23",
     "broadcast_week_start": "2026-02-23",
-    "broadcast_week_number": 8,
-    "broadcast_month": "February",
-    "broadcast_month_number": 2,
+    "broadcast_week_number": 9,
+    "broadcast_month": "March",
+    "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-02-24",
     "broadcast_week_start": "2026-02-23",
-    "broadcast_week_number": 8,
-    "broadcast_month": "February",
-    "broadcast_month_number": 2,
+    "broadcast_week_number": 9,
+    "broadcast_month": "March",
+    "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-02-25",
     "broadcast_week_start": "2026-02-23",
-    "broadcast_week_number": 8,
-    "broadcast_month": "February",
-    "broadcast_month_number": 2,
+    "broadcast_week_number": 9,
+    "broadcast_month": "March",
+    "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-02-26",
     "broadcast_week_start": "2026-02-23",
-    "broadcast_week_number": 8,
-    "broadcast_month": "February",
-    "broadcast_month_number": 2,
+    "broadcast_week_number": 9,
+    "broadcast_month": "March",
+    "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-02-27",
     "broadcast_week_start": "2026-02-23",
-    "broadcast_week_number": 8,
-    "broadcast_month": "February",
-    "broadcast_month_number": 2,
+    "broadcast_week_number": 9,
+    "broadcast_month": "March",
+    "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-02-28",
     "broadcast_week_start": "2026-02-23",
-    "broadcast_week_number": 8,
-    "broadcast_month": "February",
-    "broadcast_month_number": 2,
+    "broadcast_week_number": 9,
+    "broadcast_month": "March",
+    "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-03-01",
     "broadcast_week_start": "2026-02-23",
-    "broadcast_week_number": 8,
-    "broadcast_month": "February",
-    "broadcast_month_number": 2,
+    "broadcast_week_number": 9,
+    "broadcast_month": "March",
+    "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-03-02",
     "broadcast_week_start": "2026-03-02",
-    "broadcast_week_number": 9,
+    "broadcast_week_number": 10,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -578,7 +578,7 @@
   {
     "air_date": "2026-03-03",
     "broadcast_week_start": "2026-03-02",
-    "broadcast_week_number": 9,
+    "broadcast_week_number": 10,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -587,7 +587,7 @@
   {
     "air_date": "2026-03-04",
     "broadcast_week_start": "2026-03-02",
-    "broadcast_week_number": 9,
+    "broadcast_week_number": 10,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -596,7 +596,7 @@
   {
     "air_date": "2026-03-05",
     "broadcast_week_start": "2026-03-02",
-    "broadcast_week_number": 9,
+    "broadcast_week_number": 10,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -605,7 +605,7 @@
   {
     "air_date": "2026-03-06",
     "broadcast_week_start": "2026-03-02",
-    "broadcast_week_number": 9,
+    "broadcast_week_number": 10,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -614,7 +614,7 @@
   {
     "air_date": "2026-03-07",
     "broadcast_week_start": "2026-03-02",
-    "broadcast_week_number": 9,
+    "broadcast_week_number": 10,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -623,7 +623,7 @@
   {
     "air_date": "2026-03-08",
     "broadcast_week_start": "2026-03-02",
-    "broadcast_week_number": 9,
+    "broadcast_week_number": 10,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -632,7 +632,7 @@
   {
     "air_date": "2026-03-09",
     "broadcast_week_start": "2026-03-09",
-    "broadcast_week_number": 10,
+    "broadcast_week_number": 11,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -641,7 +641,7 @@
   {
     "air_date": "2026-03-10",
     "broadcast_week_start": "2026-03-09",
-    "broadcast_week_number": 10,
+    "broadcast_week_number": 11,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -650,7 +650,7 @@
   {
     "air_date": "2026-03-11",
     "broadcast_week_start": "2026-03-09",
-    "broadcast_week_number": 10,
+    "broadcast_week_number": 11,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -659,7 +659,7 @@
   {
     "air_date": "2026-03-12",
     "broadcast_week_start": "2026-03-09",
-    "broadcast_week_number": 10,
+    "broadcast_week_number": 11,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -668,7 +668,7 @@
   {
     "air_date": "2026-03-13",
     "broadcast_week_start": "2026-03-09",
-    "broadcast_week_number": 10,
+    "broadcast_week_number": 11,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -677,7 +677,7 @@
   {
     "air_date": "2026-03-14",
     "broadcast_week_start": "2026-03-09",
-    "broadcast_week_number": 10,
+    "broadcast_week_number": 11,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -686,7 +686,7 @@
   {
     "air_date": "2026-03-15",
     "broadcast_week_start": "2026-03-09",
-    "broadcast_week_number": 10,
+    "broadcast_week_number": 11,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -695,7 +695,7 @@
   {
     "air_date": "2026-03-16",
     "broadcast_week_start": "2026-03-16",
-    "broadcast_week_number": 11,
+    "broadcast_week_number": 12,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -704,7 +704,7 @@
   {
     "air_date": "2026-03-17",
     "broadcast_week_start": "2026-03-16",
-    "broadcast_week_number": 11,
+    "broadcast_week_number": 12,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -713,7 +713,7 @@
   {
     "air_date": "2026-03-18",
     "broadcast_week_start": "2026-03-16",
-    "broadcast_week_number": 11,
+    "broadcast_week_number": 12,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -722,7 +722,7 @@
   {
     "air_date": "2026-03-19",
     "broadcast_week_start": "2026-03-16",
-    "broadcast_week_number": 11,
+    "broadcast_week_number": 12,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -731,7 +731,7 @@
   {
     "air_date": "2026-03-20",
     "broadcast_week_start": "2026-03-16",
-    "broadcast_week_number": 11,
+    "broadcast_week_number": 12,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -740,7 +740,7 @@
   {
     "air_date": "2026-03-21",
     "broadcast_week_start": "2026-03-16",
-    "broadcast_week_number": 11,
+    "broadcast_week_number": 12,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -749,7 +749,7 @@
   {
     "air_date": "2026-03-22",
     "broadcast_week_start": "2026-03-16",
-    "broadcast_week_number": 11,
+    "broadcast_week_number": 12,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -758,7 +758,7 @@
   {
     "air_date": "2026-03-23",
     "broadcast_week_start": "2026-03-23",
-    "broadcast_week_number": 12,
+    "broadcast_week_number": 13,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -767,7 +767,7 @@
   {
     "air_date": "2026-03-24",
     "broadcast_week_start": "2026-03-23",
-    "broadcast_week_number": 12,
+    "broadcast_week_number": 13,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -776,7 +776,7 @@
   {
     "air_date": "2026-03-25",
     "broadcast_week_start": "2026-03-23",
-    "broadcast_week_number": 12,
+    "broadcast_week_number": 13,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -785,7 +785,7 @@
   {
     "air_date": "2026-03-26",
     "broadcast_week_start": "2026-03-23",
-    "broadcast_week_number": 12,
+    "broadcast_week_number": 13,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -794,7 +794,7 @@
   {
     "air_date": "2026-03-27",
     "broadcast_week_start": "2026-03-23",
-    "broadcast_week_number": 12,
+    "broadcast_week_number": 13,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -803,7 +803,7 @@
   {
     "air_date": "2026-03-28",
     "broadcast_week_start": "2026-03-23",
-    "broadcast_week_number": 12,
+    "broadcast_week_number": 13,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -812,7 +812,7 @@
   {
     "air_date": "2026-03-29",
     "broadcast_week_start": "2026-03-23",
-    "broadcast_week_number": 12,
+    "broadcast_week_number": 13,
     "broadcast_month": "March",
     "broadcast_month_number": 3,
     "broadcast_quarter": "Q1",
@@ -821,70 +821,70 @@
   {
     "air_date": "2026-03-30",
     "broadcast_week_start": "2026-03-30",
-    "broadcast_week_number": 13,
-    "broadcast_month": "March",
-    "broadcast_month_number": 3,
-    "broadcast_quarter": "Q1",
+    "broadcast_week_number": 14,
+    "broadcast_month": "April",
+    "broadcast_month_number": 4,
+    "broadcast_quarter": "Q2",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-03-31",
     "broadcast_week_start": "2026-03-30",
-    "broadcast_week_number": 13,
-    "broadcast_month": "March",
-    "broadcast_month_number": 3,
-    "broadcast_quarter": "Q1",
+    "broadcast_week_number": 14,
+    "broadcast_month": "April",
+    "broadcast_month_number": 4,
+    "broadcast_quarter": "Q2",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-04-01",
     "broadcast_week_start": "2026-03-30",
-    "broadcast_week_number": 13,
-    "broadcast_month": "March",
-    "broadcast_month_number": 3,
-    "broadcast_quarter": "Q1",
+    "broadcast_week_number": 14,
+    "broadcast_month": "April",
+    "broadcast_month_number": 4,
+    "broadcast_quarter": "Q2",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-04-02",
     "broadcast_week_start": "2026-03-30",
-    "broadcast_week_number": 13,
-    "broadcast_month": "March",
-    "broadcast_month_number": 3,
-    "broadcast_quarter": "Q1",
+    "broadcast_week_number": 14,
+    "broadcast_month": "April",
+    "broadcast_month_number": 4,
+    "broadcast_quarter": "Q2",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-04-03",
     "broadcast_week_start": "2026-03-30",
-    "broadcast_week_number": 13,
-    "broadcast_month": "March",
-    "broadcast_month_number": 3,
-    "broadcast_quarter": "Q1",
+    "broadcast_week_number": 14,
+    "broadcast_month": "April",
+    "broadcast_month_number": 4,
+    "broadcast_quarter": "Q2",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-04-04",
     "broadcast_week_start": "2026-03-30",
-    "broadcast_week_number": 13,
-    "broadcast_month": "March",
-    "broadcast_month_number": 3,
-    "broadcast_quarter": "Q1",
+    "broadcast_week_number": 14,
+    "broadcast_month": "April",
+    "broadcast_month_number": 4,
+    "broadcast_quarter": "Q2",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-04-05",
     "broadcast_week_start": "2026-03-30",
-    "broadcast_week_number": 13,
-    "broadcast_month": "March",
-    "broadcast_month_number": 3,
-    "broadcast_quarter": "Q1",
+    "broadcast_week_number": 14,
+    "broadcast_month": "April",
+    "broadcast_month_number": 4,
+    "broadcast_quarter": "Q2",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-04-06",
     "broadcast_week_start": "2026-04-06",
-    "broadcast_week_number": 14,
+    "broadcast_week_number": 15,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -893,7 +893,7 @@
   {
     "air_date": "2026-04-07",
     "broadcast_week_start": "2026-04-06",
-    "broadcast_week_number": 14,
+    "broadcast_week_number": 15,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -902,7 +902,7 @@
   {
     "air_date": "2026-04-08",
     "broadcast_week_start": "2026-04-06",
-    "broadcast_week_number": 14,
+    "broadcast_week_number": 15,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -911,7 +911,7 @@
   {
     "air_date": "2026-04-09",
     "broadcast_week_start": "2026-04-06",
-    "broadcast_week_number": 14,
+    "broadcast_week_number": 15,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -920,7 +920,7 @@
   {
     "air_date": "2026-04-10",
     "broadcast_week_start": "2026-04-06",
-    "broadcast_week_number": 14,
+    "broadcast_week_number": 15,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -929,7 +929,7 @@
   {
     "air_date": "2026-04-11",
     "broadcast_week_start": "2026-04-06",
-    "broadcast_week_number": 14,
+    "broadcast_week_number": 15,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -938,7 +938,7 @@
   {
     "air_date": "2026-04-12",
     "broadcast_week_start": "2026-04-06",
-    "broadcast_week_number": 14,
+    "broadcast_week_number": 15,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -947,7 +947,7 @@
   {
     "air_date": "2026-04-13",
     "broadcast_week_start": "2026-04-13",
-    "broadcast_week_number": 15,
+    "broadcast_week_number": 16,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -956,7 +956,7 @@
   {
     "air_date": "2026-04-14",
     "broadcast_week_start": "2026-04-13",
-    "broadcast_week_number": 15,
+    "broadcast_week_number": 16,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -965,7 +965,7 @@
   {
     "air_date": "2026-04-15",
     "broadcast_week_start": "2026-04-13",
-    "broadcast_week_number": 15,
+    "broadcast_week_number": 16,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -974,7 +974,7 @@
   {
     "air_date": "2026-04-16",
     "broadcast_week_start": "2026-04-13",
-    "broadcast_week_number": 15,
+    "broadcast_week_number": 16,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -983,7 +983,7 @@
   {
     "air_date": "2026-04-17",
     "broadcast_week_start": "2026-04-13",
-    "broadcast_week_number": 15,
+    "broadcast_week_number": 16,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -992,7 +992,7 @@
   {
     "air_date": "2026-04-18",
     "broadcast_week_start": "2026-04-13",
-    "broadcast_week_number": 15,
+    "broadcast_week_number": 16,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -1001,7 +1001,7 @@
   {
     "air_date": "2026-04-19",
     "broadcast_week_start": "2026-04-13",
-    "broadcast_week_number": 15,
+    "broadcast_week_number": 16,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -1010,7 +1010,7 @@
   {
     "air_date": "2026-04-20",
     "broadcast_week_start": "2026-04-20",
-    "broadcast_week_number": 16,
+    "broadcast_week_number": 17,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -1019,7 +1019,7 @@
   {
     "air_date": "2026-04-21",
     "broadcast_week_start": "2026-04-20",
-    "broadcast_week_number": 16,
+    "broadcast_week_number": 17,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -1028,7 +1028,7 @@
   {
     "air_date": "2026-04-22",
     "broadcast_week_start": "2026-04-20",
-    "broadcast_week_number": 16,
+    "broadcast_week_number": 17,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -1037,7 +1037,7 @@
   {
     "air_date": "2026-04-23",
     "broadcast_week_start": "2026-04-20",
-    "broadcast_week_number": 16,
+    "broadcast_week_number": 17,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -1046,7 +1046,7 @@
   {
     "air_date": "2026-04-24",
     "broadcast_week_start": "2026-04-20",
-    "broadcast_week_number": 16,
+    "broadcast_week_number": 17,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -1055,7 +1055,7 @@
   {
     "air_date": "2026-04-25",
     "broadcast_week_start": "2026-04-20",
-    "broadcast_week_number": 16,
+    "broadcast_week_number": 17,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -1064,7 +1064,7 @@
   {
     "air_date": "2026-04-26",
     "broadcast_week_start": "2026-04-20",
-    "broadcast_week_number": 16,
+    "broadcast_week_number": 17,
     "broadcast_month": "April",
     "broadcast_month_number": 4,
     "broadcast_quarter": "Q2",
@@ -1073,70 +1073,70 @@
   {
     "air_date": "2026-04-27",
     "broadcast_week_start": "2026-04-27",
-    "broadcast_week_number": 17,
-    "broadcast_month": "April",
-    "broadcast_month_number": 4,
+    "broadcast_week_number": 18,
+    "broadcast_month": "May",
+    "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-04-28",
     "broadcast_week_start": "2026-04-27",
-    "broadcast_week_number": 17,
-    "broadcast_month": "April",
-    "broadcast_month_number": 4,
+    "broadcast_week_number": 18,
+    "broadcast_month": "May",
+    "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-04-29",
     "broadcast_week_start": "2026-04-27",
-    "broadcast_week_number": 17,
-    "broadcast_month": "April",
-    "broadcast_month_number": 4,
+    "broadcast_week_number": 18,
+    "broadcast_month": "May",
+    "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-04-30",
     "broadcast_week_start": "2026-04-27",
-    "broadcast_week_number": 17,
-    "broadcast_month": "April",
-    "broadcast_month_number": 4,
+    "broadcast_week_number": 18,
+    "broadcast_month": "May",
+    "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-05-01",
     "broadcast_week_start": "2026-04-27",
-    "broadcast_week_number": 17,
-    "broadcast_month": "April",
-    "broadcast_month_number": 4,
+    "broadcast_week_number": 18,
+    "broadcast_month": "May",
+    "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-05-02",
     "broadcast_week_start": "2026-04-27",
-    "broadcast_week_number": 17,
-    "broadcast_month": "April",
-    "broadcast_month_number": 4,
+    "broadcast_week_number": 18,
+    "broadcast_month": "May",
+    "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-05-03",
     "broadcast_week_start": "2026-04-27",
-    "broadcast_week_number": 17,
-    "broadcast_month": "April",
-    "broadcast_month_number": 4,
+    "broadcast_week_number": 18,
+    "broadcast_month": "May",
+    "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-05-04",
     "broadcast_week_start": "2026-05-04",
-    "broadcast_week_number": 18,
+    "broadcast_week_number": 19,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1145,7 +1145,7 @@
   {
     "air_date": "2026-05-05",
     "broadcast_week_start": "2026-05-04",
-    "broadcast_week_number": 18,
+    "broadcast_week_number": 19,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1154,7 +1154,7 @@
   {
     "air_date": "2026-05-06",
     "broadcast_week_start": "2026-05-04",
-    "broadcast_week_number": 18,
+    "broadcast_week_number": 19,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1163,7 +1163,7 @@
   {
     "air_date": "2026-05-07",
     "broadcast_week_start": "2026-05-04",
-    "broadcast_week_number": 18,
+    "broadcast_week_number": 19,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1172,7 +1172,7 @@
   {
     "air_date": "2026-05-08",
     "broadcast_week_start": "2026-05-04",
-    "broadcast_week_number": 18,
+    "broadcast_week_number": 19,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1181,7 +1181,7 @@
   {
     "air_date": "2026-05-09",
     "broadcast_week_start": "2026-05-04",
-    "broadcast_week_number": 18,
+    "broadcast_week_number": 19,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1190,7 +1190,7 @@
   {
     "air_date": "2026-05-10",
     "broadcast_week_start": "2026-05-04",
-    "broadcast_week_number": 18,
+    "broadcast_week_number": 19,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1199,7 +1199,7 @@
   {
     "air_date": "2026-05-11",
     "broadcast_week_start": "2026-05-11",
-    "broadcast_week_number": 19,
+    "broadcast_week_number": 20,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1208,7 +1208,7 @@
   {
     "air_date": "2026-05-12",
     "broadcast_week_start": "2026-05-11",
-    "broadcast_week_number": 19,
+    "broadcast_week_number": 20,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1217,7 +1217,7 @@
   {
     "air_date": "2026-05-13",
     "broadcast_week_start": "2026-05-11",
-    "broadcast_week_number": 19,
+    "broadcast_week_number": 20,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1226,7 +1226,7 @@
   {
     "air_date": "2026-05-14",
     "broadcast_week_start": "2026-05-11",
-    "broadcast_week_number": 19,
+    "broadcast_week_number": 20,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1235,7 +1235,7 @@
   {
     "air_date": "2026-05-15",
     "broadcast_week_start": "2026-05-11",
-    "broadcast_week_number": 19,
+    "broadcast_week_number": 20,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1244,7 +1244,7 @@
   {
     "air_date": "2026-05-16",
     "broadcast_week_start": "2026-05-11",
-    "broadcast_week_number": 19,
+    "broadcast_week_number": 20,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1253,7 +1253,7 @@
   {
     "air_date": "2026-05-17",
     "broadcast_week_start": "2026-05-11",
-    "broadcast_week_number": 19,
+    "broadcast_week_number": 20,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1262,7 +1262,7 @@
   {
     "air_date": "2026-05-18",
     "broadcast_week_start": "2026-05-18",
-    "broadcast_week_number": 20,
+    "broadcast_week_number": 21,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1271,7 +1271,7 @@
   {
     "air_date": "2026-05-19",
     "broadcast_week_start": "2026-05-18",
-    "broadcast_week_number": 20,
+    "broadcast_week_number": 21,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1280,7 +1280,7 @@
   {
     "air_date": "2026-05-20",
     "broadcast_week_start": "2026-05-18",
-    "broadcast_week_number": 20,
+    "broadcast_week_number": 21,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1289,7 +1289,7 @@
   {
     "air_date": "2026-05-21",
     "broadcast_week_start": "2026-05-18",
-    "broadcast_week_number": 20,
+    "broadcast_week_number": 21,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1298,7 +1298,7 @@
   {
     "air_date": "2026-05-22",
     "broadcast_week_start": "2026-05-18",
-    "broadcast_week_number": 20,
+    "broadcast_week_number": 21,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1307,7 +1307,7 @@
   {
     "air_date": "2026-05-23",
     "broadcast_week_start": "2026-05-18",
-    "broadcast_week_number": 20,
+    "broadcast_week_number": 21,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1316,7 +1316,7 @@
   {
     "air_date": "2026-05-24",
     "broadcast_week_start": "2026-05-18",
-    "broadcast_week_number": 20,
+    "broadcast_week_number": 21,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1325,7 +1325,7 @@
   {
     "air_date": "2026-05-25",
     "broadcast_week_start": "2026-05-25",
-    "broadcast_week_number": 21,
+    "broadcast_week_number": 22,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1334,7 +1334,7 @@
   {
     "air_date": "2026-05-26",
     "broadcast_week_start": "2026-05-25",
-    "broadcast_week_number": 21,
+    "broadcast_week_number": 22,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1343,7 +1343,7 @@
   {
     "air_date": "2026-05-27",
     "broadcast_week_start": "2026-05-25",
-    "broadcast_week_number": 21,
+    "broadcast_week_number": 22,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1352,7 +1352,7 @@
   {
     "air_date": "2026-05-28",
     "broadcast_week_start": "2026-05-25",
-    "broadcast_week_number": 21,
+    "broadcast_week_number": 22,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1361,7 +1361,7 @@
   {
     "air_date": "2026-05-29",
     "broadcast_week_start": "2026-05-25",
-    "broadcast_week_number": 21,
+    "broadcast_week_number": 22,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1370,7 +1370,7 @@
   {
     "air_date": "2026-05-30",
     "broadcast_week_start": "2026-05-25",
-    "broadcast_week_number": 21,
+    "broadcast_week_number": 22,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1379,7 +1379,7 @@
   {
     "air_date": "2026-05-31",
     "broadcast_week_start": "2026-05-25",
-    "broadcast_week_number": 21,
+    "broadcast_week_number": 22,
     "broadcast_month": "May",
     "broadcast_month_number": 5,
     "broadcast_quarter": "Q2",
@@ -1388,7 +1388,7 @@
   {
     "air_date": "2026-06-01",
     "broadcast_week_start": "2026-06-01",
-    "broadcast_week_number": 22,
+    "broadcast_week_number": 23,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1397,7 +1397,7 @@
   {
     "air_date": "2026-06-02",
     "broadcast_week_start": "2026-06-01",
-    "broadcast_week_number": 22,
+    "broadcast_week_number": 23,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1406,7 +1406,7 @@
   {
     "air_date": "2026-06-03",
     "broadcast_week_start": "2026-06-01",
-    "broadcast_week_number": 22,
+    "broadcast_week_number": 23,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1415,7 +1415,7 @@
   {
     "air_date": "2026-06-04",
     "broadcast_week_start": "2026-06-01",
-    "broadcast_week_number": 22,
+    "broadcast_week_number": 23,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1424,7 +1424,7 @@
   {
     "air_date": "2026-06-05",
     "broadcast_week_start": "2026-06-01",
-    "broadcast_week_number": 22,
+    "broadcast_week_number": 23,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1433,7 +1433,7 @@
   {
     "air_date": "2026-06-06",
     "broadcast_week_start": "2026-06-01",
-    "broadcast_week_number": 22,
+    "broadcast_week_number": 23,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1442,7 +1442,7 @@
   {
     "air_date": "2026-06-07",
     "broadcast_week_start": "2026-06-01",
-    "broadcast_week_number": 22,
+    "broadcast_week_number": 23,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1451,7 +1451,7 @@
   {
     "air_date": "2026-06-08",
     "broadcast_week_start": "2026-06-08",
-    "broadcast_week_number": 23,
+    "broadcast_week_number": 24,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1460,7 +1460,7 @@
   {
     "air_date": "2026-06-09",
     "broadcast_week_start": "2026-06-08",
-    "broadcast_week_number": 23,
+    "broadcast_week_number": 24,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1469,7 +1469,7 @@
   {
     "air_date": "2026-06-10",
     "broadcast_week_start": "2026-06-08",
-    "broadcast_week_number": 23,
+    "broadcast_week_number": 24,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1478,7 +1478,7 @@
   {
     "air_date": "2026-06-11",
     "broadcast_week_start": "2026-06-08",
-    "broadcast_week_number": 23,
+    "broadcast_week_number": 24,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1487,7 +1487,7 @@
   {
     "air_date": "2026-06-12",
     "broadcast_week_start": "2026-06-08",
-    "broadcast_week_number": 23,
+    "broadcast_week_number": 24,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1496,7 +1496,7 @@
   {
     "air_date": "2026-06-13",
     "broadcast_week_start": "2026-06-08",
-    "broadcast_week_number": 23,
+    "broadcast_week_number": 24,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1505,7 +1505,7 @@
   {
     "air_date": "2026-06-14",
     "broadcast_week_start": "2026-06-08",
-    "broadcast_week_number": 23,
+    "broadcast_week_number": 24,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1514,7 +1514,7 @@
   {
     "air_date": "2026-06-15",
     "broadcast_week_start": "2026-06-15",
-    "broadcast_week_number": 24,
+    "broadcast_week_number": 25,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1523,7 +1523,7 @@
   {
     "air_date": "2026-06-16",
     "broadcast_week_start": "2026-06-15",
-    "broadcast_week_number": 24,
+    "broadcast_week_number": 25,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1532,7 +1532,7 @@
   {
     "air_date": "2026-06-17",
     "broadcast_week_start": "2026-06-15",
-    "broadcast_week_number": 24,
+    "broadcast_week_number": 25,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1541,7 +1541,7 @@
   {
     "air_date": "2026-06-18",
     "broadcast_week_start": "2026-06-15",
-    "broadcast_week_number": 24,
+    "broadcast_week_number": 25,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1550,7 +1550,7 @@
   {
     "air_date": "2026-06-19",
     "broadcast_week_start": "2026-06-15",
-    "broadcast_week_number": 24,
+    "broadcast_week_number": 25,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1559,7 +1559,7 @@
   {
     "air_date": "2026-06-20",
     "broadcast_week_start": "2026-06-15",
-    "broadcast_week_number": 24,
+    "broadcast_week_number": 25,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1568,7 +1568,7 @@
   {
     "air_date": "2026-06-21",
     "broadcast_week_start": "2026-06-15",
-    "broadcast_week_number": 24,
+    "broadcast_week_number": 25,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1577,7 +1577,7 @@
   {
     "air_date": "2026-06-22",
     "broadcast_week_start": "2026-06-22",
-    "broadcast_week_number": 25,
+    "broadcast_week_number": 26,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1586,7 +1586,7 @@
   {
     "air_date": "2026-06-23",
     "broadcast_week_start": "2026-06-22",
-    "broadcast_week_number": 25,
+    "broadcast_week_number": 26,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1595,7 +1595,7 @@
   {
     "air_date": "2026-06-24",
     "broadcast_week_start": "2026-06-22",
-    "broadcast_week_number": 25,
+    "broadcast_week_number": 26,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1604,7 +1604,7 @@
   {
     "air_date": "2026-06-25",
     "broadcast_week_start": "2026-06-22",
-    "broadcast_week_number": 25,
+    "broadcast_week_number": 26,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1613,7 +1613,7 @@
   {
     "air_date": "2026-06-26",
     "broadcast_week_start": "2026-06-22",
-    "broadcast_week_number": 25,
+    "broadcast_week_number": 26,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1622,7 +1622,7 @@
   {
     "air_date": "2026-06-27",
     "broadcast_week_start": "2026-06-22",
-    "broadcast_week_number": 25,
+    "broadcast_week_number": 26,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1631,7 +1631,7 @@
   {
     "air_date": "2026-06-28",
     "broadcast_week_start": "2026-06-22",
-    "broadcast_week_number": 25,
+    "broadcast_week_number": 26,
     "broadcast_month": "June",
     "broadcast_month_number": 6,
     "broadcast_quarter": "Q2",
@@ -1640,70 +1640,70 @@
   {
     "air_date": "2026-06-29",
     "broadcast_week_start": "2026-06-29",
-    "broadcast_week_number": 26,
-    "broadcast_month": "June",
-    "broadcast_month_number": 6,
-    "broadcast_quarter": "Q2",
+    "broadcast_week_number": 27,
+    "broadcast_month": "July",
+    "broadcast_month_number": 7,
+    "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-06-30",
     "broadcast_week_start": "2026-06-29",
-    "broadcast_week_number": 26,
-    "broadcast_month": "June",
-    "broadcast_month_number": 6,
-    "broadcast_quarter": "Q2",
+    "broadcast_week_number": 27,
+    "broadcast_month": "July",
+    "broadcast_month_number": 7,
+    "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-07-01",
     "broadcast_week_start": "2026-06-29",
-    "broadcast_week_number": 26,
-    "broadcast_month": "June",
-    "broadcast_month_number": 6,
-    "broadcast_quarter": "Q2",
+    "broadcast_week_number": 27,
+    "broadcast_month": "July",
+    "broadcast_month_number": 7,
+    "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-07-02",
     "broadcast_week_start": "2026-06-29",
-    "broadcast_week_number": 26,
-    "broadcast_month": "June",
-    "broadcast_month_number": 6,
-    "broadcast_quarter": "Q2",
+    "broadcast_week_number": 27,
+    "broadcast_month": "July",
+    "broadcast_month_number": 7,
+    "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-07-03",
     "broadcast_week_start": "2026-06-29",
-    "broadcast_week_number": 26,
-    "broadcast_month": "June",
-    "broadcast_month_number": 6,
-    "broadcast_quarter": "Q2",
+    "broadcast_week_number": 27,
+    "broadcast_month": "July",
+    "broadcast_month_number": 7,
+    "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-07-04",
     "broadcast_week_start": "2026-06-29",
-    "broadcast_week_number": 26,
-    "broadcast_month": "June",
-    "broadcast_month_number": 6,
-    "broadcast_quarter": "Q2",
+    "broadcast_week_number": 27,
+    "broadcast_month": "July",
+    "broadcast_month_number": 7,
+    "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-07-05",
     "broadcast_week_start": "2026-06-29",
-    "broadcast_week_number": 26,
-    "broadcast_month": "June",
-    "broadcast_month_number": 6,
-    "broadcast_quarter": "Q2",
+    "broadcast_week_number": 27,
+    "broadcast_month": "July",
+    "broadcast_month_number": 7,
+    "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-07-06",
     "broadcast_week_start": "2026-07-06",
-    "broadcast_week_number": 27,
+    "broadcast_week_number": 28,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1712,7 +1712,7 @@
   {
     "air_date": "2026-07-07",
     "broadcast_week_start": "2026-07-06",
-    "broadcast_week_number": 27,
+    "broadcast_week_number": 28,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1721,7 +1721,7 @@
   {
     "air_date": "2026-07-08",
     "broadcast_week_start": "2026-07-06",
-    "broadcast_week_number": 27,
+    "broadcast_week_number": 28,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1730,7 +1730,7 @@
   {
     "air_date": "2026-07-09",
     "broadcast_week_start": "2026-07-06",
-    "broadcast_week_number": 27,
+    "broadcast_week_number": 28,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1739,7 +1739,7 @@
   {
     "air_date": "2026-07-10",
     "broadcast_week_start": "2026-07-06",
-    "broadcast_week_number": 27,
+    "broadcast_week_number": 28,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1748,7 +1748,7 @@
   {
     "air_date": "2026-07-11",
     "broadcast_week_start": "2026-07-06",
-    "broadcast_week_number": 27,
+    "broadcast_week_number": 28,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1757,7 +1757,7 @@
   {
     "air_date": "2026-07-12",
     "broadcast_week_start": "2026-07-06",
-    "broadcast_week_number": 27,
+    "broadcast_week_number": 28,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1766,7 +1766,7 @@
   {
     "air_date": "2026-07-13",
     "broadcast_week_start": "2026-07-13",
-    "broadcast_week_number": 28,
+    "broadcast_week_number": 29,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1775,7 +1775,7 @@
   {
     "air_date": "2026-07-14",
     "broadcast_week_start": "2026-07-13",
-    "broadcast_week_number": 28,
+    "broadcast_week_number": 29,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1784,7 +1784,7 @@
   {
     "air_date": "2026-07-15",
     "broadcast_week_start": "2026-07-13",
-    "broadcast_week_number": 28,
+    "broadcast_week_number": 29,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1793,7 +1793,7 @@
   {
     "air_date": "2026-07-16",
     "broadcast_week_start": "2026-07-13",
-    "broadcast_week_number": 28,
+    "broadcast_week_number": 29,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1802,7 +1802,7 @@
   {
     "air_date": "2026-07-17",
     "broadcast_week_start": "2026-07-13",
-    "broadcast_week_number": 28,
+    "broadcast_week_number": 29,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1811,7 +1811,7 @@
   {
     "air_date": "2026-07-18",
     "broadcast_week_start": "2026-07-13",
-    "broadcast_week_number": 28,
+    "broadcast_week_number": 29,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1820,7 +1820,7 @@
   {
     "air_date": "2026-07-19",
     "broadcast_week_start": "2026-07-13",
-    "broadcast_week_number": 28,
+    "broadcast_week_number": 29,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1829,7 +1829,7 @@
   {
     "air_date": "2026-07-20",
     "broadcast_week_start": "2026-07-20",
-    "broadcast_week_number": 29,
+    "broadcast_week_number": 30,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1838,7 +1838,7 @@
   {
     "air_date": "2026-07-21",
     "broadcast_week_start": "2026-07-20",
-    "broadcast_week_number": 29,
+    "broadcast_week_number": 30,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1847,7 +1847,7 @@
   {
     "air_date": "2026-07-22",
     "broadcast_week_start": "2026-07-20",
-    "broadcast_week_number": 29,
+    "broadcast_week_number": 30,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1856,7 +1856,7 @@
   {
     "air_date": "2026-07-23",
     "broadcast_week_start": "2026-07-20",
-    "broadcast_week_number": 29,
+    "broadcast_week_number": 30,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1865,7 +1865,7 @@
   {
     "air_date": "2026-07-24",
     "broadcast_week_start": "2026-07-20",
-    "broadcast_week_number": 29,
+    "broadcast_week_number": 30,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1874,7 +1874,7 @@
   {
     "air_date": "2026-07-25",
     "broadcast_week_start": "2026-07-20",
-    "broadcast_week_number": 29,
+    "broadcast_week_number": 30,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1883,7 +1883,7 @@
   {
     "air_date": "2026-07-26",
     "broadcast_week_start": "2026-07-20",
-    "broadcast_week_number": 29,
+    "broadcast_week_number": 30,
     "broadcast_month": "July",
     "broadcast_month_number": 7,
     "broadcast_quarter": "Q3",
@@ -1892,70 +1892,70 @@
   {
     "air_date": "2026-07-27",
     "broadcast_week_start": "2026-07-27",
-    "broadcast_week_number": 30,
-    "broadcast_month": "July",
-    "broadcast_month_number": 7,
+    "broadcast_week_number": 31,
+    "broadcast_month": "August",
+    "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-07-28",
     "broadcast_week_start": "2026-07-27",
-    "broadcast_week_number": 30,
-    "broadcast_month": "July",
-    "broadcast_month_number": 7,
+    "broadcast_week_number": 31,
+    "broadcast_month": "August",
+    "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-07-29",
     "broadcast_week_start": "2026-07-27",
-    "broadcast_week_number": 30,
-    "broadcast_month": "July",
-    "broadcast_month_number": 7,
+    "broadcast_week_number": 31,
+    "broadcast_month": "August",
+    "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-07-30",
     "broadcast_week_start": "2026-07-27",
-    "broadcast_week_number": 30,
-    "broadcast_month": "July",
-    "broadcast_month_number": 7,
+    "broadcast_week_number": 31,
+    "broadcast_month": "August",
+    "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-07-31",
     "broadcast_week_start": "2026-07-27",
-    "broadcast_week_number": 30,
-    "broadcast_month": "July",
-    "broadcast_month_number": 7,
+    "broadcast_week_number": 31,
+    "broadcast_month": "August",
+    "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-08-01",
     "broadcast_week_start": "2026-07-27",
-    "broadcast_week_number": 30,
-    "broadcast_month": "July",
-    "broadcast_month_number": 7,
+    "broadcast_week_number": 31,
+    "broadcast_month": "August",
+    "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-08-02",
     "broadcast_week_start": "2026-07-27",
-    "broadcast_week_number": 30,
-    "broadcast_month": "July",
-    "broadcast_month_number": 7,
+    "broadcast_week_number": 31,
+    "broadcast_month": "August",
+    "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-08-03",
     "broadcast_week_start": "2026-08-03",
-    "broadcast_week_number": 31,
+    "broadcast_week_number": 32,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -1964,7 +1964,7 @@
   {
     "air_date": "2026-08-04",
     "broadcast_week_start": "2026-08-03",
-    "broadcast_week_number": 31,
+    "broadcast_week_number": 32,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -1973,7 +1973,7 @@
   {
     "air_date": "2026-08-05",
     "broadcast_week_start": "2026-08-03",
-    "broadcast_week_number": 31,
+    "broadcast_week_number": 32,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -1982,7 +1982,7 @@
   {
     "air_date": "2026-08-06",
     "broadcast_week_start": "2026-08-03",
-    "broadcast_week_number": 31,
+    "broadcast_week_number": 32,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -1991,7 +1991,7 @@
   {
     "air_date": "2026-08-07",
     "broadcast_week_start": "2026-08-03",
-    "broadcast_week_number": 31,
+    "broadcast_week_number": 32,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2000,7 +2000,7 @@
   {
     "air_date": "2026-08-08",
     "broadcast_week_start": "2026-08-03",
-    "broadcast_week_number": 31,
+    "broadcast_week_number": 32,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2009,7 +2009,7 @@
   {
     "air_date": "2026-08-09",
     "broadcast_week_start": "2026-08-03",
-    "broadcast_week_number": 31,
+    "broadcast_week_number": 32,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2018,7 +2018,7 @@
   {
     "air_date": "2026-08-10",
     "broadcast_week_start": "2026-08-10",
-    "broadcast_week_number": 32,
+    "broadcast_week_number": 33,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2027,7 +2027,7 @@
   {
     "air_date": "2026-08-11",
     "broadcast_week_start": "2026-08-10",
-    "broadcast_week_number": 32,
+    "broadcast_week_number": 33,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2036,7 +2036,7 @@
   {
     "air_date": "2026-08-12",
     "broadcast_week_start": "2026-08-10",
-    "broadcast_week_number": 32,
+    "broadcast_week_number": 33,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2045,7 +2045,7 @@
   {
     "air_date": "2026-08-13",
     "broadcast_week_start": "2026-08-10",
-    "broadcast_week_number": 32,
+    "broadcast_week_number": 33,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2054,7 +2054,7 @@
   {
     "air_date": "2026-08-14",
     "broadcast_week_start": "2026-08-10",
-    "broadcast_week_number": 32,
+    "broadcast_week_number": 33,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2063,7 +2063,7 @@
   {
     "air_date": "2026-08-15",
     "broadcast_week_start": "2026-08-10",
-    "broadcast_week_number": 32,
+    "broadcast_week_number": 33,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2072,7 +2072,7 @@
   {
     "air_date": "2026-08-16",
     "broadcast_week_start": "2026-08-10",
-    "broadcast_week_number": 32,
+    "broadcast_week_number": 33,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2081,7 +2081,7 @@
   {
     "air_date": "2026-08-17",
     "broadcast_week_start": "2026-08-17",
-    "broadcast_week_number": 33,
+    "broadcast_week_number": 34,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2090,7 +2090,7 @@
   {
     "air_date": "2026-08-18",
     "broadcast_week_start": "2026-08-17",
-    "broadcast_week_number": 33,
+    "broadcast_week_number": 34,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2099,7 +2099,7 @@
   {
     "air_date": "2026-08-19",
     "broadcast_week_start": "2026-08-17",
-    "broadcast_week_number": 33,
+    "broadcast_week_number": 34,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2108,7 +2108,7 @@
   {
     "air_date": "2026-08-20",
     "broadcast_week_start": "2026-08-17",
-    "broadcast_week_number": 33,
+    "broadcast_week_number": 34,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2117,7 +2117,7 @@
   {
     "air_date": "2026-08-21",
     "broadcast_week_start": "2026-08-17",
-    "broadcast_week_number": 33,
+    "broadcast_week_number": 34,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2126,7 +2126,7 @@
   {
     "air_date": "2026-08-22",
     "broadcast_week_start": "2026-08-17",
-    "broadcast_week_number": 33,
+    "broadcast_week_number": 34,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2135,7 +2135,7 @@
   {
     "air_date": "2026-08-23",
     "broadcast_week_start": "2026-08-17",
-    "broadcast_week_number": 33,
+    "broadcast_week_number": 34,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2144,7 +2144,7 @@
   {
     "air_date": "2026-08-24",
     "broadcast_week_start": "2026-08-24",
-    "broadcast_week_number": 34,
+    "broadcast_week_number": 35,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2153,7 +2153,7 @@
   {
     "air_date": "2026-08-25",
     "broadcast_week_start": "2026-08-24",
-    "broadcast_week_number": 34,
+    "broadcast_week_number": 35,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2162,7 +2162,7 @@
   {
     "air_date": "2026-08-26",
     "broadcast_week_start": "2026-08-24",
-    "broadcast_week_number": 34,
+    "broadcast_week_number": 35,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2171,7 +2171,7 @@
   {
     "air_date": "2026-08-27",
     "broadcast_week_start": "2026-08-24",
-    "broadcast_week_number": 34,
+    "broadcast_week_number": 35,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2180,7 +2180,7 @@
   {
     "air_date": "2026-08-28",
     "broadcast_week_start": "2026-08-24",
-    "broadcast_week_number": 34,
+    "broadcast_week_number": 35,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2189,7 +2189,7 @@
   {
     "air_date": "2026-08-29",
     "broadcast_week_start": "2026-08-24",
-    "broadcast_week_number": 34,
+    "broadcast_week_number": 35,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2198,7 +2198,7 @@
   {
     "air_date": "2026-08-30",
     "broadcast_week_start": "2026-08-24",
-    "broadcast_week_number": 34,
+    "broadcast_week_number": 35,
     "broadcast_month": "August",
     "broadcast_month_number": 8,
     "broadcast_quarter": "Q3",
@@ -2207,70 +2207,70 @@
   {
     "air_date": "2026-08-31",
     "broadcast_week_start": "2026-08-31",
-    "broadcast_week_number": 35,
-    "broadcast_month": "August",
-    "broadcast_month_number": 8,
+    "broadcast_week_number": 36,
+    "broadcast_month": "September",
+    "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-09-01",
     "broadcast_week_start": "2026-08-31",
-    "broadcast_week_number": 35,
-    "broadcast_month": "August",
-    "broadcast_month_number": 8,
+    "broadcast_week_number": 36,
+    "broadcast_month": "September",
+    "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-09-02",
     "broadcast_week_start": "2026-08-31",
-    "broadcast_week_number": 35,
-    "broadcast_month": "August",
-    "broadcast_month_number": 8,
+    "broadcast_week_number": 36,
+    "broadcast_month": "September",
+    "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-09-03",
     "broadcast_week_start": "2026-08-31",
-    "broadcast_week_number": 35,
-    "broadcast_month": "August",
-    "broadcast_month_number": 8,
+    "broadcast_week_number": 36,
+    "broadcast_month": "September",
+    "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-09-04",
     "broadcast_week_start": "2026-08-31",
-    "broadcast_week_number": 35,
-    "broadcast_month": "August",
-    "broadcast_month_number": 8,
+    "broadcast_week_number": 36,
+    "broadcast_month": "September",
+    "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-09-05",
     "broadcast_week_start": "2026-08-31",
-    "broadcast_week_number": 35,
-    "broadcast_month": "August",
-    "broadcast_month_number": 8,
+    "broadcast_week_number": 36,
+    "broadcast_month": "September",
+    "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-09-06",
     "broadcast_week_start": "2026-08-31",
-    "broadcast_week_number": 35,
-    "broadcast_month": "August",
-    "broadcast_month_number": 8,
+    "broadcast_week_number": 36,
+    "broadcast_month": "September",
+    "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-09-07",
     "broadcast_week_start": "2026-09-07",
-    "broadcast_week_number": 36,
+    "broadcast_week_number": 37,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2279,7 +2279,7 @@
   {
     "air_date": "2026-09-08",
     "broadcast_week_start": "2026-09-07",
-    "broadcast_week_number": 36,
+    "broadcast_week_number": 37,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2288,7 +2288,7 @@
   {
     "air_date": "2026-09-09",
     "broadcast_week_start": "2026-09-07",
-    "broadcast_week_number": 36,
+    "broadcast_week_number": 37,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2297,7 +2297,7 @@
   {
     "air_date": "2026-09-10",
     "broadcast_week_start": "2026-09-07",
-    "broadcast_week_number": 36,
+    "broadcast_week_number": 37,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2306,7 +2306,7 @@
   {
     "air_date": "2026-09-11",
     "broadcast_week_start": "2026-09-07",
-    "broadcast_week_number": 36,
+    "broadcast_week_number": 37,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2315,7 +2315,7 @@
   {
     "air_date": "2026-09-12",
     "broadcast_week_start": "2026-09-07",
-    "broadcast_week_number": 36,
+    "broadcast_week_number": 37,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2324,7 +2324,7 @@
   {
     "air_date": "2026-09-13",
     "broadcast_week_start": "2026-09-07",
-    "broadcast_week_number": 36,
+    "broadcast_week_number": 37,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2333,7 +2333,7 @@
   {
     "air_date": "2026-09-14",
     "broadcast_week_start": "2026-09-14",
-    "broadcast_week_number": 37,
+    "broadcast_week_number": 38,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2342,7 +2342,7 @@
   {
     "air_date": "2026-09-15",
     "broadcast_week_start": "2026-09-14",
-    "broadcast_week_number": 37,
+    "broadcast_week_number": 38,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2351,7 +2351,7 @@
   {
     "air_date": "2026-09-16",
     "broadcast_week_start": "2026-09-14",
-    "broadcast_week_number": 37,
+    "broadcast_week_number": 38,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2360,7 +2360,7 @@
   {
     "air_date": "2026-09-17",
     "broadcast_week_start": "2026-09-14",
-    "broadcast_week_number": 37,
+    "broadcast_week_number": 38,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2369,7 +2369,7 @@
   {
     "air_date": "2026-09-18",
     "broadcast_week_start": "2026-09-14",
-    "broadcast_week_number": 37,
+    "broadcast_week_number": 38,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2378,7 +2378,7 @@
   {
     "air_date": "2026-09-19",
     "broadcast_week_start": "2026-09-14",
-    "broadcast_week_number": 37,
+    "broadcast_week_number": 38,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2387,7 +2387,7 @@
   {
     "air_date": "2026-09-20",
     "broadcast_week_start": "2026-09-14",
-    "broadcast_week_number": 37,
+    "broadcast_week_number": 38,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2396,7 +2396,7 @@
   {
     "air_date": "2026-09-21",
     "broadcast_week_start": "2026-09-21",
-    "broadcast_week_number": 38,
+    "broadcast_week_number": 39,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2405,7 +2405,7 @@
   {
     "air_date": "2026-09-22",
     "broadcast_week_start": "2026-09-21",
-    "broadcast_week_number": 38,
+    "broadcast_week_number": 39,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2414,7 +2414,7 @@
   {
     "air_date": "2026-09-23",
     "broadcast_week_start": "2026-09-21",
-    "broadcast_week_number": 38,
+    "broadcast_week_number": 39,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2423,7 +2423,7 @@
   {
     "air_date": "2026-09-24",
     "broadcast_week_start": "2026-09-21",
-    "broadcast_week_number": 38,
+    "broadcast_week_number": 39,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2432,7 +2432,7 @@
   {
     "air_date": "2026-09-25",
     "broadcast_week_start": "2026-09-21",
-    "broadcast_week_number": 38,
+    "broadcast_week_number": 39,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2441,7 +2441,7 @@
   {
     "air_date": "2026-09-26",
     "broadcast_week_start": "2026-09-21",
-    "broadcast_week_number": 38,
+    "broadcast_week_number": 39,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2450,7 +2450,7 @@
   {
     "air_date": "2026-09-27",
     "broadcast_week_start": "2026-09-21",
-    "broadcast_week_number": 38,
+    "broadcast_week_number": 39,
     "broadcast_month": "September",
     "broadcast_month_number": 9,
     "broadcast_quarter": "Q3",
@@ -2459,70 +2459,70 @@
   {
     "air_date": "2026-09-28",
     "broadcast_week_start": "2026-09-28",
-    "broadcast_week_number": 39,
-    "broadcast_month": "September",
-    "broadcast_month_number": 9,
-    "broadcast_quarter": "Q3",
+    "broadcast_week_number": 40,
+    "broadcast_month": "October",
+    "broadcast_month_number": 10,
+    "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-09-29",
     "broadcast_week_start": "2026-09-28",
-    "broadcast_week_number": 39,
-    "broadcast_month": "September",
-    "broadcast_month_number": 9,
-    "broadcast_quarter": "Q3",
+    "broadcast_week_number": 40,
+    "broadcast_month": "October",
+    "broadcast_month_number": 10,
+    "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-09-30",
     "broadcast_week_start": "2026-09-28",
-    "broadcast_week_number": 39,
-    "broadcast_month": "September",
-    "broadcast_month_number": 9,
-    "broadcast_quarter": "Q3",
+    "broadcast_week_number": 40,
+    "broadcast_month": "October",
+    "broadcast_month_number": 10,
+    "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-10-01",
     "broadcast_week_start": "2026-09-28",
-    "broadcast_week_number": 39,
-    "broadcast_month": "September",
-    "broadcast_month_number": 9,
-    "broadcast_quarter": "Q3",
+    "broadcast_week_number": 40,
+    "broadcast_month": "October",
+    "broadcast_month_number": 10,
+    "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-10-02",
     "broadcast_week_start": "2026-09-28",
-    "broadcast_week_number": 39,
-    "broadcast_month": "September",
-    "broadcast_month_number": 9,
-    "broadcast_quarter": "Q3",
+    "broadcast_week_number": 40,
+    "broadcast_month": "October",
+    "broadcast_month_number": 10,
+    "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-10-03",
     "broadcast_week_start": "2026-09-28",
-    "broadcast_week_number": 39,
-    "broadcast_month": "September",
-    "broadcast_month_number": 9,
-    "broadcast_quarter": "Q3",
+    "broadcast_week_number": 40,
+    "broadcast_month": "October",
+    "broadcast_month_number": 10,
+    "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-10-04",
     "broadcast_week_start": "2026-09-28",
-    "broadcast_week_number": 39,
-    "broadcast_month": "September",
-    "broadcast_month_number": 9,
-    "broadcast_quarter": "Q3",
+    "broadcast_week_number": 40,
+    "broadcast_month": "October",
+    "broadcast_month_number": 10,
+    "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-10-05",
     "broadcast_week_start": "2026-10-05",
-    "broadcast_week_number": 40,
+    "broadcast_week_number": 41,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2531,7 +2531,7 @@
   {
     "air_date": "2026-10-06",
     "broadcast_week_start": "2026-10-05",
-    "broadcast_week_number": 40,
+    "broadcast_week_number": 41,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2540,7 +2540,7 @@
   {
     "air_date": "2026-10-07",
     "broadcast_week_start": "2026-10-05",
-    "broadcast_week_number": 40,
+    "broadcast_week_number": 41,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2549,7 +2549,7 @@
   {
     "air_date": "2026-10-08",
     "broadcast_week_start": "2026-10-05",
-    "broadcast_week_number": 40,
+    "broadcast_week_number": 41,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2558,7 +2558,7 @@
   {
     "air_date": "2026-10-09",
     "broadcast_week_start": "2026-10-05",
-    "broadcast_week_number": 40,
+    "broadcast_week_number": 41,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2567,7 +2567,7 @@
   {
     "air_date": "2026-10-10",
     "broadcast_week_start": "2026-10-05",
-    "broadcast_week_number": 40,
+    "broadcast_week_number": 41,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2576,7 +2576,7 @@
   {
     "air_date": "2026-10-11",
     "broadcast_week_start": "2026-10-05",
-    "broadcast_week_number": 40,
+    "broadcast_week_number": 41,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2585,7 +2585,7 @@
   {
     "air_date": "2026-10-12",
     "broadcast_week_start": "2026-10-12",
-    "broadcast_week_number": 41,
+    "broadcast_week_number": 42,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2594,7 +2594,7 @@
   {
     "air_date": "2026-10-13",
     "broadcast_week_start": "2026-10-12",
-    "broadcast_week_number": 41,
+    "broadcast_week_number": 42,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2603,7 +2603,7 @@
   {
     "air_date": "2026-10-14",
     "broadcast_week_start": "2026-10-12",
-    "broadcast_week_number": 41,
+    "broadcast_week_number": 42,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2612,7 +2612,7 @@
   {
     "air_date": "2026-10-15",
     "broadcast_week_start": "2026-10-12",
-    "broadcast_week_number": 41,
+    "broadcast_week_number": 42,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2621,7 +2621,7 @@
   {
     "air_date": "2026-10-16",
     "broadcast_week_start": "2026-10-12",
-    "broadcast_week_number": 41,
+    "broadcast_week_number": 42,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2630,7 +2630,7 @@
   {
     "air_date": "2026-10-17",
     "broadcast_week_start": "2026-10-12",
-    "broadcast_week_number": 41,
+    "broadcast_week_number": 42,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2639,7 +2639,7 @@
   {
     "air_date": "2026-10-18",
     "broadcast_week_start": "2026-10-12",
-    "broadcast_week_number": 41,
+    "broadcast_week_number": 42,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2648,7 +2648,7 @@
   {
     "air_date": "2026-10-19",
     "broadcast_week_start": "2026-10-19",
-    "broadcast_week_number": 42,
+    "broadcast_week_number": 43,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2657,7 +2657,7 @@
   {
     "air_date": "2026-10-20",
     "broadcast_week_start": "2026-10-19",
-    "broadcast_week_number": 42,
+    "broadcast_week_number": 43,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2666,7 +2666,7 @@
   {
     "air_date": "2026-10-21",
     "broadcast_week_start": "2026-10-19",
-    "broadcast_week_number": 42,
+    "broadcast_week_number": 43,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2675,7 +2675,7 @@
   {
     "air_date": "2026-10-22",
     "broadcast_week_start": "2026-10-19",
-    "broadcast_week_number": 42,
+    "broadcast_week_number": 43,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2684,7 +2684,7 @@
   {
     "air_date": "2026-10-23",
     "broadcast_week_start": "2026-10-19",
-    "broadcast_week_number": 42,
+    "broadcast_week_number": 43,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2693,7 +2693,7 @@
   {
     "air_date": "2026-10-24",
     "broadcast_week_start": "2026-10-19",
-    "broadcast_week_number": 42,
+    "broadcast_week_number": 43,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2702,7 +2702,7 @@
   {
     "air_date": "2026-10-25",
     "broadcast_week_start": "2026-10-19",
-    "broadcast_week_number": 42,
+    "broadcast_week_number": 43,
     "broadcast_month": "October",
     "broadcast_month_number": 10,
     "broadcast_quarter": "Q4",
@@ -2711,70 +2711,70 @@
   {
     "air_date": "2026-10-26",
     "broadcast_week_start": "2026-10-26",
-    "broadcast_week_number": 43,
-    "broadcast_month": "October",
-    "broadcast_month_number": 10,
+    "broadcast_week_number": 44,
+    "broadcast_month": "November",
+    "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-10-27",
     "broadcast_week_start": "2026-10-26",
-    "broadcast_week_number": 43,
-    "broadcast_month": "October",
-    "broadcast_month_number": 10,
+    "broadcast_week_number": 44,
+    "broadcast_month": "November",
+    "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-10-28",
     "broadcast_week_start": "2026-10-26",
-    "broadcast_week_number": 43,
-    "broadcast_month": "October",
-    "broadcast_month_number": 10,
+    "broadcast_week_number": 44,
+    "broadcast_month": "November",
+    "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-10-29",
     "broadcast_week_start": "2026-10-26",
-    "broadcast_week_number": 43,
-    "broadcast_month": "October",
-    "broadcast_month_number": 10,
+    "broadcast_week_number": 44,
+    "broadcast_month": "November",
+    "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-10-30",
     "broadcast_week_start": "2026-10-26",
-    "broadcast_week_number": 43,
-    "broadcast_month": "October",
-    "broadcast_month_number": 10,
+    "broadcast_week_number": 44,
+    "broadcast_month": "November",
+    "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-10-31",
     "broadcast_week_start": "2026-10-26",
-    "broadcast_week_number": 43,
-    "broadcast_month": "October",
-    "broadcast_month_number": 10,
+    "broadcast_week_number": 44,
+    "broadcast_month": "November",
+    "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-11-01",
     "broadcast_week_start": "2026-10-26",
-    "broadcast_week_number": 43,
-    "broadcast_month": "October",
-    "broadcast_month_number": 10,
+    "broadcast_week_number": 44,
+    "broadcast_month": "November",
+    "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-11-02",
     "broadcast_week_start": "2026-11-02",
-    "broadcast_week_number": 44,
+    "broadcast_week_number": 45,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2783,7 +2783,7 @@
   {
     "air_date": "2026-11-03",
     "broadcast_week_start": "2026-11-02",
-    "broadcast_week_number": 44,
+    "broadcast_week_number": 45,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2792,7 +2792,7 @@
   {
     "air_date": "2026-11-04",
     "broadcast_week_start": "2026-11-02",
-    "broadcast_week_number": 44,
+    "broadcast_week_number": 45,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2801,7 +2801,7 @@
   {
     "air_date": "2026-11-05",
     "broadcast_week_start": "2026-11-02",
-    "broadcast_week_number": 44,
+    "broadcast_week_number": 45,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2810,7 +2810,7 @@
   {
     "air_date": "2026-11-06",
     "broadcast_week_start": "2026-11-02",
-    "broadcast_week_number": 44,
+    "broadcast_week_number": 45,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2819,7 +2819,7 @@
   {
     "air_date": "2026-11-07",
     "broadcast_week_start": "2026-11-02",
-    "broadcast_week_number": 44,
+    "broadcast_week_number": 45,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2828,7 +2828,7 @@
   {
     "air_date": "2026-11-08",
     "broadcast_week_start": "2026-11-02",
-    "broadcast_week_number": 44,
+    "broadcast_week_number": 45,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2837,7 +2837,7 @@
   {
     "air_date": "2026-11-09",
     "broadcast_week_start": "2026-11-09",
-    "broadcast_week_number": 45,
+    "broadcast_week_number": 46,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2846,7 +2846,7 @@
   {
     "air_date": "2026-11-10",
     "broadcast_week_start": "2026-11-09",
-    "broadcast_week_number": 45,
+    "broadcast_week_number": 46,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2855,7 +2855,7 @@
   {
     "air_date": "2026-11-11",
     "broadcast_week_start": "2026-11-09",
-    "broadcast_week_number": 45,
+    "broadcast_week_number": 46,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2864,7 +2864,7 @@
   {
     "air_date": "2026-11-12",
     "broadcast_week_start": "2026-11-09",
-    "broadcast_week_number": 45,
+    "broadcast_week_number": 46,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2873,7 +2873,7 @@
   {
     "air_date": "2026-11-13",
     "broadcast_week_start": "2026-11-09",
-    "broadcast_week_number": 45,
+    "broadcast_week_number": 46,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2882,7 +2882,7 @@
   {
     "air_date": "2026-11-14",
     "broadcast_week_start": "2026-11-09",
-    "broadcast_week_number": 45,
+    "broadcast_week_number": 46,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2891,7 +2891,7 @@
   {
     "air_date": "2026-11-15",
     "broadcast_week_start": "2026-11-09",
-    "broadcast_week_number": 45,
+    "broadcast_week_number": 46,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2900,7 +2900,7 @@
   {
     "air_date": "2026-11-16",
     "broadcast_week_start": "2026-11-16",
-    "broadcast_week_number": 46,
+    "broadcast_week_number": 47,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2909,7 +2909,7 @@
   {
     "air_date": "2026-11-17",
     "broadcast_week_start": "2026-11-16",
-    "broadcast_week_number": 46,
+    "broadcast_week_number": 47,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2918,7 +2918,7 @@
   {
     "air_date": "2026-11-18",
     "broadcast_week_start": "2026-11-16",
-    "broadcast_week_number": 46,
+    "broadcast_week_number": 47,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2927,7 +2927,7 @@
   {
     "air_date": "2026-11-19",
     "broadcast_week_start": "2026-11-16",
-    "broadcast_week_number": 46,
+    "broadcast_week_number": 47,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2936,7 +2936,7 @@
   {
     "air_date": "2026-11-20",
     "broadcast_week_start": "2026-11-16",
-    "broadcast_week_number": 46,
+    "broadcast_week_number": 47,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2945,7 +2945,7 @@
   {
     "air_date": "2026-11-21",
     "broadcast_week_start": "2026-11-16",
-    "broadcast_week_number": 46,
+    "broadcast_week_number": 47,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2954,7 +2954,7 @@
   {
     "air_date": "2026-11-22",
     "broadcast_week_start": "2026-11-16",
-    "broadcast_week_number": 46,
+    "broadcast_week_number": 47,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2963,7 +2963,7 @@
   {
     "air_date": "2026-11-23",
     "broadcast_week_start": "2026-11-23",
-    "broadcast_week_number": 47,
+    "broadcast_week_number": 48,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2972,7 +2972,7 @@
   {
     "air_date": "2026-11-24",
     "broadcast_week_start": "2026-11-23",
-    "broadcast_week_number": 47,
+    "broadcast_week_number": 48,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2981,7 +2981,7 @@
   {
     "air_date": "2026-11-25",
     "broadcast_week_start": "2026-11-23",
-    "broadcast_week_number": 47,
+    "broadcast_week_number": 48,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2990,7 +2990,7 @@
   {
     "air_date": "2026-11-26",
     "broadcast_week_start": "2026-11-23",
-    "broadcast_week_number": 47,
+    "broadcast_week_number": 48,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -2999,7 +2999,7 @@
   {
     "air_date": "2026-11-27",
     "broadcast_week_start": "2026-11-23",
-    "broadcast_week_number": 47,
+    "broadcast_week_number": 48,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -3008,7 +3008,7 @@
   {
     "air_date": "2026-11-28",
     "broadcast_week_start": "2026-11-23",
-    "broadcast_week_number": 47,
+    "broadcast_week_number": 48,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -3017,7 +3017,7 @@
   {
     "air_date": "2026-11-29",
     "broadcast_week_start": "2026-11-23",
-    "broadcast_week_number": 47,
+    "broadcast_week_number": 48,
     "broadcast_month": "November",
     "broadcast_month_number": 11,
     "broadcast_quarter": "Q4",
@@ -3026,70 +3026,70 @@
   {
     "air_date": "2026-11-30",
     "broadcast_week_start": "2026-11-30",
-    "broadcast_week_number": 48,
-    "broadcast_month": "November",
-    "broadcast_month_number": 11,
+    "broadcast_week_number": 49,
+    "broadcast_month": "December",
+    "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-12-01",
     "broadcast_week_start": "2026-11-30",
-    "broadcast_week_number": 48,
-    "broadcast_month": "November",
-    "broadcast_month_number": 11,
+    "broadcast_week_number": 49,
+    "broadcast_month": "December",
+    "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-12-02",
     "broadcast_week_start": "2026-11-30",
-    "broadcast_week_number": 48,
-    "broadcast_month": "November",
-    "broadcast_month_number": 11,
+    "broadcast_week_number": 49,
+    "broadcast_month": "December",
+    "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-12-03",
     "broadcast_week_start": "2026-11-30",
-    "broadcast_week_number": 48,
-    "broadcast_month": "November",
-    "broadcast_month_number": 11,
+    "broadcast_week_number": 49,
+    "broadcast_month": "December",
+    "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-12-04",
     "broadcast_week_start": "2026-11-30",
-    "broadcast_week_number": 48,
-    "broadcast_month": "November",
-    "broadcast_month_number": 11,
+    "broadcast_week_number": 49,
+    "broadcast_month": "December",
+    "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-12-05",
     "broadcast_week_start": "2026-11-30",
-    "broadcast_week_number": 48,
-    "broadcast_month": "November",
-    "broadcast_month_number": 11,
+    "broadcast_week_number": 49,
+    "broadcast_month": "December",
+    "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-12-06",
     "broadcast_week_start": "2026-11-30",
-    "broadcast_week_number": 48,
-    "broadcast_month": "November",
-    "broadcast_month_number": 11,
+    "broadcast_week_number": 49,
+    "broadcast_month": "December",
+    "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
     "broadcast_year": 2026
   },
   {
     "air_date": "2026-12-07",
     "broadcast_week_start": "2026-12-07",
-    "broadcast_week_number": 49,
+    "broadcast_week_number": 50,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3098,7 +3098,7 @@
   {
     "air_date": "2026-12-08",
     "broadcast_week_start": "2026-12-07",
-    "broadcast_week_number": 49,
+    "broadcast_week_number": 50,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3107,7 +3107,7 @@
   {
     "air_date": "2026-12-09",
     "broadcast_week_start": "2026-12-07",
-    "broadcast_week_number": 49,
+    "broadcast_week_number": 50,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3116,7 +3116,7 @@
   {
     "air_date": "2026-12-10",
     "broadcast_week_start": "2026-12-07",
-    "broadcast_week_number": 49,
+    "broadcast_week_number": 50,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3125,7 +3125,7 @@
   {
     "air_date": "2026-12-11",
     "broadcast_week_start": "2026-12-07",
-    "broadcast_week_number": 49,
+    "broadcast_week_number": 50,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3134,7 +3134,7 @@
   {
     "air_date": "2026-12-12",
     "broadcast_week_start": "2026-12-07",
-    "broadcast_week_number": 49,
+    "broadcast_week_number": 50,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3143,7 +3143,7 @@
   {
     "air_date": "2026-12-13",
     "broadcast_week_start": "2026-12-07",
-    "broadcast_week_number": 49,
+    "broadcast_week_number": 50,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3152,7 +3152,7 @@
   {
     "air_date": "2026-12-14",
     "broadcast_week_start": "2026-12-14",
-    "broadcast_week_number": 50,
+    "broadcast_week_number": 51,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3161,7 +3161,7 @@
   {
     "air_date": "2026-12-15",
     "broadcast_week_start": "2026-12-14",
-    "broadcast_week_number": 50,
+    "broadcast_week_number": 51,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3170,7 +3170,7 @@
   {
     "air_date": "2026-12-16",
     "broadcast_week_start": "2026-12-14",
-    "broadcast_week_number": 50,
+    "broadcast_week_number": 51,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3179,7 +3179,7 @@
   {
     "air_date": "2026-12-17",
     "broadcast_week_start": "2026-12-14",
-    "broadcast_week_number": 50,
+    "broadcast_week_number": 51,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3188,7 +3188,7 @@
   {
     "air_date": "2026-12-18",
     "broadcast_week_start": "2026-12-14",
-    "broadcast_week_number": 50,
+    "broadcast_week_number": 51,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3197,7 +3197,7 @@
   {
     "air_date": "2026-12-19",
     "broadcast_week_start": "2026-12-14",
-    "broadcast_week_number": 50,
+    "broadcast_week_number": 51,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3206,7 +3206,7 @@
   {
     "air_date": "2026-12-20",
     "broadcast_week_start": "2026-12-14",
-    "broadcast_week_number": 50,
+    "broadcast_week_number": 51,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3215,7 +3215,7 @@
   {
     "air_date": "2026-12-21",
     "broadcast_week_start": "2026-12-21",
-    "broadcast_week_number": 51,
+    "broadcast_week_number": 52,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3224,7 +3224,7 @@
   {
     "air_date": "2026-12-22",
     "broadcast_week_start": "2026-12-21",
-    "broadcast_week_number": 51,
+    "broadcast_week_number": 52,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3233,7 +3233,7 @@
   {
     "air_date": "2026-12-23",
     "broadcast_week_start": "2026-12-21",
-    "broadcast_week_number": 51,
+    "broadcast_week_number": 52,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3242,7 +3242,7 @@
   {
     "air_date": "2026-12-24",
     "broadcast_week_start": "2026-12-21",
-    "broadcast_week_number": 51,
+    "broadcast_week_number": 52,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3251,7 +3251,7 @@
   {
     "air_date": "2026-12-25",
     "broadcast_week_start": "2026-12-21",
-    "broadcast_week_number": 51,
+    "broadcast_week_number": 52,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3260,7 +3260,7 @@
   {
     "air_date": "2026-12-26",
     "broadcast_week_start": "2026-12-21",
-    "broadcast_week_number": 51,
+    "broadcast_week_number": 52,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
@@ -3269,7 +3269,7 @@
   {
     "air_date": "2026-12-27",
     "broadcast_week_start": "2026-12-21",
-    "broadcast_week_number": 51,
+    "broadcast_week_number": 52,
     "broadcast_month": "December",
     "broadcast_month_number": 12,
     "broadcast_quarter": "Q4",
