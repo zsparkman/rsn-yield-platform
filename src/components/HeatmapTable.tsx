@@ -151,7 +151,7 @@ export function HeatmapTable({ rows }: { rows: InventoryRollupRow[] }) {
         </p>
       ) : (
         <div className="overflow-x-auto rounded border border-slate-200 bg-white">
-          <table className="grid-table w-full table-fixed text-[13px] leading-tight">
+          <table className="grid-table w-full text-[13px] leading-tight">
             <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="min-w-[168px] px-3 py-2">Air Date</th>

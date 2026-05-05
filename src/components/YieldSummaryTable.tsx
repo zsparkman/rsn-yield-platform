@@ -294,7 +294,7 @@ export function YieldSummaryTable({ rows }: { rows: AurSummaryRow[] }) {
       </div>
 
       <div className="overflow-x-auto rounded border border-slate-200 bg-white">
-        <table className="grid-table w-full table-fixed text-[13px] leading-tight">
+        <table className="grid-table w-full text-[13px] leading-tight">
           <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
             <tr>
               <th className="min-w-[56px] px-3 py-2">Type</th>
@@ -308,11 +308,11 @@ export function YieldSummaryTable({ rows }: { rows: AurSummaryRow[] }) {
               <th className="min-w-[64px] px-3 py-2 text-right num normal-case">xADU</th>
               <th className="min-w-[64px] px-3 py-2 text-right num">Bonus</th>
               <th className="min-w-[64px] px-3 py-2 text-right num">Total</th>
-              <th className="min-w-[96px] px-3 py-2 text-right num">Net REV</th>
+              <th className="min-w-[112px] px-3 py-2 text-right num">Net REV</th>
               <th className="min-w-[88px] px-3 py-2 text-right num">AUR</th>
               <th className="min-w-[96px] px-3 py-2 text-right num">EUR (Net)</th>
               <th className="min-w-[96px] px-3 py-2 text-right num">Sellout%</th>
-              <th className="min-w-[112px] px-3 py-2 text-right num">Sellout+ADU%</th>
+              <th className="min-w-[128px] px-3 py-2 text-right num">Sellout+ADU%</th>
             </tr>
           </thead>
           <tbody>
