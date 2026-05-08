@@ -153,7 +153,7 @@ export function RatesTable({ rows }: { rows: InventoryRollupRow[] }) {
         </span>
       </div>
 
-      <div className="overflow-x-auto rounded border border-slate-200 bg-white">
+      <div className="overflow-x-auto rounded-xl border border-[#E5E7EB] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
         <table className="grid-table w-full text-[13px] leading-tight">
           <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
             <tr>

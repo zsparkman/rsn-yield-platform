@@ -226,7 +226,7 @@ export function BookingMatrix({
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search client or order…"
           aria-label="Search client or order"
-          className="w-[300px] rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-300"
+          className="w-[300px] rounded-lg border border-[#E5E7EB] bg-white px-3 py-1.5 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
         />
         <div className="flex flex-wrap items-center gap-4">
           <Segment<InvFilter>
@@ -279,11 +279,11 @@ export function BookingMatrix({
       </div>
 
       {searchMatch && topClients.length === 0 ? (
-        <p className="rounded border border-slate-200 bg-white p-6 text-sm text-slate-500">
+        <p className="rounded-xl border border-[#E5E7EB] bg-white p-6 text-sm text-slate-500 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
           No clients or orders match your search.
         </p>
       ) : (
-      <div className="relative max-h-[78vh] overflow-auto rounded border border-slate-200 bg-white">
+      <div className="relative max-h-[78vh] overflow-auto rounded-xl border border-[#E5E7EB] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
         <table className="table-fixed border-separate border-spacing-0 text-[11px] leading-tight">
           <thead>
             <tr>

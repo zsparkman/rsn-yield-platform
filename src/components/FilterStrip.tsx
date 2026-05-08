@@ -27,17 +27,17 @@ export function Segment<T extends string>({
       <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
         {label}
       </span>
-      <div className="flex overflow-hidden rounded border border-slate-200 bg-white">
+      <div className="flex overflow-hidden rounded-lg border border-[#E5E7EB] bg-white">
         {options.map((o) => (
           <button
             key={o.value}
             type="button"
             onClick={() => onChange(o.value)}
             className={clsx(
-              "px-2.5 py-1 text-xs",
+              "px-2.5 py-1 text-xs transition-colors",
               o.value === value
                 ? "bg-indigo-600 text-white"
-                : "text-slate-600 hover:bg-slate-50",
+                : "text-slate-600 hover:bg-indigo-50 hover:text-indigo-700",
             )}
           >
             {o.label}
@@ -74,7 +74,7 @@ export function DateRangeFilter({
         min={min}
         max={max}
         onChange={(e) => onStart(e.target.value)}
-        className="rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700"
+        className="rounded-lg border border-[#E5E7EB] bg-white px-2 py-1 text-xs text-slate-700 transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
       />
       <span className="text-xs text-slate-400">–</span>
       <input
@@ -83,7 +83,7 @@ export function DateRangeFilter({
         min={min}
         max={max}
         onChange={(e) => onEnd(e.target.value)}
-        className="rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700"
+        className="rounded-lg border border-[#E5E7EB] bg-white px-2 py-1 text-xs text-slate-700 transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
       />
     </div>
   );

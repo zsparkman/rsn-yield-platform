@@ -26,19 +26,26 @@ export function TopNav() {
     return pathname === href || pathname.startsWith(`${href}/`);
   }
 
+  const onHome = pathname === "/";
+
   return (
     <header className="border-b border-[#E5E7EB] bg-white">
-      <nav className="mx-auto flex max-w-[1536px] items-center gap-8 px-6 py-3">
+      <nav className="mx-auto flex max-w-[1536px] items-center gap-8 px-6 py-5">
         <Link
           href="/"
           aria-label="RSN Yield Platform — home"
-          className="flex shrink-0 items-center transition-opacity hover:opacity-80"
+          aria-hidden={onHome}
+          tabIndex={onHome ? -1 : 0}
+          className={clsx(
+            "flex shrink-0 items-center transition-opacity hover:opacity-80",
+            onHome && "invisible",
+          )}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/rsn-yield-wordmark.svg"
             alt="RSN Yield Platform"
-            className="h-8 w-auto"
+            className="h-12 w-auto"
           />
         </Link>
         <ul className="font-mont flex flex-1 items-center justify-center gap-6">

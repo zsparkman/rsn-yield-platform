@@ -146,11 +146,11 @@ export function HeatmapTable({ rows }: { rows: InventoryRollupRow[] }) {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="rounded border border-slate-200 bg-white p-6 text-sm text-slate-500">
+        <p className="rounded-xl border border-[#E5E7EB] bg-white p-6 text-sm text-slate-500 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
           No games match these filters.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded border border-slate-200 bg-white">
+        <div className="overflow-x-auto rounded-xl border border-[#E5E7EB] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
           <table className="grid-table w-full text-[13px] leading-tight">
             <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
               <tr>

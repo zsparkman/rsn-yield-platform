@@ -225,7 +225,7 @@ export function YieldSummaryTable({ rows }: { rows: AurSummaryRow[] }) {
       </div>
 
       {legendOpen && (
-        <div className="rounded border border-slate-200 bg-white px-4 py-3 text-xs leading-relaxed text-slate-600">
+        <div className="rounded-xl border border-[#E5E7EB] bg-white px-4 py-3 text-xs leading-relaxed text-slate-600 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1">
               <p>
@@ -293,7 +293,7 @@ export function YieldSummaryTable({ rows }: { rows: AurSummaryRow[] }) {
         </span>
       </div>
 
-      <div className="overflow-x-auto rounded border border-slate-200 bg-white">
+      <div className="overflow-x-auto rounded-xl border border-[#E5E7EB] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
         <table className="grid-table w-full text-[13px] leading-tight">
           <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
             <tr>

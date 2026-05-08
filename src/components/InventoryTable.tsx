@@ -212,11 +212,11 @@ export function InventoryTable({
       </div>
 
       {totalGames === 0 ? (
-        <p className="rounded border border-slate-200 bg-white p-6 text-sm text-slate-500">
+        <p className="rounded-xl border border-[#E5E7EB] bg-white p-6 text-sm text-slate-500 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
           No games match these filters.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded border border-slate-200 bg-white">
+        <div className="overflow-x-auto rounded-xl border border-[#E5E7EB] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
           <table className="grid-table w-full text-[13px] leading-tight">
             <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
               <tr>
@@ -246,7 +246,7 @@ export function InventoryTable({
             type="button"
             disabled={page === 0}
             onClick={() => setPage((p) => Math.max(0, p - 1))}
-            className="rounded border border-slate-200 bg-white px-3 py-1 text-slate-700 disabled:opacity-40"
+            className="rounded-lg border border-[#E5E7EB] bg-white px-3 py-1 text-slate-700 transition-colors hover:border-indigo-500 disabled:opacity-40 disabled:hover:border-[#E5E7EB]"
           >
             Prev
           </button>
@@ -255,7 +255,7 @@ export function InventoryTable({
             type="button"
             disabled={page + 1 >= totalPages}
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-            className="rounded border border-slate-200 bg-white px-3 py-1 text-slate-700 disabled:opacity-40"
+            className="rounded-lg border border-[#E5E7EB] bg-white px-3 py-1 text-slate-700 transition-colors hover:border-indigo-500 disabled:opacity-40 disabled:hover:border-[#E5E7EB]"
           >
             Next
           </button>
