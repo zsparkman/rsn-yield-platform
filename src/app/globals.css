@@ -1,9 +1,15 @@
 @import "tailwindcss";
 
+/* Typography — Inter for body, Montserrat for uppercase accent text.
+ * Variables come from next/font in app/layout.tsx; mirrors CTV design. */
 html, body {
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol", sans-serif;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.font-mont {
+  font-family: var(--font-montserrat), var(--font-inter), ui-sans-serif,
+    system-ui, sans-serif;
 }
 
 /* Tabular numerics on every numeric cell — applied via the .num utility
@@ -24,8 +30,8 @@ html, body {
 }
 .grid-table th,
 .grid-table td {
-  border-right: 1px solid rgb(226 232 240);  /* slate-200 */
-  border-bottom: 1px solid rgb(226 232 240);
+  border-right: 1px solid rgb(229 231 235);  /* #E5E7EB — CTV hairline */
+  border-bottom: 1px solid rgb(229 231 235);
 }
 .grid-table tr > *:last-child {
   border-right: 0;

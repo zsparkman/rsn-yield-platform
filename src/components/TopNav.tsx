@@ -27,15 +27,21 @@ export function TopNav() {
   }
 
   return (
-    <header className="border-b border-slate-200 bg-white">
+    <header className="border-b border-[#E5E7EB] bg-white">
       <nav className="mx-auto flex max-w-[1536px] items-center gap-8 px-6 py-3">
         <Link
           href="/"
-          className="text-sm font-semibold tracking-tight text-slate-900 hover:text-indigo-600"
+          aria-label="RSN Yield Platform — home"
+          className="flex shrink-0 items-center transition-opacity hover:opacity-80"
         >
-          RSN Yield Platform
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/rsn-yield-wordmark.svg"
+            alt="RSN Yield Platform"
+            className="h-8 w-auto"
+          />
         </Link>
-        <ul className="flex flex-1 items-center justify-center gap-6">
+        <ul className="font-mont flex flex-1 items-center justify-center gap-6">
           {VIEW_LINKS.map((v) => {
             const active = isActive(v.href);
             return (
@@ -44,10 +50,10 @@ export function TopNav() {
                   href={v.href}
                   aria-current={active ? "page" : undefined}
                   className={clsx(
-                    "-mb-[2px] inline-block border-b-2 pb-1 text-sm transition-colors",
+                    "-mb-[2px] inline-block border-b-2 pb-1 text-[11px] font-bold uppercase tracking-[0.12em] transition-colors",
                     active
-                      ? "border-indigo-500 font-medium text-slate-900"
-                      : "border-transparent text-slate-600 hover:text-indigo-600",
+                      ? "border-indigo-600 text-slate-900"
+                      : "border-transparent text-slate-500 hover:text-indigo-600",
                   )}
                 >
                   {v.label}
@@ -56,15 +62,15 @@ export function TopNav() {
             );
           })}
         </ul>
-        <div className="flex items-center gap-4 text-sm text-slate-600">
+        <div className="font-mont flex items-center gap-4">
           <Link
             href="/about"
             aria-current={isActive("/about") ? "page" : undefined}
             className={clsx(
-              "-mb-[2px] inline-block border-b-2 pb-1 transition-colors",
+              "-mb-[2px] inline-block border-b-2 pb-1 text-[11px] font-bold uppercase tracking-[0.12em] transition-colors",
               isActive("/about")
-                ? "border-indigo-500 font-medium text-slate-900"
-                : "border-transparent hover:text-indigo-600",
+                ? "border-indigo-600 text-slate-900"
+                : "border-transparent text-slate-500 hover:text-indigo-600",
             )}
           >
             About

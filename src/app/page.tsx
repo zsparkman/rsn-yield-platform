@@ -36,14 +36,14 @@ export default function Landing() {
   return (
     <div className="grid min-h-[calc(100vh-9rem)] grid-rows-[auto_1fr_auto] gap-8">
       {/* Header */}
-      <section className="pt-6">
-        <h1 className="text-4xl font-semibold tracking-tight text-slate-900">
-          RSN Yield Platform
-        </h1>
-        <p className="mt-2 text-base text-slate-600">
-          Inventory, rate, and yield management for a regional sports network.
-        </p>
-        <p className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-600">
+      <section className="border-b border-[#E5E7EB] pt-6 pb-6">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/rsn-yield-wordmark.svg"
+          alt="RSN Yield Platform"
+          className="h-[52px] w-auto"
+        />
+        <p className="mt-5 max-w-3xl text-sm leading-relaxed text-slate-600">
           A sanitized portfolio version of a production yield-management tool
           for an MLB-team regional sports network. The pipeline mirrors a
           real-world Wide Orbit + Excel chain at a 170-game-per-season scale
@@ -58,14 +58,14 @@ export default function Landing() {
           <Link
             key={v.href}
             href={v.href}
-            className="group flex flex-col gap-2 rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition-colors hover:border-indigo-600"
+            className="group flex flex-col gap-2 rounded-xl border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all hover:-translate-y-0.5 hover:border-indigo-500 hover:shadow-[0_4px_16px_rgba(79,70,229,0.10)]"
           >
             <div className="flex items-center gap-2">
               <span
                 aria-hidden
-                className="inline-block h-2 w-2 rounded-full bg-slate-400 group-hover:bg-indigo-600"
+                className="inline-block h-2 w-2 rounded-full bg-slate-400 transition-colors group-hover:bg-indigo-600"
               />
-              <span className="text-sm font-medium text-slate-900 group-hover:text-indigo-600">
+              <span className="font-mont text-[11px] font-bold uppercase tracking-[0.1em] text-slate-900 group-hover:text-indigo-600">
                 {v.name}
               </span>
             </div>
@@ -75,7 +75,7 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="flex flex-col items-start gap-2 border-t border-slate-200 pt-4 text-xs text-slate-600 md:flex-row md:items-center md:justify-between">
+      <footer className="flex flex-col items-start gap-2 border-t border-[#E5E7EB] pt-4 text-xs text-slate-600 md:flex-row md:items-center md:justify-between">
         <p>
           All data shown is synthetic. No real client names, rates, fill
           numbers, or revenue figures appear in this demo.{" "}

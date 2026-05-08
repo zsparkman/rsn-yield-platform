@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 80" role="img" aria-label="RSN Yield Platform">
+  <rect x="4" y="14" width="52" height="52" fill="#6366F1" rx="3"/>
+  <rect x="14" y="48" width="5" height="8"  fill="#FFFFFF" rx="1"/>
+  <rect x="23" y="40" width="5" height="16" fill="#FFFFFF" rx="1"/>
+  <rect x="32" y="32" width="5" height="24" fill="#FFFFFF" rx="1"/>
+  <rect x="41" y="24" width="5" height="32" fill="#FFFFFF" rx="1"/>
+  <text x="74" y="42" font-family="Inter, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="26" font-weight="800" fill="#FFFFFF" letter-spacing="-0.4">RSN Yield Platform</text>
+  <text x="74" y="62" font-family="Inter, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="500" fill="#94A3B8" letter-spacing="0.2">Yield Management &#8226; Regional Sports Network</text>
+</svg>
